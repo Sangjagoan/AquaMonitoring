@@ -1,6 +1,6 @@
-let redrawCounter = 0;
-"use strict";
 
+"use strict";
+let redrawCounter = 0;
 function num(v) {
     return Number(v) || 0;
 }
@@ -11,15 +11,14 @@ function updateElement(id, value) {
 }
 
 function onMQTTData(topic, data) {
-    if (topic === "esp32/panel/data") {
-
-        updateElectrical(data);
-        updateAquaBars(data.level, data.tinggi, data.jarak);
+    if (topic === "esp32/panel/data" ) {
+console.log("MQTT RX:", topic, data);
+        updateAquaBars(data.lvl, data.tAir, data.jar);
         // CHART ENGINE
-
+        updateElectrical(data);
         pushVoltage(CHART1, data.v1);
         pushVoltage(CHART2, data.v2);
-        pushVoltage(CHART3, data.tinggi);
+        pushVoltage(CHART3, data.tAir);
         chartRenderLoop(); // render langsung
         // =========================
         // PRESSURE CANDLE
@@ -38,7 +37,6 @@ function onMQTTData(topic, data) {
             Number(data.kg)
 
         );
-
     }
 }
 
@@ -61,11 +59,10 @@ function updatePressure(d) {
 }
 
 function ubdatedashboardPressureValues(data) {
-    updateElement('kalmanPressureValue', data.kalmanPressureValue.toFixed(0));
-    updateElement('nonKalmanPressure', data.nonKalmanPressure.toFixed(0));
+    updateElement('kalmanPressureValue', data.kPsi.toFixed(0));
+    updateElement('nonKalmanPressure', data.nkPsi.toFixed(0));
 }
 
 window.addEventListener("load", () => {
     mqttStart();
 });
-

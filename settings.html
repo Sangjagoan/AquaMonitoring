@@ -102,6 +102,24 @@ https://templatemo.com/tm-609-crypto-vault
                     </svg>
                     System Monitor
                 </a>
+                <a href="control.html" class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+
+                        <!-- slider line 1 -->
+                        <line x1="4" y1="6" x2="20" y2="6"></line>
+                        <circle cx="9" cy="6" r="2"></circle>
+
+                        <!-- slider line 2 -->
+                        <line x1="4" y1="12" x2="20" y2="12"></line>
+                        <circle cx="15" cy="12" r="2"></circle>
+
+                        <!-- slider line 3 -->
+                        <line x1="4" y1="18" x2="20" y2="18"></line>
+                        <circle cx="11" cy="18" r="2"></circle>
+                    </svg>
+                    Control
+                </a>
             </nav>
 
             <nav class="nav-section">
@@ -156,7 +174,6 @@ https://templatemo.com/tm-609-crypto-vault
                 <button class="settings-tab active" data-tab="profile">Profile</button>
                 <button class="settings-tab" data-tab="security">Security</button>
                 <button class="settings-tab" data-tab="notifications">Notifications</button>
-                <button class="settings-tab" data-tab="mode-control">🌙 Day / Night Mode Control</button>
                 <button class="settings-tab" data-tab="preferences">Preferences</button>
                 <button class="settings-tab" data-tab="connected">Connecting</button>
             </div>
@@ -349,42 +366,6 @@ https://templatemo.com/tm-609-crypto-vault
                     </div>
                 </div>
             </div>
-            <!-- 🌙 Day / Night Mode Control -->
-            <div class="settings-content active" id="mode-control">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>🌙 Operation Mode</h3>
-                    </div>
-                    <div class="toggle-item">
-                        <div class="radio-group">
-                            <label><input type="radio" name="mode" value="AUTO" checked> Auto (Schedule)</label>
-                            <label><input type="radio" name="mode" value="DAY"> Force Day</label>
-                            <label><input type="radio" name="mode" value="NIGHT"> Force Night</label>
-                        </div>
-
-                    </div>
-                    <div class="toggle-item">
-                        <div class="schedule-row">
-                            <span>From</span>
-                            <input type="number" id="nightStart" min="0" max="23">
-                            <span>to</span>
-                            <input type="number" id="nightEnd" min="0" max="23">
-                        </div>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn-reset" onclick="saveDayNightConfig()">
-                            Save
-                        </button>
-                    </div>
-                    <div class="toggle-item">
-                        <div class="mode-indicator">
-                            Current State:
-                            <span id="modeState">--</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Preferences Settings -->
             <div class="settings-content" id="preferences">
 
@@ -596,6 +577,7 @@ https://templatemo.com/tm-609-crypto-vault
     </div>
     <script src="script.js"></script>
     <script src="settings.js"></script>
+    <script src="ui.js"></script>
 </body>
 
 </html>

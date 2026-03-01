@@ -26,7 +26,8 @@ https://templatemo.com/tm-609-crypto-vault
 /* ========================================
    CSS Variables - Dark Theme (Default)
 ======================================== */
-:root, [data-theme="dark"] {
+:root,
+[data-theme="dark"] {
     --bg-primary: #1c1c1e;
     --bg-secondary: #232325;
     --bg-card: #2c2c2e;
@@ -44,6 +45,7 @@ https://templatemo.com/tm-609-crypto-vault
     --shadow: rgba(0, 0, 0, 0.3);
     --chart-grid: rgba(255, 255, 255, 0.05);
     --overlay: rgba(0, 0, 0, 0.5);
+    --wifi-diconnected: rgba(255, 0, 0, 0.5);
 }
 
 /* ========================================
@@ -67,6 +69,7 @@ https://templatemo.com/tm-609-crypto-vault
     --shadow: rgba(0, 0, 0, 0.08);
     --chart-grid: rgba(0, 0, 0, 0.05);
     --overlay: rgba(0, 0, 0, 0.5);
+    --wifi-diconnected: rgba(255, 0, 0, 0.5);
 }
 
 /* ========================================
@@ -169,7 +172,7 @@ body {
 ======================================== */
 .sidebar {
     background-color: var(--bg-secondary);
-    padding: 32px 24px;
+    padding: 32px 4px;
     border-right: 1px solid var(--border);
     display: flex;
     flex-direction: column;
@@ -288,6 +291,11 @@ body {
 
 .nav-item.active .nav-icon {
     opacity: 1;
+}
+
+.nav-link.active .nav-icon {
+    stroke: #f4a261;
+    filter: drop-shadow(0 0 4px rgba(244, 162, 97, 0.6));
 }
 
 /* ========================================
@@ -455,6 +463,10 @@ body {
     border-radius: 10px;
     font-size: 16px;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     font-family: inherit;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -465,6 +477,7 @@ body {
 
 .btn:hover {
     background-color: var(--bg-card-hover);
+    border-color: var(--accent-copper);
 }
 
 .btn.primary {
@@ -518,9 +531,21 @@ body {
     margin-bottom: 8px;
 }
 
+.form-input-wrapper {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
 .form-input {
     width: 100%;
-    padding: 14px 18px;
+    padding: 14px 45px;
     background-color: var(--bg-primary);
     border: 1px solid var(--border);
     border-radius: 10px;
@@ -537,6 +562,23 @@ body {
 
 .form-input::placeholder {
     color: var(--text-muted);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+    transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+    color: var(--accent-copper);
 }
 
 .form-select {
@@ -637,16 +679,45 @@ body {
     color: #fff;
 }
 
-.coin-icon.btc { background: linear-gradient(135deg, #f7931a, #c77b15); }
-.coin-icon.eth { background: linear-gradient(135deg, #627eea, #4a5fc1); }
-.coin-icon.usdt { background: linear-gradient(135deg, #26a17b, #1a7a5c); }
-.coin-icon.bnb { background: linear-gradient(135deg, #f3ba2f, #c99a27); }
-.coin-icon.sol { background: linear-gradient(135deg, #9945ff, #14f195); }
-.coin-icon.xrp { background: linear-gradient(135deg, #23292f, #000000); }
-.coin-icon.ada { background: linear-gradient(135deg, #0033ad, #002276); }
-.coin-icon.doge { background: linear-gradient(135deg, #c3a634, #ba9f33); }
-.coin-icon.dot { background: linear-gradient(135deg, #e6007a, #c40068); }
-.coin-icon.matic { background: linear-gradient(135deg, #8247e5, #6b3bc4); }
+.coin-icon.btc {
+    background: linear-gradient(135deg, #f7931a, #c77b15);
+}
+
+.coin-icon.eth {
+    background: linear-gradient(135deg, #627eea, #4a5fc1);
+}
+
+.coin-icon.usdt {
+    background: linear-gradient(135deg, #26a17b, #1a7a5c);
+}
+
+.coin-icon.bnb {
+    background: linear-gradient(135deg, #f3ba2f, #c99a27);
+}
+
+.coin-icon.sol {
+    background: linear-gradient(135deg, #9945ff, #14f195);
+}
+
+.coin-icon.xrp {
+    background: linear-gradient(135deg, #23292f, #000000);
+}
+
+.coin-icon.ada {
+    background: linear-gradient(135deg, #0033ad, #002276);
+}
+
+.coin-icon.doge {
+    background: linear-gradient(135deg, #c3a634, #ba9f33);
+}
+
+.coin-icon.dot {
+    background: linear-gradient(135deg, #e6007a, #c40068);
+}
+
+.coin-icon.matic {
+    background: linear-gradient(135deg, #8247e5, #6b3bc4);
+}
 
 /* ========================================
    Copyright Footer

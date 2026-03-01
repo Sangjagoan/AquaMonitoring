@@ -9,7 +9,8 @@ const MQTT_CONFIG = {
 
     topic_data: "esp32/panel/data",
     topic_state: "esp32/panel/state",
-    topic_heartbeat: "esp32/panel/heartbeat"
+    topic_heartbeat: "esp32/panel/heartbeat",
+    topic_daynight: "esp32/config/daynight"
 };
 
 let mqttClient = null;
@@ -34,6 +35,7 @@ function mqttStart()
         mqttClient.subscribe(MQTT_CONFIG.topic_data);
         mqttClient.subscribe(MQTT_CONFIG.topic_state);
         mqttClient.subscribe(MQTT_CONFIG.topic_heartbeat);
+        mqttClient.subscribe(MQTT_CONFIG.topic_daynight);
     });
 
     mqttClient.on("message", mqttOnMessage);

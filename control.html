@@ -5,13 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ESP32 Home Monitoring</title>
-    <script>
-        // Load theme immediately to prevent flash
-        (function () {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-        })();
-    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
@@ -29,8 +22,7 @@ https://templatemo.com/tm-609-crypto-vault
 </head>
 
 <body>
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
         <div class="hamburger">
             <span></span>
             <span></span>
@@ -38,11 +30,9 @@ https://templatemo.com/tm-609-crypto-vault
         </div>
     </button>
 
-    <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="dashboard">
-        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="logo">
                 <div class="logo-icon">
@@ -54,7 +44,7 @@ https://templatemo.com/tm-609-crypto-vault
                             </linearGradient>
                         </defs>
                         <!-- Background rounded -->
-                        <rect x="5" y="5" width="90" height="90" rx="20" fill="var(--bg-primary)" />
+                        <rect x="5" y="5" width="90" height="90" rx="20" fill=var(--bg-primary) />
                         <!-- Water Drop -->
                         <path d="M50 18
                             C35 40, 28 52, 28 65
@@ -83,7 +73,7 @@ https://templatemo.com/tm-609-crypto-vault
                     </svg>
                     Analysis Data
                 </a>
-                <a href="system.html" class="nav-item active">
+                <a href="system.html" class="nav-item">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
 
@@ -112,7 +102,7 @@ https://templatemo.com/tm-609-crypto-vault
                     </svg>
                     System Monitor
                 </a>
-                <a href="control.html" class="nav-item">
+                <a href="control.html" class="nav-item active">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
 
@@ -133,7 +123,7 @@ https://templatemo.com/tm-609-crypto-vault
             </nav>
 
             <nav class="nav-section">
-                <div class="nav-label">Configurasi</div>
+                <div class="nav-label">Account</div>
                 <a href="settings.html" class="nav-item">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="3" />
@@ -174,122 +164,64 @@ https://templatemo.com/tm-609-crypto-vault
             </div>
         </aside>
 
-        <!-- Main Content -->
         <main class="main-content">
             <div class="page-header">
-                <h1>System Monitor</h1>
-                <p>Realtime diagnostics, memory usage and PLC status overview</p>
+                <h1>Settings</h1>
+                <p>Manage your account preferences and security</p>
             </div>
-            <div class="grid-2">
-
-                <!-- SYSTEM HEALTH -->
+            <!-- Settings Tabs -->
+            <div class="settings-tabs">
+                <button class="settings-tab active" data-tab="mode-control">🌙 Day / Night Mode Control</button>
+                <button class="settings-tab " data-tab="mode">Stopkran</button>
+                <button class="settings-tab " data-tab="mode">State</button>
+            </div>
+            <!-- 🌙 Day / Night Mode Control -->
+            <div class="settings-content active" id="mode-control">
                 <div class="card">
-                    <h2>System Health</h2>
-
-                    <div class="stat-row">
-                        <div class="stat-box">
-                            <label>Status</label>
-                            <span id="sysHealth" class="badge success">HEALTHY</span>
+                    <div class="card-header">
+                        <h3>🌙 Operation Mode</h3>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="radio-group">
+                            <label><input type="radio" name="mode" value="AUTO" checked> Auto (Schedule)</label>
+                            <label><input type="radio" name="mode" value="DAY"> Force Day</label>
+                            <label><input type="radio" name="mode" value="NIGHT"> Force Night</label>
                         </div>
 
-                        <div class="stat-box">
-                            <label>Uptime</label>
-                            <span id="uptimeValue">0 s</span>
-                        </div>
-                        <div class="stat-box">
-                            <label>QueueCount</label>
-                            <span id="queueCountValue">0 s</span>
+                    </div>
+                    <div class="toggle-item">
+                        <div class="schedule-row">
+                            <span>From</span>
+                            <input type="number" id="nightStart" min="0" max="23">
+                            <span>to</span>
+                            <input type="number" id="nightEnd" min="0" max="23">
                         </div>
                     </div>
-                </div>
-
-                <!-- MEMORY -->
-                <div class="card">
-                    <h2>Memory</h2>
-
-                    <div class="memory-bar">
-                        <div id="heapBar" class="memory-fill"></div>
+                    <div class="btn-group">
+                        <button class="btn-reset" onclick="saveDayNightConfigMQTT()">
+                            Save
+                        </button>
                     </div>
-
-                    <div class="stat-row">
-                        <div class="stat-box">
-                            <label>Free Heap</label>
-                            <span id="heapValue">0 KB</span>
-                        </div>
-
-                        <div class="stat-box">
-                            <label>Min Heap</label>
-                            <span id="minHeapValue">0 KB</span>
-                        </div>
-
-                        <div class="stat-box">
-                            <label>Max Block</label>
-                            <span id="maxBlockValue">0 KB</span>
+                    <div class="toggle-item">
+                        <div class="schedule-row">
+                            Current State:
+                            <span id="currentState">--</span>
                         </div>
                     </div>
                 </div>
-
             </div>
-
-            <!-- PLC & SENSOR -->
-            <div class="card">
-                <h2>PLC & Sensor Status</h2>
-
-                <div class="stat-row">
-                    <div class="stat-box">
-                        <label>Sensor</label>
-                        <span id="sensorValue">-</span>
-                    </div>
-
-                    <div class="stat-box">
-                        <label>WDT</label>
-                        <span id="wdtValue">-</span>
-                    </div>
-
-                    <div class="stat-box">
-                        <label>NTP</label>
-                        <span id="ntpValue">-</span>
-                    </div>
-                    <div class="stat-box">
-                        <label>PLC</label>
-                        <span id="plcValue">-</span>
-                    </div>
-                    <div class="stat-box">
-                        <label>HEALTH</label>
-                        <span id="healthValue">-</span>
-                    </div>
-                    <div class="stat-box">
-                        <label>MQTT</label>
-                        <span id="mqttValue">-</span>
-                    </div>
-                    <div class="stat-box">
-                        <label>TELEGRAM</label>
-                        <span id="telValue">-</span>
-                    </div>
-                    <div class="stat-box">
-                        <label>DEBUGING</label>
-                        <span id="debugValue">-</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- DEBUG -->
-            <div class="card">
-                <h2>Debug Info</h2>
-                <pre id="debugConsole" class="debug-box"></pre>
-            </div>
-            <!-- Copyright -->
             <footer class="copyright">
                 Copyright &copy; 2026 CryptoVault. Designed by <a href="https://templatemo.com" target="_blank"
                     rel="nofollow">TemplateMo</a>
-
                 <div id="liveDate"></div>
                 <div id="liveClock"></div>
             </footer>
         </main>
-        <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-        <script src="mqtt.js"></script>
-        <script src="system.js"></script>
+    </div>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="mqtt.js"></script>
+    <script src="control.js"></script>
+    <script src="ui.js"></script>
 </body>
 
 </html>

@@ -1,33 +1,40 @@
-
 /* ========================================
  SYSTEM MONITORING
 ======================================== */
-async function loadSystemStatus() {
 
-    try {
-        const res = await fetch("/system/ui");
-        const data = await res.json();
-        updateHealthUI(data);
-        document.getElementById("uptimeValue").textContent = formatUptime(data.uptime);
+async function loadSystemStatus(d)
+{
+    console.log("System status:", d);
 
-        document.getElementById("heapValue").textContent = (data.heap / 1024).toFixed(1) + " KB";
-        document.getElementById("minHeapValue").textContent = (data.minHeap / 1024).toFixed(1) + " KB";
-        document.getElementById("maxBlockValue").textContent = (data.maxBlock / 1024).toFixed(1) + " KB";
+    document.getElementById("uptimeValue").textContent =
+        formatUptime(d.up);
 
-        const percent = (data.heap / 320000) * 100;
-        document.getElementById("heapBar").style.width = percent + "%";
+    document.getElementById("heapValue").textContent =
+        (d.hp / 1024).toFixed(1) + " KB";
 
-        document.getElementById("plcStateValue").textContent = data.state;
-        document.getElementById("sensorValue").textContent = data.sensor;
-        document.getElementById("wdtValue").textContent = data.wdt;
-        document.getElementById("ntpValue").textContent = data.ntp;
+    document.getElementById("minHeapValue").textContent =
+        (d.mh / 1024).toFixed(1) + " KB";
 
-        document.getElementById("debugConsole").textContent =
-            JSON.stringify(data, null, 2);
+    document.getElementById("maxBlockValue").textContent =
+        (d.mb / 1024).toFixed(1) + " KB";
 
-    } catch (e) {
-        console.log("System fetch error");
-    }
+    const percent = (d.hp / 320000) * 100;
+
+    document.getElementById("heapBar").style.width =
+        percent + "%";
+
+    document.getElementById("queueCountValue").textContent = d.mq;
+    document.getElementById("sensorValue").textContent = d.s;
+    document.getElementById("wdtValue").textContent = d.w;
+    document.getElementById("ntpValue").textContent = d.n;
+    document.getElementById("plcValue").textContent = d.p;
+    document.getElementById("healthValue").textContent = d.h;
+    document.getElementById("mqttValue").textContent = d.m;
+    document.getElementById("telValue").textContent = d.t;
+    document.getElementById("debugValue").textContent = d.d;
+
+    document.getElementById("debugConsole").textContent =
+        JSON.stringify(d, null, 2);
 }
 
 function updateHealthUI(data) {
@@ -36,63 +43,37 @@ function updateHealthUI(data) {
 
     if (!el) return;
 
-    el.innerText = data.health;
+    el.innerText = data.hl;
 
     el.classList.remove("green", "yellow", "red");
 
-    if (data.health === "HEALTHY") el.classList.add("green");
-    else if (data.health === "WARNING") el.classList.add("yellow");
+    if (data.hl === "HEALTHY") el.classList.add("green");
+    else if (data.hl === "WARNING") el.classList.add("yellow");
     else el.classList.add("red");
 }
 
-function formatUptime(seconds) {
+function formatUptime(seconds)
+{
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
     return `${h}h ${m}m ${s}s`;
 }
 
-let socket;
+function onMQTTData(topic, data)
+{
+    console.log("SYSTEM RX:", topic, data);
 
-function initWebSocket() {
+    if (topic === "esp32/panel/data")
+    {
+        loadSystemStatus(data);
+        updateHealthUI(data);
+    }
 
-    socket = new WebSocket(`ws://${location.hostname}:81/`);
-
-    socket.onopen = () => {
-        console.log("WebSocket connected");
-    };
-
-    socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        updateSystemUI(data);
-    };
-
-    socket.onclose = () => {
-        console.log("WebSocket closed, reconnecting...");
-        setTimeout(initWebSocket, 2000);
-    };
+    
 }
 
-function updateSystemUI(data) {
-
-    document.getElementById("uptimeValue").textContent =
-        formatUptime(data.uptime);
-
-
-    document.getElementById("heapValue").textContent =
-        (data.heap / 1024).toFixed(1) + " KB";
-
-    document.getElementById("minHeapValue").textContent =
-        (data.minHeap / 1024).toFixed(1) + " KB";
-
-    document.getElementById("maxBlockValue").textContent =
-        (data.maxBlock / 1024).toFixed(1) + " KB";
-
-    updateHealthBadge(data.health);
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    loadSystemStatus();   // sekali saja
-    initWebSocket();      // realtime stream
+window.addEventListener("load", () =>
+{
+    mqttStart();
 });
-
