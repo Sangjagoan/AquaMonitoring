@@ -15,8 +15,7 @@ const MQTT_CONFIG = {
 
 let mqttClient = null;
 
-function mqttStart()
-{
+function mqttStart() {
     console.log("Starting MQTT...");
 
     mqttClient = mqtt.connect(MQTT_CONFIG.host, {
@@ -28,35 +27,31 @@ function mqttStart()
         clean: true
     });
 
-    mqttClient.on("connect", () =>
-    {
+    mqttClient.on("connect", () => {
         console.log("MQTT Connected ✅");
 
         mqttClient.subscribe(MQTT_CONFIG.topic_data);
         mqttClient.subscribe(MQTT_CONFIG.topic_state);
         mqttClient.subscribe(MQTT_CONFIG.topic_heartbeat);
         mqttClient.subscribe(MQTT_CONFIG.topic_daynight);
+
     });
 
     mqttClient.on("message", mqttOnMessage);
 
-    mqttClient.on("error", err =>
-    {
+    mqttClient.on("error", err => {
         console.error("MQTT error ❌:", err);
     });
 }
 
-function mqttOnMessage(topic, payload)
-{
-    try
-    {
+function mqttOnMessage(topic, payload) {
+    try {
         const data = JSON.parse(payload.toString());
 
         onMQTTData(topic, data);
 
     }
-    catch(e)
-    {
+    catch (e) {
         console.error("JSON error", e);
     }
 }

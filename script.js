@@ -61,6 +61,8 @@ function updatePressure(d) {
 function ubdatedashboardPressureValues(data) {
     updateElement('kalmanPressureValue', data.kPsi.toFixed(0));
     updateElement('nonKalmanPressure', data.nkPsi.toFixed(0));
+    updateElement('psi', data.psi.toFixed(2));
+    updateElement('kg', data.kg.toFixed(2));
 }
 
 window.addEventListener("load", () => {

@@ -11,7 +11,8 @@
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="pages.css">
-    <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="control.css">
+
     <!--
 
 TemplateMo 609 Crypto Vault
@@ -187,26 +188,33 @@ https://templatemo.com/tm-609-crypto-vault
                             <label><input type="radio" name="mode" value="DAY"> Force Day</label>
                             <label><input type="radio" name="mode" value="NIGHT"> Force Night</label>
                         </div>
-
                     </div>
-                    <div class="toggle-item">
-                        <div class="schedule-row">
+                    <div class="toggle">
+                        <div class="value-state">
                             <span>From</span>
                             <input type="number" id="nightStart" min="0" max="23">
                             <span>to</span>
                             <input type="number" id="nightEnd" min="0" max="23">
                         </div>
+                        <div class="value-state">
+                            <div>
+                                Plc:
+                                <span id="plcState">---</span>
+                            </div>
+
+                            <div>
+                                Mode:
+                                <span id="systemMode">---</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="btn-group">
-                        <button class="btn-reset" onclick="saveDayNightConfigMQTT()">
+                    <div class="save-toggle">
+                        <button class="btn-save" onclick="saveDayNightConfigMQTT()">
                             Save
                         </button>
                     </div>
                     <div class="toggle-item">
-                        <div class="schedule-row">
-                            Current State:
-                            <span id="currentState">--</span>
-                        </div>
+
                     </div>
                 </div>
             </div>
