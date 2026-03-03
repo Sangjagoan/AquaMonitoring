@@ -10,7 +10,7 @@ const MQTT_CONFIG = {
     topic_data: "esp32/panel/data",
     topic_state: "esp32/panel/state",
     topic_heartbeat: "esp32/panel/heartbeat",
-    topic_daynight: "esp32/config/daynight"
+    topic_daynight: "esp32/config/daynight/state"
 };
 
 let mqttClient = null;

@@ -623,30 +623,6 @@ https://templatemo.com/tm-609-crypto-vault
 
                     <!-- Bottom Row -->
                     <div class="bottom-row">
-                        <!-- Asset Allocation -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h2 class="card-title">Asset Allocation</h2>
-                            </div>
-                            <div class="donut-chart-container">
-                                <svg class="donut-chart" viewBox="0 0 120 120">
-                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#f7931a" stroke-width="18"
-                                        stroke-dasharray="113 170" stroke-dashoffset="-42" stroke-linecap="round" />
-                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#627eea" stroke-width="18"
-                                        stroke-dasharray="71 212" stroke-dashoffset="-155" stroke-linecap="round" />
-                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#26a17b" stroke-width="18"
-                                        stroke-dasharray="57 226" stroke-dashoffset="-226" stroke-linecap="round" />
-                                    <circle cx="60" cy="60" r="45" fill="none" stroke="#b87333" stroke-width="18"
-                                        stroke-dasharray="42 241" stroke-dashoffset="-283" stroke-linecap="round" />
-                                </svg>
-                                <div class="donut-legend">
-                                    <div class="legend-item"><span class="legend-dot btc"></span>BTC 40%</div>
-                                    <div class="legend-item"><span class="legend-dot eth"></span>ETH 25%</div>
-                                    <div class="legend-item"><span class="legend-dot usdt"></span>USDT 20%</div>
-                                    <div class="legend-item"><span class="legend-dot other"></span>Other 15%</div>
-                                </div>
-                            </div>
-                        </div>
                         <!-- PSI GAUGE -->
                         <div class="card">
                             <div class="card-header">
@@ -687,6 +663,37 @@ https://templatemo.com/tm-609-crypto-vault
                         <div class="card">
                             <div class="card-header">
                                 <h2 class="card-title">Pressure</h2>
+                            </div>
+                            <div class="donut-chart-container">
+                                <svg viewBox="0 0 300 180" class="gauge-svg">
+                                    <defs>
+                                        <linearGradient id="kgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#00c6ff" />
+                                            <stop offset="50%" stop-color="#00ff88" />
+                                            <stop offset="100%" stop-color="#ff8800" />
+                                        </linearGradient>
+                                    </defs>
+
+                                    <path d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="url(#kgGradient)"
+                                        stroke-width="20" stroke-linecap="round" />
+
+                                    <g id="kgTicks"></g>
+                                    <g id="kgNeedle" transform="rotate(-90 150 150)">
+                                        <line x1="150" y1="150" x2="150" y2="55" stroke="#ffffff" stroke-width="5"
+                                            stroke-linecap="round" />
+                                        <circle cx="150" cy="150" r="12" fill="#ffffff" />
+                                    </g>
+                                    <text id="kgValue" x="150" y="115" text-anchor="middle" font-size="20"
+                                        font-weight="bold" fill="#fff">0.0</text>
+
+                                    <text x="150" y="140" text-anchor="middle" font-size="18" fill="#aaa">KG</text>
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- BAR -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2 class="card-title">Bar</h2>
                             </div>
                             <div class="donut-chart-container">
                                 <svg viewBox="0 0 300 180" class="gauge-svg">
