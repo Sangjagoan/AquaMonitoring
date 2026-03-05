@@ -6,13 +6,20 @@ function num(v) {
 }
 
 function updateElement(id, value) {
+
     const el = document.getElementById(id);
-    if (el) el.textContent = value;
+
+    if (!el) {
+        console.warn("ELEMENT TIDAK ADA:", id);
+        return;
+    }
+
+    el.textContent = value;
 }
 
 function onMQTTData(topic, data) {
-    if (topic === "esp32/panel/data" ) {
-console.log("MQTT RX:", topic, data);
+    if (topic === "esp32/panel/data") {
+        console.log("MQTT RX:", topic, data);
         updateAquaBars(data.lvl, data.tAir, data.jar);
         // CHART ENGINE
         updateElectrical(data);
@@ -64,6 +71,7 @@ function ubdatedashboardPressureValues(data) {
     updateElement('psi', data.psi.toFixed(2));
     updateElement('kg', data.kg.toFixed(2));
 }
+
 
 window.addEventListener("load", () => {
     mqttStart();

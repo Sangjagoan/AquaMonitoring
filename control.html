@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="pages.css">
     <link rel="stylesheet" href="control.css">
+    <link rel="stylesheet" href="settings.css">
 
     <!--
 
@@ -172,12 +173,12 @@ https://templatemo.com/tm-609-crypto-vault
             </div>
             <!-- Settings Tabs -->
             <div class="settings-tabs">
-                <button class="settings-tab active" data-tab="mode-control">🌙 Day / Night Mode Control</button>
+                <button class="settings-tab active" data-tab="mode-night_day">🌙 Day / Night Mode Control</button>
                 <button class="settings-tab " data-tab="mode">Stopkran</button>
-                <button class="settings-tab " data-tab="mode">State</button>
+                <button class="settings-tab " data-tab="mode_state">State</button>
             </div>
             <!-- 🌙 Day / Night Mode Control -->
-            <div class="settings-content active" id="mode-control">
+            <div class="settings-content active" id="mode-night_day">
                 <div class="card">
                     <div class="card-header">
                         <h3>🌙 Operation Mode</h3>
@@ -216,6 +217,46 @@ https://templatemo.com/tm-609-crypto-vault
                     <div class="toggle-item">
 
                     </div>
+                </div>
+            </div>
+            <!--  State Mode Control -->
+            <div class="settings-content" id="mode_state">
+                <div class="gauge-container">
+
+                    <div class="plc-status">
+
+                        <div class="status-row">
+                            <span>System Health</span>
+                            <span id="ledSystem" class="led"></span>
+                        </div>
+
+                        <div class="status-row">
+                            <span>Sensor eneble</span>
+                            <span id="ledRun" class="led"></span>
+                        </div>
+
+                        <div class="status-row">
+                            <span>WiFi</span>
+                            <span id="ledWifi" class="led"></span>
+                        </div>
+
+                        <div class="status-row">
+                            <span>MQTT</span>
+                            <span id="ledMqtt" class="led"></span>
+                        </div>
+
+                        <div class="status-row">
+                            <span>OTA Update</span>
+                            <span id="ledOta" class="led"></span>
+                        </div>
+
+                        <div class="status-row">
+                            <span>PLC Error</span>
+                            <span id="ledError" class="led"></span>
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
             <footer class="copyright">

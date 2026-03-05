@@ -71,13 +71,55 @@ function updateSystemStateUI(data) {
         modeEl.textContent = data.systemMode;
 }
 
+function setLed(id, state, colorTrue = "green", colorFalse = "red") {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.classList.remove("green", "red", "yellow", "blink");
+
+    if (state)
+        el.classList.add(colorTrue);
+    else
+        el.classList.add(colorFalse);
+}
+
 function onMQTTData(topic, data) {
 
     if (topic === "esp32/config/daynight/state") {
         updateSystemStateUI(data);
         updateDayNightUI(data);
 
+        const errLed = document.getElementById("ledError");
+
+        errLed.classList.remove("green", "red", "blink");
+
+        if (data.plcState.includes("Error")) {
+            errLed.classList.add("red");
+            errLed.classList.add("blink");
+        }
+        else {
+            errLed.classList.add("green");
+        }
+
         console.log("state:", data);
+    }
+
+    if (topic === "esp32/panel/heartbeat") {
+        const hb = data;
+
+        setLed("ledSystem", hb.hlt);
+        setLed("ledRun", hb.run);
+        setLed("ledWifi", hb.wifi);
+
+        // OTA khusus
+        const otaLed = document.getElementById("ledOta");
+        otaLed.classList.remove("green", "red", "yellow");
+
+        if (hb.ota)
+            otaLed.classList.add("yellow");
+        else
+            otaLed.classList.add("green");
+        console.log("heartbeat:", data);
     }
 }
 

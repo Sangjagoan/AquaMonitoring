@@ -191,14 +191,23 @@ https://templatemo.com/tm-609-crypto-vault
                         </svg>
                         <input type="text" placeholder="Search...">
                     </div>
-                    <button class="notification-btn">
+                    <!-- NOTIFICATION BUTTON -->
+                    <button class="notification-btn" id="notifBtn">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
                             <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
                             <path d="M13.73 21a2 2 0 01-3.46 0" />
                         </svg>
-                        <span class="notification-badge">3</span>
+                        <span class="notification-badge" id="notifCount">0</span>
                     </button>
+                    <!-- DROPDOWN NOTIFICATION -->
+                    <div class="notification-dropdown" id="notifDropdown">
+                        <div class="notif-header">
+                            Notifications
+                        </div>
+                        <ul id="notifList"></ul>
+                    </div>
+                    <!-- USER MENU -->
                     <div class="user-menu">
                         <div class="user-avatar">S</div>
                         <div class="user-info">
@@ -798,82 +807,6 @@ https://templatemo.com/tm-609-crypto-vault
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">Power Factor (cos φ)</div>
-                            <div class="stat-value" id="pf">0.00</div>
-                            <div class="stat-change positive" id="_pf">0.00</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 4 L12 20 L20 4" />
-                            </svg>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-label">🔋 Voltage (V)</div>
-                            <div class="stat-value" id="_voltage">0<span class="unit">V</span></div>
-                            <div class="stat-change positive" id="voltage">0<span class="unit">V</span></div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M6 20 L12 4 L18 20" />
-                                <line x1="8.5" y1="14" x2="15.5" y2="14" />
-                            </svg>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-label">⚡ Current (A)</div>
-                            <div class="stat-value" id="_current">0<span class="unit">A</span></div>
-                            <div class="stat-change positive" id="current">0<span class="unit">A</span></div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="3 4 7 20 12 10 17 20 21 4" />
-                            </svg>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-label">🔌 Power (W)</div>
-                            <div class="stat-value" id="_power">0<span class="unit">W</span></div>
-                            <div class="stat-change positive" id="power">0<span class="unit">W</span></div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <!-- H -->
-                                <line x1="4" y1="4" x2="4" y2="20" />
-                                <line x1="10" y1="4" x2="10" y2="20" />
-                                <line x1="4" y1="12" x2="10" y2="12" />
-                                <!-- z -->
-                                <polyline points="14 6 20 6 14 18 20 18" />
-                            </svg>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-label">⏱ Frequency (Hz)</div>
-                            <div class="stat-value" id="_frequency">0<span class="unit">Hz</span></div>
-                            <div class="stat-change positive" id="frequency">0<span class="unit">Hz</span></div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" id="icon-pf">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <!-- lingkaran -->
-                                <circle cx="12" cy="12" r="8" />
-                                <!-- garis sudut fase -->
-                                <line x1="12" y1="12" x2="18" y2="9" />
-                                <!-- garis referensi -->
-                                <line x1="12" y1="12" x2="18" y2="12" />
-                            </svg>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-label">Power Factor (cos φ)</div>
                             <div class="stat-value" id="_pf">0.00</div>
                             <div class="stat-change positive" id="pf">0.00</div>
                         </div>
@@ -891,13 +824,13 @@ https://templatemo.com/tm-609-crypto-vault
         </main>
     </div>
 
-    <!-- <script src="script.js"></script> -->
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-    <script src="gauge.js"></script>
-    <script src="chart.js"></script>
     <script src="mqtt.js"></script>
     <script src="script.js"></script>
+    <script src="gauge.js"></script>
+    <script src="chart.js"></script>
     <script src="ui.js"></script>
+    <script src="notifications.js"></script>
 </body>
 
 </html>

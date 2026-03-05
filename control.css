@@ -1,10 +1,10 @@
-.toggle{
+.toggle {
     padding: 10px;
-    display:flex;
+    display: flex;
     gap: 40px;
 }
 
-.value-state{
+.value-state {
     background: var(--bg-primary);
     padding: 15px 20px;
     border-radius: 12px;
@@ -34,4 +34,61 @@
     transform: scale(1.05);
     background-color: var(--bg-card-hover);
     border-color: var(--accent-copper);
+}
+
+/* State Plc */
+
+.plc-status {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.led {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #444;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+}
+
+.led.green {
+    background: #00ff9c;
+    box-shadow: 0 0 12px #00ff9c;
+}
+
+.led.red {
+    background: #ff3c3c;
+    box-shadow: 0 0 12px #ff3c3c;
+}
+
+.led.yellow {
+    background: #ffc400;
+    box-shadow: 0 0 12px #ffc400;
+}
+
+.led.blink {
+    animation: blinkLed 1s infinite;
+}
+
+@keyframes blinkLed {
+    0% {
+        opacity: 1
+    }
+
+    50% {
+        opacity: 0.3
+    }
+
+    100% {
+        opacity: 1
+    }
 }

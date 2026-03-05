@@ -816,7 +816,65 @@ TAMBAHAN
 .card-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
     z-index: 9998;
+}
+
+/* Notifikasi css */
+
+.header-right {
+    position: relative;
+}
+
+.notification-btn {
+    position: relative;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #ff4d4f;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.notification-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    width: 300px;
+    background: #1f1f24;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    display: none;
+    z-index: 1000;
+}
+
+.notification-dropdown.active {
+    display: block;
+}
+
+.notification-dropdown ul {
+    list-style: none;
+    padding: 10px;
+    margin: 0;
+    max-height: 300px;
+    overflow: auto;
+}
+
+.notification-dropdown li {
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    font-size: 13px;
+}
+
+.notification-dropdown li:hover {
+    background: #2a2a31;
 }
