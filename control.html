@@ -174,8 +174,8 @@ https://templatemo.com/tm-609-crypto-vault
             <!-- Settings Tabs -->
             <div class="settings-tabs">
                 <button class="settings-tab active" data-tab="mode-night_day">🌙 Day / Night Mode Control</button>
-                <button class="settings-tab " data-tab="mode">Stopkran</button>
-                <button class="settings-tab " data-tab="mode_state">State</button>
+                <button class="settings-tab " data-tab="mode-kran">Stopkran</button>
+                <button class="settings-tab " data-tab="mode-state">State</button>
             </div>
             <!-- 🌙 Day / Night Mode Control -->
             <div class="settings-content active" id="mode-night_day">
@@ -219,8 +219,26 @@ https://templatemo.com/tm-609-crypto-vault
                     </div>
                 </div>
             </div>
+            <!--  State Stopkran Mode -->
+            <div class="settings-content" id="mode-kran">
+                <div class="gauge-container">
+                    <div class="kran-status">
+                        <div class="control-row">
+                            <span>Stopkran Utara</span>
+                            <button onclick="controlValve('utara','on')">ON</button>
+                            <button onclick="controlValve('utara','off')">OFF</button>
+                        </div>
+
+                        <div class="control-row">
+                            <span>Stopkran Selatan</span>
+                            <button onclick="controlValve('selatan','on')">ON</button>
+                            <button onclick="controlValve('selatan','off')">OFF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!--  State Mode Control -->
-            <div class="settings-content" id="mode_state">
+            <div class="settings-content" id="mode-state">
                 <div class="gauge-container">
 
                     <div class="plc-status">
@@ -254,7 +272,15 @@ https://templatemo.com/tm-609-crypto-vault
                             <span>PLC Error</span>
                             <span id="ledError" class="led"></span>
                         </div>
+                        <div class="status-row">
+                            <span>Sible Atas</span>
+                            <div id="sibleAtas" class="led"></div>
+                        </div>
 
+                        <div class="status-row">
+                            <span>Sible Bawah</span>
+                            <div id="sibleBawah" class="led"></div>
+                        </div>
                     </div>
 
                 </div>

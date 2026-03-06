@@ -110,7 +110,8 @@ function onMQTTData(topic, data) {
         setLed("ledSystem", hb.hlt);
         setLed("ledRun", hb.run);
         setLed("ledWifi", hb.wifi);
-
+        setLed("sibleAtas", hb.sa);
+        setLed("sibleBawah", hb.sb);
         // OTA khusus
         const otaLed = document.getElementById("ledOta");
         otaLed.classList.remove("green", "red", "yellow");
@@ -121,6 +122,18 @@ function onMQTTData(topic, data) {
             otaLed.classList.add("green");
         console.log("heartbeat:", data);
     }
+}
+
+function controlValve(name, state){
+
+    const topic = "esp32/panel/stopkran/set";
+
+    const payload = JSON.stringify({
+        valve: name,
+        state: state
+    });
+
+    mqttClient.publish(topic, payload);
 }
 
 window.addEventListener("load", () => {
