@@ -221,22 +221,29 @@ https://templatemo.com/tm-609-crypto-vault
             </div>
             <!--  State Stopkran Mode -->
             <div class="settings-content" id="mode-kran">
-                <div class="gauge-container">
-                    <div class="kran-status">
-                        <div class="control-row">
-                            <span>Stopkran Utara</span>
-                            <button onclick="controlValve('utara','on')">ON</button>
-                            <button onclick="controlValve('utara','off')">OFF</button>
-                        </div>
+                <div class="control-row">
+                    <span>Stopkran Utara</span>
+                    <label class="ui-switch">
+                        <input type="checkbox" id="valveUtara" onchange="toggleValve('utara', this.checked)">
+                        <span class="ui-slider">
+                            <span class="ui-on">ON</span>
+                            <span class="ui-off">OFF</span>
+                        </span>
+                    </label>
+                </div>
+                <div class="control-row">
+                    <span>Stopkran Selatan</span>
 
-                        <div class="control-row">
-                            <span>Stopkran Selatan</span>
-                            <button onclick="controlValve('selatan','on')">ON</button>
-                            <button onclick="controlValve('selatan','off')">OFF</button>
-                        </div>
-                    </div>
+                    <label class="ui-switch">
+                        <input type="checkbox" id="valveSelatan" onchange="toggleValve('selatan', this.checked)">
+                        <span class="ui-slider">
+                            <span class="ui-on">ON</span>
+                            <span class="ui-off">OFF</span>
+                        </span>
+                    </label>
                 </div>
             </div>
+
             <!--  State Mode Control -->
             <div class="settings-content" id="mode-state">
                 <div class="gauge-container">

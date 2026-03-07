@@ -124,16 +124,31 @@ function onMQTTData(topic, data) {
     }
 }
 
-function controlValve(name, state){
-
-    const topic = "esp32/panel/stopkran/set";
+function toggleValve(valve, state){
 
     const payload = JSON.stringify({
-        valve: name,
-        state: state
+        valve: valve,
+        state: state ? "on" : "off"
     });
 
-    mqttClient.publish(topic, payload);
+    mqttClient.publish(
+        "esp32/panel/stopkran/set",
+        payload
+    );
+}
+
+function updateValve(valve, state){
+
+    const id = valve === "utara"
+        ? "valveUtara"
+        : "valveSelatan";
+
+    const el = document.getElementById(id);
+
+    if(el){
+        el.checked = state;
+    }
+
 }
 
 window.addEventListener("load", () => {
