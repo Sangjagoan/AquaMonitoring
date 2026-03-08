@@ -11,7 +11,9 @@ const MQTT_CONFIG = {
     topic_state: "esp32/panel/state",
     topic_heartbeat: "esp32/panel/heartbeat",
     topic_daynight: "esp32/config/daynight/state",
-    topic_notif: "esp32/panel/alarm"
+    topic_notif: "esp32/panel/alarm",
+    topic_pump_state: "esp32/panel/pump/state",
+    topic_valve_state: "esp32/panel/valve/state"
 
 };
 
@@ -38,6 +40,8 @@ function mqttStart() {
         mqttClient.subscribe(MQTT_CONFIG.topic_heartbeat);
         mqttClient.subscribe(MQTT_CONFIG.topic_daynight);
         mqttClient.subscribe(MQTT_CONFIG.topic_notif);
+        mqttClient.subscribe(MQTT_CONFIG.topic_pump_state);
+        mqttClient.subscribe(MQTT_CONFIG.topic_valve_state);
 
     });
 
@@ -55,7 +59,7 @@ function mqttStart() {
     });
 }
 
-function setLed(id, state){
+function setLed(id, state) {
 
     const led = document.getElementById(id);
 

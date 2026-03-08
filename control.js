@@ -122,9 +122,32 @@ function onMQTTData(topic, data) {
             otaLed.classList.add("green");
         console.log("heartbeat:", data);
     }
+
+    if (topic === "esp32/panel/pump/state") {
+
+        const pump = data || {}
+
+        levelStop.value = pump.stop ?? ""
+        levelOne.value = pump.one ?? ""
+        levelDay.value = pump.day ?? ""
+        levelNight.value = pump.night ?? ""
+        kedalam.value = pump.kp ?? ""
+        jarakSensorDariPermukaanAtas.value = pump.js ?? ""
+
+        console.log("pump:", data);
+    }
+
+    if (topic === "esp32/panel/valve/state") {
+        const stop = data
+        updateValve("utara", stop.utara)
+        updateValve("selatan", stop.selatan)
+
+        console.log("valve:", data)
+
+    }
 }
 
-function toggleValve(valve, state){
+function toggleValve(valve, state) {
 
     const payload = JSON.stringify({
         valve: valve,
@@ -137,7 +160,7 @@ function toggleValve(valve, state){
     );
 }
 
-function updateValve(valve, state){
+function updateValve(valve, state) {
 
     const id = valve === "utara"
         ? "valveUtara"
@@ -145,9 +168,29 @@ function updateValve(valve, state){
 
     const el = document.getElementById(id);
 
-    if(el){
+    if (el) {
         el.checked = state;
     }
+
+}
+
+function savePumpSetting() {
+
+    const payload = JSON.stringify({
+
+        stop: parseFloat(levelStop.value),
+        one: parseFloat(levelOne.value),
+        day: parseFloat(levelDay.value),
+        night: parseFloat(levelNight.value),
+        kp: parseFloat(kedalam.value),
+        js: parseFloat(jarakSensorDariPermukaanAtas.value)
+
+    })
+
+    mqttClient.publish(
+        "esp32/panel/pump/set",
+        payload
+    )
 
 }
 

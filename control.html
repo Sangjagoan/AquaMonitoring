@@ -176,6 +176,7 @@ https://templatemo.com/tm-609-crypto-vault
                 <button class="settings-tab active" data-tab="mode-night_day">🌙 Day / Night Mode Control</button>
                 <button class="settings-tab " data-tab="mode-kran">Stopkran</button>
                 <button class="settings-tab " data-tab="mode-state">State</button>
+                <button class="settings-tab " data-tab="mode-calibrasi">calibrasi sensor</button>
             </div>
             <!-- 🌙 Day / Night Mode Control -->
             <div class="settings-content active" id="mode-night_day">
@@ -221,26 +222,28 @@ https://templatemo.com/tm-609-crypto-vault
             </div>
             <!--  State Stopkran Mode -->
             <div class="settings-content" id="mode-kran">
-                <div class="control-row">
-                    <span>Stopkran Utara</span>
-                    <label class="ui-switch">
-                        <input type="checkbox" id="valveUtara" onchange="toggleValve('utara', this.checked)">
-                        <span class="ui-slider">
-                            <span class="ui-on">ON</span>
-                            <span class="ui-off">OFF</span>
-                        </span>
-                    </label>
-                </div>
-                <div class="control-row">
-                    <span>Stopkran Selatan</span>
+                <div class="switc-group">
+                    <div class="control-row">
+                        <span>Selatan</span>
 
-                    <label class="ui-switch">
-                        <input type="checkbox" id="valveSelatan" onchange="toggleValve('selatan', this.checked)">
-                        <span class="ui-slider">
-                            <span class="ui-on">ON</span>
-                            <span class="ui-off">OFF</span>
-                        </span>
-                    </label>
+                        <label class="ui-switch">
+                            <input type="checkbox" id="valveSelatan" onchange="toggleValve('selatan', this.checked)">
+                            <span class="ui-slider">
+                                <span class="ui-on">ON</span>
+                                <span class="ui-off">OFF</span>
+                            </span>
+                        </label>
+                    </div>
+                    <div class="control-row">
+                        <span>Utara</span>
+                        <label class="ui-switch">
+                            <input type="checkbox" id="valveUtara" onchange="toggleValve('utara',this.checked)">
+                            <span class="ui-slider">
+                                <span class="ui-on">ON</span>
+                                <span class="ui-off">OFF</span>
+                            </span>
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -290,6 +293,52 @@ https://templatemo.com/tm-609-crypto-vault
                         </div>
                     </div>
 
+                </div>
+            </div>
+
+            <!--  calibrasi Mode -->
+            <div class="settings-content" id="mode-calibrasi">
+                <div class="calib-card">
+                    <div class="calib-title">Calibrasi Sensor</div>
+                    <div class="pump-grid">
+                        <div>
+                            <label>Kedalaman</label>
+                            <input id="kedalam" type="number" min="0" max="400">
+                        </div>
+
+                        <div>
+                            <label>Jarak Sensor </label>
+                            <input id="jarakSensorDariPermukaanAtas" type="number" min="0" max="100">
+                        </div>
+                    </div>
+                </div>
+                <div class="calib-card">
+                    <div class="calib-title">Pump Control</div>
+                    <div class="pump-grid">
+                        <div>
+                            <label>Stop Pump</label>
+                            <input id="levelStop" type="number" min="0" max="100">
+                        </div>
+
+                        <div>
+                            <label>1 Pump</label>
+                            <input id="levelOne" type="number" min="0" max="100">
+                        </div>
+
+                        <div>
+                            <label>2 Pump Day</label>
+                            <input id="levelDay" type="number" min="0" max="100">
+                        </div>
+
+                        <div>
+                            <label>2 Pump Night</label>
+                            <input id="levelNight" type="number" min="0" max="100">
+                        </div>
+                    </div>
+                    <br>
+                    <button class="btn-save" onclick="savePumpSetting()">
+                        SAVE SETTINGS
+                    </button>
                 </div>
             </div>
             <footer class="copyright">

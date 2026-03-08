@@ -383,8 +383,8 @@ function updateAquaBars(L, T, J) {
     currentJarak = J;
 
     drawWave("waveLevel", L, 100, 100);
-    drawWave("waveTinggi", T, 239, 350);
-    drawWave("waveJarak", J, 239, 600);
+    drawWave("waveTinggi", T, 249, 350);
+    drawWave("waveJarak", J, 249, 600);
 
     const valueLevel = document.getElementById("valueLevel");
     const valueTinggi = document.getElementById("valueTinggi");
