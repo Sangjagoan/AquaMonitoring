@@ -220,7 +220,7 @@ function savePressureSetting() {
         high: parseFloat(p_high.value),
         low: parseFloat(p_low.value),
 
-        deadband: parseInt(pressureDeadband.value),
+        deadband: parseFloat(pressureDeadband.value),
         pulseMin: parseInt(p_pulseMin.value),
         pulseMax: parseInt(p_pulseMax.value),
         lockTime: parseInt(pressureLock.value),

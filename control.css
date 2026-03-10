@@ -175,10 +175,9 @@
 /* calibrasi */
 .calib-card {
     background-color: var(--bg-card);
-    border-radius: 12px;
-    padding: 25px;
-    margin-bottom: 25px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
 .calib-title {
@@ -204,7 +203,7 @@
 
 .pump-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 15px;
     margin-top: 15px;
 }
