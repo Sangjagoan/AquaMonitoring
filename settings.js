@@ -1,278 +1,3 @@
-/* ========================================
-   Ubdate Firmware Manual
-======================================== */
-function formatBytes(bytes) {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return (bytes / Math.pow(k, i)).toFixed(2) + " " + sizes[i];
-}
-
-function uploadFile(fileInputId, progressId, statusId, infoId, endpoint) {
-
-    const fileInput = document.getElementById(fileInputId);
-    const file = fileInput.files[0];
-    if (!file) return;
-
-    document.getElementById(infoId).innerHTML =
-        `File: ${file.name} (${formatBytes(file.size)})`;
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", endpoint, true);
-
-    xhr.upload.onprogress = function (e) {
-        if (e.lengthComputable) {
-            let percent = (e.loaded / e.total) * 100;
-            document.getElementById(progressId).style.width = percent + "%";
-            document.getElementById(statusId).innerHTML = "Upload";
-        }
-    };
-
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            document.getElementById(statusId).innerHTML = "✔ Update Successful";
-            document.getElementById(statusId).className = "status success";
-        } else {
-            document.getElementById(statusId).innerHTML = "✖ Update Failed";
-            document.getElementById(statusId).className = "status error";
-        }
-    };
-
-    xhr.onerror = function () {
-        document.getElementById(statusId).innerHTML = "✖ Upload Error";
-        document.getElementById(statusId).className = "status error";
-    };
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    xhr.send(formData);
-}
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    // Firmware trigger
-    const fwInput = document.getElementById("firmwareFile");
-    const webInput = document.getElementById("webFile");
-
-    if (fwInput) {
-        fwInput.addEventListener("change", function () {
-            uploadFile("firmwareFile", "fwProgress", "fwStatus", "fwFileInfo", "/update/firmware");
-        });
-    }
-
-    // Web UI trigger
-    if (webInput) {
-        webInput.addEventListener("change", function () {
-            uploadFile("webFile", "webProgress", "webStatus", "webFileInfo", "/upload/spiffs");
-        });
-    }
-
-});
-
-/* ========================================
-   FIRMWARE OTA GITHUB
-======================================== */
-function startOnlineOTA() {
-
-    const btn = document.getElementById("otaButton");
-    btn.disabled = true;
-
-    fetch("/ota")
-        .then(r => r.text())
-        .then(res => {
-
-            if (res === "UP_TO_DATE") {
-                setOTAStatus("Device already up to date", "success");
-                return;
-            }
-
-            if (res === "START_OTA") {
-                setOTAStatus("Starting OTA...", "info");
-                monitorOTA();
-            }
-        })
-        .catch(() => {
-            setOTAStatus("Failed to start OTA", "error");
-        });
-}
-
-function monitorOTA(btn) {
-
-    const interval = setInterval(() => {
-
-        fetch("/ota/status")
-            .then(r => r.json())
-            .then(data => {
-
-                document.getElementById("otaProgressBar").style.width =
-                    data.progress + "%";
-
-                setOTAStatus(data.status, "info");
-
-                if (data.status === "REBOOT" ||
-                    data.status === "ERROR") {
-
-                    clearInterval(interval);
-                    btn.disabled = false;   // 🔥 enable lagi
-                }
-            });
-
-    }, 1000);
-}
-
-function setOTAStatus(text, type) {
-    const el = document.getElementById("otaStatusText");
-    el.textContent = text;
-    el.className = "status " + type;
-}
-
-function loadFirmwareVersionSafe() {
-    const el = document.getElementById("fwVersion");
-    if (!el) return;
-
-    fetch("/version")
-        .then(r => r.json())
-        .then(data => {
-            el.textContent = "v" + data.version;
-        })
-        .catch(console.error);
-}
-
-
-/* ========================================
-   RESET PZEM
-======================================== */
-function initResetPzem() {
-
-    const btn = document.getElementById("resetPzemBtn");
-    const statusEl = document.getElementById("maintenanceStatus");
-
-    if (!btn) return; // kalau bukan di halaman settings, stop
-
-    btn.addEventListener("click", async function () {
-
-        if (!confirm("Are you sure you want to reset PZEM energy data?")) return;
-
-        btn.disabled = true;
-
-        if (statusEl) {
-            statusEl.textContent = "Sending reset command...";
-            statusEl.className = "status";
-        }
-
-        try {
-            const response = await fetch("/reset/pzem", { method: "POST" });
-            const text = await response.text();
-
-            if (text === "OK") {
-                if (statusEl) {
-                    statusEl.textContent = "PZEM reset successful";
-                    statusEl.className = "status success";
-                }
-            } else {
-                if (statusEl) {
-                    statusEl.textContent = "Reset failed";
-                    statusEl.className = "status error";
-                }
-            }
-
-        } catch (err) {
-
-            if (statusEl) {
-                statusEl.textContent = "Connection error";
-                statusEl.className = "status error";
-            }
-
-        }
-
-        btn.disabled = false;
-    });
-}
-
-async function save() {
-    const ssid = document.getElementById("wifiSSID").value;
-    const pass = document.getElementById("wifiPASS").value;
-
-    if (!ssid) {
-        alert("SSID tidak boleh kosong!");
-        return;
-    }
-
-    // Tampilkan loader
-    document.getElementById("wifiConnectingBox").style.display = "block";
-    document.getElementById("wifiConnectingText").innerText =
-        "Mencoba menghubungkan ke WiFi: " + ssid + " ...";
-
-    const resultBox = document.getElementById("wifiResult");
-    resultBox.innerText = "";
-    resultBox.className = "";
-
-    fetch('/wifi/save', {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            ssid: ssid,
-            password: pass
-        })
-    })
-        .then(r => r.text())
-        .then(msg => {
-
-            // Sembunyikan loader
-            document.getElementById("wifiConnectingBox").style.display = "none";
-
-            if (msg === "OK_CONNECTED") {
-                resultBox.innerText = "✅ WiFi berhasil terhubung! ESP32 akan restart...";
-                resultBox.className = "success";
-            }
-            else if (msg === "FAIL_CONNECT") {   // 🔹 DIBETULKAN
-                resultBox.innerText = "❌ Gagal konek! Periksa SSID / Password.";
-                resultBox.className = "fail";
-            }
-            else {
-                resultBox.innerText = "⚠️ Respons tidak dikenal: " + msg;
-                resultBox.className = "fail";
-            }
-        })
-        .catch(err => {
-            document.getElementById("wifiConnectingBox").style.display = "none";
-            resultBox.innerText =
-                "❌ Tidak dapat mengirim data ke ESP32! Pastikan Anda terhubung ke AP ESP32.";
-            resultBox.className = "fail";
-        });
-}
-
-async function scanWiFi() {
-    const btn = document.querySelector('[onclick="scanWiFi()"]');
-    btn.disabled = true;
-
-    const ssidSelect = document.getElementById("wifiSSID");
-
-    // Tampilkan loading sementara
-    ssidSelect.innerHTML = "<option> Scanning...</option>";
-
-    try {
-        const res = await fetch("/wifi/scan");
-        const networks = await res.json();
-
-        ssidSelect.innerHTML = "<option value=''></option>";
-
-        networks.forEach(net => {
-            const opt = document.createElement("option");
-            opt.value = net.ssid;
-            opt.textContent = `${net.ssid} (${net.rssi} dBm)`;
-            ssidSelect.appendChild(opt);
-        });
-
-    } catch (err) {
-        ssidSelect.innerHTML = "<option>Scan Failed</option>";
-        console.error("WiFi scan error:", err);
-    }
-
-    btn.disabled = false;
-}
 
 function updateWifiIcon(rssi, connected) {
 
@@ -335,3 +60,128 @@ async function updateTopWifiStatus() {
         console.log("WiFi top status error");
     }
 }
+
+function scanWiFi() {
+
+    const select = document.getElementById("wifiSSID");
+
+    if (select)
+        select.innerHTML = "<option>Scanning WiFi...</option>";
+
+    if (!mqttClient || !mqttClient.connected) {
+        select.innerHTML = "<option>MQTT not connected</option>";
+        return;
+    }
+
+    mqttClient.publish("panel/cmd/wifi/scan", "{}");
+
+}
+
+function save() {
+
+    const ssid = document.getElementById("wifiSSID").value;
+    const pass = document.getElementById("wifiPASS").value;
+
+    if (!ssid) {
+        alert("SSID tidak boleh kosong!");
+        return;
+    }
+
+    const payload = {
+        ssid: ssid,
+        password: pass
+    };
+
+    mqttClient.publish(
+        MQTT_CONFIG.topic_wifi_set,
+        JSON.stringify(payload)
+    );
+
+    const resultBox = document.getElementById("wifiResult");
+
+    resultBox.innerText = "Mengirim konfigurasi WiFi...";
+    resultBox.className = "status";
+
+}
+
+function onMQTTWifi(topic, data) {
+    // 🔹 STATUS WIFI
+    if (topic === "esp32/config/wifi/state") {
+
+        console.log("Status Wifi:", data);
+        const resultBox = document.getElementById("wifiResult");
+
+        if (!resultBox) return;
+
+        if (data === "CONNECTED") {
+
+            resultBox.innerText = "CONNECTED";
+            resultBox.className = "success";
+
+        } else {
+
+            resultBox.innerText = "DISCONNECTED";
+            resultBox.className = "fail";
+
+        }
+
+        return;
+    }
+
+    // 🔹 WIFI SCAN RESULT
+    if (topic === "panel/wifi/list") {
+
+        const list = JSON.parse(data);
+
+        const select = document.getElementById("wifiSSID");
+        if (!select) return;
+
+        select.innerHTML = "";
+
+        let currentSSID = document.getElementById("SSID")?.innerText || "";
+        currentSSID = currentSSID.match(/[A-Za-z0-9_\-]+/)?.[0] || "";
+
+        list.sort((a, b) => b.rssi - a.rssi);
+
+        list.forEach(net => {
+
+            const option = document.createElement("option");
+
+            const bars = getWifiBars(net.rssi);
+            const lock = net.enc ? "🔒" : "";
+            const active = (net.ssid === currentSSID) ? "⭐" : "";
+
+            option.value = net.ssid;
+            option.textContent = `${bars}  ${net.ssid}  ${net.rssi} dBm ${lock} ${active}`;
+
+            if (net.ssid === currentSSID) {
+                option.selected = true;
+            }
+
+            select.appendChild(option);
+
+        });
+
+        return;
+    }
+
+}
+
+function getWifiBars(rssi) {
+
+    if (rssi > -55) return "🟢████";   // sangat kuat
+    if (rssi > -65) return "🟢███▁";   // kuat
+    if (rssi > -75) return "🟡██▁▁";   // sedang
+    return "🔴█▁▁▁";                  // lemah
+
+}
+
+window.addEventListener("load", () => {
+
+    mqttStart();
+
+    setTimeout(() => {
+        scanWiFi();
+    }, 1500);
+
+});

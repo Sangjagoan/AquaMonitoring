@@ -13,8 +13,10 @@ const MQTT_CONFIG = {
     topic_daynight: "esp32/config/daynight/state",
     topic_notif: "esp32/panel/alarm",
     topic_pump_state: "esp32/panel/pump/state",
-    topic_valve_state: "esp32/panel/valve/state"
-
+    topic_valve_state: "esp32/panel/valve/state",
+    topic_wifi_list: "panel/wifi/list",
+    topic_wifi_state: "esp32/config/wifi/state",
+    topic_wifi_set: "esp32/config/wifi/set"
 };
 
 let mqttClient = null;
@@ -42,7 +44,9 @@ function mqttStart() {
         mqttClient.subscribe(MQTT_CONFIG.topic_notif);
         mqttClient.subscribe(MQTT_CONFIG.topic_pump_state);
         mqttClient.subscribe(MQTT_CONFIG.topic_valve_state);
-
+        mqttClient.subscribe(MQTT_CONFIG.topic_wifi_list);
+        mqttClient.subscribe(MQTT_CONFIG.topic_wifi_state);
+        mqttClient.subscribe(MQTT_CONFIG.topic_wifi_set);
     });
 
     mqttClient.on("close", () => {
@@ -76,20 +80,30 @@ function setLed(id, state) {
 
 function mqttOnMessage(topic, payload) {
 
-    try {
+    const message = payload.toString();
 
-        const data = JSON.parse(payload.toString());
+    // kirim ke handler WiFi dulu
+    if (typeof onMQTTWifi === "function")
+        onMQTTWifi(topic, message);
 
-        if (typeof onMQTTData === "function")
-            onMQTTData(topic, data);
+    // hanya parse JSON jika memang JSON
+    if (message.startsWith("{") || message.startsWith("[")) {
 
-        if (typeof onMQTTAlarm === "function")
-            onMQTTAlarm(topic, data);
+        try {
 
+            const data = JSON.parse(message);
 
-    } catch (e) {
+            if (typeof onMQTTData === "function")
+                onMQTTData(topic, data);
 
-        console.error("JSON error", e);
+            if (typeof onMQTTAlarm === "function")
+                onMQTTAlarm(topic, data);
+
+        } catch (e) {
+
+            console.error("JSON parse error:", e);
+
+        }
 
     }
 

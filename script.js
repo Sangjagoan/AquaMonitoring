@@ -72,7 +72,6 @@ function ubdatedashboardPressureValues(data) {
     updateElement('kg', data.kg.toFixed(2));
 }
 
-
 window.addEventListener("load", () => {
     mqttStart();
 });

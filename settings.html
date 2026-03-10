@@ -424,7 +424,7 @@ https://templatemo.com/tm-609-crypto-vault
                     <div class="card-header">
                         <h4 class="card-title">Setting wifi</h4>
                         <div class="top-wifi-status">
-                            <span id="topWifiText">Checking...</span>
+                            <span id="wifiResult">Checking...</span>
                         </div>
                     </div>
                     <div class="form-group">
@@ -514,7 +514,7 @@ https://templatemo.com/tm-609-crypto-vault
                             <div class="loader"></div>
                             <p id="wifiConnectingText"></p>
                         </div>
-                        <p id="wifiResult" style="margin-top:10px; font-weight:600;"></p>
+                        <p id="wifiResul" style="margin-top:10px; font-weight:600;"></p>
                         <p id="wifiResetStatus"></p>
                         <p id="wifiInfo"></p>
                     </div>
@@ -537,7 +537,8 @@ https://templatemo.com/tm-609-crypto-vault
             </footer>
         </main>
     </div>
-    <script src="script.js"></script>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="mqtt.js"></script>
     <script src="settings.js"></script>
     <script src="ui.js"></script>
     <script src="notifications.js"></script>
