@@ -41,7 +41,8 @@ function onMQTTData(topic, data) {
         // =========================
         updatePressureGauges(
             Number(data.psi),
-            Number(data.kg)
+            Number(data.kg),
+            Number(data.br)
 
         );
     }
@@ -63,6 +64,7 @@ function updateElectrical(d) {
 function updatePressure(d) {
     gaugeUpdatePSI(num(d.psi));
     gaugeUpdateKG(num(d.kg));
+    gaugeUpdateBAR(num(d.br));
 }
 
 function ubdatedashboardPressureValues(data) {

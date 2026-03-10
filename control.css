@@ -178,7 +178,7 @@
     border-radius: 12px;
     padding: 25px;
     margin-bottom: 25px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 5px rgba(248, 146, 44, 0.904);
 }
 
 .calib-title {
@@ -204,7 +204,7 @@
 
 .pump-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 15px;
     margin-top: 15px;
 }
