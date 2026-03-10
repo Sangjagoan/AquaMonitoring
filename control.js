@@ -145,6 +145,22 @@ function onMQTTData(topic, data) {
         console.log("valve:", data)
 
     }
+
+    if (topic === "esp32/panel/pressure/state") {
+
+        const p = data || {};
+
+        p_target.value = p.target ?? "";
+        p_high.value = p.high ?? "";
+        p_low.value = p.low ?? "";
+
+        p_pulseMin.value = p.pulseMin ?? "";
+        p_pulseMax.value = p.pulseMax ?? "";
+
+        p_settle.value = p.settle ?? "";
+
+        console.log("pressure:", data);
+    }
 }
 
 function toggleValve(valve, state) {
@@ -194,6 +210,27 @@ function savePumpSetting() {
 
 }
 
+function savePressureSetting() {
+
+    const payload = JSON.stringify({
+
+        target: parseFloat(p_target.value),
+        high: parseFloat(p_high.value),
+        low: parseFloat(p_low.value),
+
+        pulseMin: parseInt(p_pulseMin.value),
+        pulseMax: parseInt(p_pulseMax.value),
+
+        settle: parseInt(p_settle.value)
+
+    });
+
+    mqttClient.publish(
+        "esp32/panel/pressure/set",
+        payload
+    );
+
+}
 window.addEventListener("load", () => {
     mqttStart();
 })

@@ -299,46 +299,89 @@ https://templatemo.com/tm-609-crypto-vault
             <!--  calibrasi Mode -->
             <div class="settings-content" id="mode-calibrasi">
                 <div class="calib-card">
-                    <div class="calib-title">Calibrasi Sensor</div>
-                    <div class="pump-grid">
-                        <div>
-                            <label>Kedalaman</label>
-                            <input id="kedalam" type="number" min="0" max="400">
-                        </div>
+                    <div class="calib-card">
+                        <div class="calib-title">Calibrasi Sensor</div>
+                        <div class="pump-grid">
+                            <div>
+                                <label>Kedalaman</label>
+                                <input id="kedalam" type="number" min="0" max="400">
+                            </div>
 
-                        <div>
-                            <label>Jarak Sensor </label>
-                            <input id="jarakSensorDariPermukaanAtas" type="number" min="0" max="100">
+                            <div>
+                                <label>Jarak Sensor </label>
+                                <input id="jarakSensorDariPermukaanAtas" type="number" min="0" max="100">
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="calib-card">
-                    <div class="calib-title">Pump Control</div>
-                    <div class="pump-grid">
-                        <div>
-                            <label>Stop Pump</label>
-                            <input id="levelStop" type="number" min="0" max="100">
-                        </div>
+                    <div class="calib-card">
+                        <div class="calib-title">Pump Control</div>
+                        <div class="pump-grid">
+                            <div>
+                                <label>Stop Pump</label>
+                                <input id="levelStop" type="number" min="0" max="100">
+                            </div>
 
-                        <div>
-                            <label>1 Pump</label>
-                            <input id="levelOne" type="number" min="0" max="100">
-                        </div>
+                            <div>
+                                <label>1 Pump</label>
+                                <input id="levelOne" type="number" min="0" max="100">
+                            </div>
 
-                        <div>
-                            <label>2 Pump Day</label>
-                            <input id="levelDay" type="number" min="0" max="100">
-                        </div>
+                            <div>
+                                <label>2 Pump Day</label>
+                                <input id="levelDay" type="number" min="0" max="100">
+                            </div>
 
-                        <div>
-                            <label>2 Pump Night</label>
-                            <input id="levelNight" type="number" min="0" max="100">
+                            <div>
+                                <label>2 Pump Night</label>
+                                <input id="levelNight" type="number" min="0" max="100">
+                            </div>
                         </div>
+                        <br>
+                        <button class="btn-save" onclick="savePumpSetting()">
+                            SAVE SETTINGS
+                        </button>
                     </div>
-                    <br>
-                    <button class="btn-save" onclick="savePumpSetting()">
-                        SAVE SETTINGS
-                    </button>
+                    <div class="calib-card">
+                        <h3>Pressure Control</h3>
+                        <div class="pump-grid">
+
+                            <div class="form-group">
+                                <label>Target Pressure</label>
+                                <input id="p_target" type="number" step="0.01">
+                            </div>
+
+                            <div class="form-group">
+                                <label>High Limit</label>
+                                <input id="p_high" type="number" step="0.01">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Low Limit</label>
+                                <input id="p_low" type="number" step="0.01">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Settle Time (ms)</label>
+                                <input id="p_settle" type="number">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Pulse Min</label>
+                                <input id="p_pulseMin" type="number">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Pulse Max</label>
+                                <input id="p_pulseMax" type="number">
+                            </div>
+
+                        </div>
+                        <button onclick="savePressureSetting()" class="btn-save">
+                            SAVE PRESSURE SETTINGS
+                        </button>
+                    </div>
                 </div>
             </div>
             <footer class="copyright">
