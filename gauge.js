@@ -6,6 +6,7 @@
 
 const PSI_CANDLE = createCandle();
 const KG_CANDLE = createCandle();
+const BAR_CANDLE = createCandle();
 
 function createCandle() {
     return {
@@ -108,11 +109,11 @@ function drawPressureCandles(engine, svgId) {
     });
 }
 
-function updatePressureGauges(psi, kg) {
+function updatePressureGauges(psi, kg, br) {
 
     updateGauge("psiNeedle", "psiValue", psi, 0, 50);
     updateGauge("kgNeedle", "kgValue", kg, 0, 3);
-    updateGauge("barNeedle", "barValue", kg, 0, 5);
+    updateGauge("barNeedle", "barValue", br, 0, 5);
 }
 
 function updateGauge(needleId, valueId, value, min, max) {

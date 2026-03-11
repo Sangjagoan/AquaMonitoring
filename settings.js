@@ -180,8 +180,4 @@ window.addEventListener("load", () => {
 
     mqttStart();
 
-    setTimeout(() => {
-        scanWiFi();
-    }, 1500);
-
 });
