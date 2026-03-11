@@ -432,9 +432,10 @@ body {
 .card {
     background-color: var(--bg-card);
     border-radius: 14px;
-    padding: 28px;
+    padding: 10px;
     border: 1px solid var(--border);
     transition: all 0.3s ease;
+    margin: 0px;
 }
 
 .card-header {

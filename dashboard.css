@@ -410,10 +410,21 @@ https://templatemo.com/tm-609-crypto-vault
     border-radius: 50%;
 }
 
-.legend-dot.btc { background-color: #f7931a; }
-.legend-dot.eth { background-color: #627eea; }
-.legend-dot.usdt { background-color: #26a17b; }
-.legend-dot.other { background-color: #b87333; }
+.legend-dot.btc {
+    background-color: #f7931a;
+}
+
+.legend-dot.eth {
+    background-color: #627eea;
+}
+
+.legend-dot.usdt {
+    background-color: #26a17b;
+}
+
+.legend-dot.other {
+    background-color: #b87333;
+}
 
 /* Gauge */
 .gauge-container {
@@ -841,4 +852,26 @@ https://templatemo.com/tm-609-crypto-vault
     .donut-chart-container {
         flex-direction: column;
     }
+}
+
+/* Led Indikator */
+
+
+.led {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #444;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+}
+
+
+.led.green {
+    background: #00ff9c;
+    box-shadow: 0 0 12px #00ff9c;
+}
+
+.led.red {
+    background: #ff3c3c;
+    box-shadow: 0 0 12px #ff3c3c;
 }

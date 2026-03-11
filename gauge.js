@@ -113,7 +113,7 @@ function updatePressureGauges(psi, kg, br) {
 
     updateGauge("psiNeedle", "psiValue", psi, 0, 50);
     updateGauge("kgNeedle", "kgValue", kg, 0, 3);
-    updateGauge("barNeedle", "barValue", br, 0, 5);
+    updateGauge("barNeedle", "barValue", br, 0, 10);
 }
 
 function updateGauge(needleId, valueId, value, min, max) {
@@ -315,6 +315,6 @@ function createDangerArc(id, min, max, dangerStart, dangerEnd) {
 window.addEventListener("load", () => {
     createTicks("psiTicks", 0, 50, 10, 5);
     createTicks("kgTicks", 0, 3, 1, 0.5);
-    createTicks("barTicks", 0, 5, 1, 0.5);
+    createTicks("barTicks", 0, 10, 1, 0.5);
     createDangerArc("psiDangerArc", 0, 50, 40, 50); // 0	nilai minimum gauge 50	nilai maksimum gauge 40	awal zona bahaya 50	akhir zona bahaya
 });

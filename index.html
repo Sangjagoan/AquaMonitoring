@@ -675,6 +675,7 @@ https://templatemo.com/tm-609-crypto-vault
                             </div>
                             <div class="donut-chart-container">
                                 <svg viewBox="0 0 300 180" class="gauge-svg">
+
                                     <defs>
                                         <linearGradient id="kgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                                             <stop offset="0%" stop-color="#00c6ff" />
@@ -682,20 +683,29 @@ https://templatemo.com/tm-609-crypto-vault
                                             <stop offset="100%" stop-color="#ff8800" />
                                         </linearGradient>
                                     </defs>
-
+                                    <!-- ARC -->
                                     <path d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="url(#kgGradient)"
                                         stroke-width="20" stroke-linecap="round" />
 
                                     <g id="kgTicks"></g>
+
                                     <g id="kgNeedle" transform="rotate(-90 150 150)">
                                         <line x1="150" y1="150" x2="150" y2="55" stroke="#ffffff" stroke-width="5"
                                             stroke-linecap="round" />
                                         <circle cx="150" cy="150" r="12" fill="#ffffff" />
                                     </g>
+
+                                    <!-- LED kiri -->
+                                    <circle id="ledTutup" cx="90" cy="120" r="8" fill="#400" />
+
+                                    <!-- LED kanan -->
+                                    <circle id="ledBuka" cx="210" cy="120" r="8" fill="#400" />
+
                                     <text id="kgValue" x="150" y="115" text-anchor="middle" font-size="20"
                                         font-weight="bold" fill="#fff">0.0</text>
 
                                     <text x="150" y="140" text-anchor="middle" font-size="18" fill="#aaa">KG</text>
+
                                 </svg>
                             </div>
                         </div>
@@ -816,8 +826,8 @@ https://templatemo.com/tm-609-crypto-vault
 
             <!-- Copyright -->
             <footer class="copyright">
-                Copyright &copy;  2026 Sang Jagoan
-                 <!-- Designed by <a href="https://templatemo.com" target="_blank"
+                Copyright &copy; 2026 Sang Jagoan
+                <!-- Designed by <a href="https://templatemo.com" target="_blank"
                     rel="nofollow">TemplateMo</a> -->
             </footer>
         </main>

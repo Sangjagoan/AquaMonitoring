@@ -17,6 +17,13 @@ function updateElement(id, value) {
     el.textContent = value;
 }
 
+function setLed(id, state, colorTrue = "#00ff00", colorFalse = "#ff0000") {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.setAttribute("fill", state ? colorTrue : colorFalse);
+}
+
 function onMQTTData(topic, data) {
     if (topic === "esp32/panel/data") {
         console.log("MQTT RX:", topic, data);
@@ -46,6 +53,15 @@ function onMQTTData(topic, data) {
 
         );
     }
+
+    if (topic === "esp32/indikator/state") {
+        const hb = data;
+
+        setLed("ledTutup", hb.ot);
+        setLed("ledBuka", hb.ob);
+
+        console.log("Indikator Led:", data);
+    }
 }
 
 function updateElectrical(d) {
@@ -73,6 +89,7 @@ function ubdatedashboardPressureValues(data) {
     updateElement('psi', data.psi.toFixed(2));
     updateElement('kg', data.kg.toFixed(2));
 }
+
 
 window.addEventListener("load", () => {
     mqttStart();
