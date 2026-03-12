@@ -1,4 +1,3 @@
-
 function updateWifiIcon(rssi, connected) {
 
     const arc2 = document.getElementById("arc2");
@@ -10,7 +9,7 @@ function updateWifiIcon(rssi, connected) {
 
     // reset warna
     [arc2, arc3, arc4].forEach(a => a.setAttribute("stroke", "var(--text-muted)"));
-    dot.setAttribute("fill", "var(--text-muted");
+    dot.setAttribute("fill", "var(--text-muted)");
 
     if (!connected) return;
 
@@ -22,43 +21,15 @@ function updateWifiIcon(rssi, connected) {
     else if (rssi > -80) level = 1;
 
     let color = "var(--text-primary)";
-    if (rssi <= -70) color = "var(--los";
-    if (rssi <= -80) color = "var(--wifi-diconnected)";
 
-    // 🔥 DOT SELALU NYALA JIKA CONNECTED
+    if (rssi <= -70) color = "var(--loss)";
+    if (rssi <= -80) color = "var(--wifi-disconnected)";
+
     dot.setAttribute("fill", color);
 
     if (level >= 1) arc2.setAttribute("stroke", color);
     if (level >= 2) arc3.setAttribute("stroke", color);
     if (level >= 3) arc4.setAttribute("stroke", color);
-
-}
-
-async function updateTopWifiStatus() {
-
-    try {
-        const res = await fetch("/wifi/status");
-        const data = await res.json();
-
-        const text = document.getElementById("topWifiText");
-
-        if (data.connected) {
-            text.textContent = "Connected";
-            text.style.color = "var(--text-primary)";
-        } else {
-            text.textContent = "Offline";
-            text.style.color = "var( --wifi-diconnected)";
-        }
-
-        document.getElementById("SSID").textContent = data.ssid || "-";
-        document.getElementById("wifiIP").textContent = data.ip || "-";
-        document.getElementById("wifiRSSI").textContent = data.rssi + " dBm";
-        // 🔥 INI YANG WAJIB ADA
-        updateWifiIcon(data.rssi, data.connected);
-
-    } catch (e) {
-        console.log("WiFi top status error");
-    }
 }
 
 function scanWiFi() {
@@ -74,7 +45,6 @@ function scanWiFi() {
     }
 
     mqttClient.publish("panel/cmd/wifi/scan", "{}");
-
 }
 
 function save() {
@@ -93,7 +63,7 @@ function save() {
     };
 
     mqttClient.publish(
-        MQTT_CONFIG.topic_wifi_set,
+        "esp32/config/wifi/set",
         JSON.stringify(payload)
     );
 
@@ -101,15 +71,23 @@ function save() {
 
     resultBox.innerText = "Mengirim konfigurasi WiFi...";
     resultBox.className = "status";
+}
 
+function restartEsp() {
+
+    console.log("Reset wifi clicked");
+
+    if (!confirm("Yakin mau Restart EPS?")) return;
+
+    mqttClient.publish("esp32/config/esp/restart", "1");
 }
 
 function onMQTTWifi(topic, data) {
-    // 🔹 STATUS WIFI
+
+    // ===== WIFI STATUS =====
     if (topic === "esp32/config/wifi/state") {
 
-        console.log("Status Wifi:", data);
-        const resultBox = document.getElementById("wifiResult");
+        const resultBox = document.getElementById("wifiInf");
 
         if (!resultBox) return;
 
@@ -122,13 +100,12 @@ function onMQTTWifi(topic, data) {
 
             resultBox.innerText = "DISCONNECTED";
             resultBox.className = "fail";
-
         }
 
         return;
     }
 
-    // 🔹 WIFI SCAN RESULT
+    // ===== WIFI SCAN RESULT =====
     if (topic === "panel/wifi/list") {
 
         const list = JSON.parse(data);
@@ -152,7 +129,7 @@ function onMQTTWifi(topic, data) {
             const active = (net.ssid === currentSSID) ? "⭐" : "";
 
             option.value = net.ssid;
-            option.textContent = `${bars}  ${net.ssid}  ${net.rssi} dBm ${lock} ${active}`;
+            option.textContent = `${bars} ${net.ssid} (${net.rssi} dBm) ${lock} ${active}`;
 
             if (net.ssid === currentSSID) {
                 option.selected = true;
@@ -165,19 +142,47 @@ function onMQTTWifi(topic, data) {
         return;
     }
 
+    // ===== WIFI STATUS DETAIL =====
+    if (topic === "esp32/wifi/status") {
+
+        const wifi = typeof data === "string" ? JSON.parse(data) : data;
+
+        const resultBox = document.getElementById("wifiResult");
+
+        document.getElementById("SSID").innerText = wifi.ssid || "-";
+        document.getElementById("wifiIP").innerText = wifi.ip || "-";
+        document.getElementById("wifiSignal").innerText = wifi.rssi + " dBm";
+
+        updateWifiIcon(wifi.rssi, wifi.connected);
+
+        if (wifi.connected) {
+
+            resultBox.innerText = "CONNECTED";
+            resultBox.className = "success";
+
+        } else {
+
+            resultBox.innerText = "DISCONNECTED";
+            resultBox.className = "error";
+        }
+    }
+
+    if (topic === "esp32/config/wifi/progress") {
+
+        console.log("Progress Wifi:", data);
+    }
 }
 
 function getWifiBars(rssi) {
 
-    if (rssi > -55) return "🟢████";   // sangat kuat
-    if (rssi > -65) return "🟢███▁";   // kuat
-    if (rssi > -75) return "🟡██▁▁";   // sedang
-    return "🔴█▁▁▁";                  // lemah
-
+    if (rssi > -55) return "▁ ▂ ▃ ▅ ▆ ▇";
+    if (rssi > -65) return "▁ ▂ ▃ ▅ ▆";
+    if (rssi > -75) return "▁ ▂ ▃";
+    if (rssi > -85) return "▁ ▂";
+    if (rssi > -95) return "▁";
+    return "🔴";
 }
 
 window.addEventListener("load", () => {
-
     mqttStart();
-
 });

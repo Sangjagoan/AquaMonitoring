@@ -17,9 +17,11 @@ const MQTT_CONFIG = {
     topic_wifi_list: "panel/wifi/list",
     topic_wifi_state: "esp32/config/wifi/state",
     topic_wifi_set: "esp32/config/wifi/set",
-    topic_wifi_set: "esp32/panel/pressure/state",
-    topic_Led_indikator: "esp32/indikator/state"
-
+    topic_Pressure_state: "esp32/panel/pressure/state",
+    topic_Led_indikator: "esp32/indikator/state",
+    topic_Wifi_status: "esp32/wifi/status",
+    topic_Wifi_progress: "esp32/config/wifi/progress",
+    topic_ESP_RESTART: "esp32/config/esp/restart"
 };
 
 let mqttClient = null;
@@ -50,7 +52,12 @@ function mqttStart() {
         mqttClient.subscribe(MQTT_CONFIG.topic_wifi_list);
         mqttClient.subscribe(MQTT_CONFIG.topic_wifi_state);
         mqttClient.subscribe(MQTT_CONFIG.topic_wifi_set);
+        mqttClient.subscribe(MQTT_CONFIG.topic_Pressure_state);
         mqttClient.subscribe(MQTT_CONFIG.topic_Led_indikator);
+        mqttClient.subscribe(MQTT_CONFIG.topic_Wifi_status);
+        mqttClient.subscribe(MQTT_CONFIG.topic_Wifi_progress);
+        mqttClient.subscribe(MQTT_CONFIG.topic_ESP_RESTART);
+
         mqttClient.subscribe();
     });
 
