@@ -83,90 +83,6 @@ function setLed(id, state, colorTrue = "green", colorFalse = "red") {
         el.classList.add(colorFalse);
 }
 
-function onMQTTData(topic, data) {
-
-    if (topic === "esp32/config/daynight/state") {
-        updateSystemStateUI(data);
-        updateDayNightUI(data);
-
-        const errLed = document.getElementById("ledError");
-
-        errLed.classList.remove("green", "red", "blink");
-
-        if (data.plcState.includes("Error")) {
-            errLed.classList.add("red");
-            errLed.classList.add("blink");
-        }
-        else {
-            errLed.classList.add("green");
-        }
-
-        console.log("state:", data);
-    }
-
-    if (topic === "esp32/panel/heartbeat") {
-        const hb = data;
-
-        setLed("ledSystem", hb.hlt);
-        setLed("ledRun", hb.run);
-        setLed("ledWifi", hb.wifi);
-        setLed("sibleAtas", hb.sa);
-        setLed("sibleBawah", hb.sb);
-        // OTA khusus
-        const otaLed = document.getElementById("ledOta");
-        otaLed.classList.remove("green", "red", "yellow");
-
-        if (hb.ota)
-            otaLed.classList.add("yellow");
-        else
-            otaLed.classList.add("green");
-        console.log("heartbeat:", data);
-    }
-
-    if (topic === "esp32/panel/pump/state") {
-
-        const pump = data || {}
-
-        levelStop.value = pump.stop ?? ""
-        levelOne.value = pump.one ?? ""
-        levelDay.value = pump.day ?? ""
-        levelNight.value = pump.night ?? ""
-        kedalam.value = pump.kp ?? ""
-        jarakSensorDariPermukaanAtas.value = pump.js ?? ""
-
-        console.log("pump:", data);
-    }
-
-    if (topic === "esp32/panel/valve/state") {
-        const stop = data
-        updateValve("utara", stop.utara)
-        updateValve("selatan", stop.selatan)
-
-        console.log("valve:", data)
-
-    }
-
-    if (topic === "esp32/panel/pressure/state") {
-
-        const p = data || {};
-
-        p_target.value = p.target ?? "";
-        p_high.value = p.high ?? "";
-        p_low.value = p.low ?? "";
-
-        pressureDeadband.value = p.deadband ?? "";
-        pressureLock.value = p.lock ?? "";
-        p_pulseMin.value = p.pulseMin ?? "";
-        p_pulseMax.value = p.pulseMax ?? "";
-        overshoot.value = p.ovr ?? "";
-        overLoad.value = p.ol ?? "";
-
-        p_settle.value = p.settle ?? "";
-
-        console.log("pressure:", data);
-    }
-}
-
 function toggleValve(valve, state) {
 
     const payload = JSON.stringify({
@@ -239,6 +155,126 @@ function savePressureSetting() {
     );
 
 }
+
+function updateHealth(health, state) {
+
+    const id = health === "hlt"
+        ? "systemError"
+        : "valveS";
+
+    const el = document.getElementById(id);
+
+    if (el) {
+        el.checked = state;
+    }
+}
+
+function toggleHealth(state){
+
+    if (!mqttClient || !mqttClient.connected) return;
+
+    const payload = JSON.stringify({
+        hlt: state
+    });
+
+    mqttClient.publish(
+        "esp32/panel/system/set",
+        payload
+    );
+
+}
+
+function onMQTTData(topic, data) {
+
+    if (topic === "esp32/config/daynight/state") {
+        updateSystemStateUI(data);
+        updateDayNightUI(data);
+
+        const errLed = document.getElementById("ledError");
+
+        errLed.classList.remove("green", "red", "blink");
+
+        if (data.plcState.includes("Error")) {
+            errLed.classList.add("red");
+            errLed.classList.add("blink");
+        }
+        else {
+            errLed.classList.add("green");
+        }
+
+        console.log("state:", data);
+    }
+
+    if (topic === "esp32/panel/heartbeat") {
+        const hb = data;
+
+        const toggle = document.getElementById("systemError");
+
+        if (toggle) {
+            toggle.checked = hb.hlt;
+        }
+
+        updateHealth("systemError", hb.hlt);
+        setLed("ledSystem", hb.hlt);
+        setLed("ledRun", hb.run);
+        setLed("ledWifi", hb.wifi);
+        setLed("sibleAtas", hb.sa);
+        setLed("sibleBawah", hb.sb);
+        // OTA khusus
+        const otaLed = document.getElementById("ledOta");
+        otaLed.classList.remove("green", "red", "yellow");
+
+        if (hb.ota)
+            otaLed.classList.add("yellow");
+        else
+            otaLed.classList.add("green");
+        console.log("heartbeat:", data);
+    }
+
+    if (topic === "esp32/panel/pump/state") {
+
+        const pump = data || {}
+
+        levelStop.value = pump.stop ?? ""
+        levelOne.value = pump.one ?? ""
+        levelDay.value = pump.day ?? ""
+        levelNight.value = pump.night ?? ""
+        kedalam.value = pump.kp ?? ""
+        jarakSensorDariPermukaanAtas.value = pump.js ?? ""
+
+        console.log("pump:", data);
+    }
+
+    if (topic === "esp32/panel/valve/state") {
+        const stop = data
+        updateValve("utara", stop.utara)
+        updateValve("selatan", stop.selatan)
+
+        console.log("valve:", data)
+
+    }
+
+    if (topic === "esp32/panel/pressure/state") {
+
+        const p = data || {};
+
+        p_target.value = p.target ?? "";
+        p_high.value = p.high ?? "";
+        p_low.value = p.low ?? "";
+
+        pressureDeadband.value = p.deadband ?? "";
+        pressureLock.value = p.lock ?? "";
+        p_pulseMin.value = p.pulseMin ?? "";
+        p_pulseMax.value = p.pulseMax ?? "";
+        overshoot.value = p.ovr ?? "";
+        overLoad.value = p.ol ?? "";
+
+        p_settle.value = p.settle ?? "";
+
+        console.log("pressure:", data);
+    }
+}
+
 window.addEventListener("load", () => {
     mqttStart();
 })

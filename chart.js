@@ -592,7 +592,7 @@ function animateWave(timestamp) {
 window.addEventListener("load", () => {
     requestAnimationFrame(animateWave);
     setInterval(updateLiveDateTime, 1000);
-    initCardFullscreen();
+    // initCardFullscreen();
     loadChartHistory();
     setInterval(saveChartHistory, 5000);
     setInterval(chartRenderLoop, 2000); // redraw tiap 1 detik

@@ -252,19 +252,20 @@ https://templatemo.com/tm-609-crypto-vault
                 <div class="gauge-container">
                     <div class="plc-status">
                         <div class="status-row">
-                            <span>PLC Error</span>
+                            <span>System Health</span>
 
                             <label class="ui-switch">
-                                <input type="checkbox" id="ledError" onchange="toggleValve('selatan', this.checked)">
+                                <input type="checkbox" id="systemError" onchange="toggleHealth(this.checked)">
                                 <span class="ui-slider">
-                                    <span class="ui-on">ON</span>
-                                    <span class="ui-off">OFF</span>
+                                    <span class="ui-on">true</span>
+                                    <span class="ui-off">false</span>
                                 </span>
                             </label>
                         </div>
+
                         <div class="status-row">
-                            <span>System Health</span>
-                            <span id="ledSystem" class="led"></span>
+                            <span>PLC Error</span>
+                            <span id="ledError" class="led"></span>
                         </div>
 
                         <div class="status-row">
