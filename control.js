@@ -159,6 +159,7 @@ function onMQTTData(topic, data) {
         p_pulseMin.value = p.pulseMin ?? "";
         p_pulseMax.value = p.pulseMax ?? "";
         overshoot.value = p.ovr ?? "";
+        overLoad.value = p.ol ?? "";
 
         p_settle.value = p.settle ?? "";
 
@@ -223,6 +224,7 @@ function savePressureSetting() {
 
         deadband: parseFloat(pressureDeadband.value),
         over: parseFloat(overshoot.value),
+        overLoad: parseFloat(overLoad.value),
         pulseMin: parseInt(p_pulseMin.value),
         pulseMax: parseInt(p_pulseMax.value),
         lockTime: parseInt(pressureLock.value),

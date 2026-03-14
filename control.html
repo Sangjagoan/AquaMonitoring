@@ -250,9 +250,18 @@ https://templatemo.com/tm-609-crypto-vault
             <!--  State Mode Control -->
             <div class="settings-content" id="mode-state">
                 <div class="gauge-container">
-
                     <div class="plc-status">
+                        <div class="status-row">
+                            <span>PLC Error</span>
 
+                            <label class="ui-switch">
+                                <input type="checkbox" id="ledError" onchange="toggleValve('selatan', this.checked)">
+                                <span class="ui-slider">
+                                    <span class="ui-on">ON</span>
+                                    <span class="ui-off">OFF</span>
+                                </span>
+                            </label>
+                        </div>
                         <div class="status-row">
                             <span>System Health</span>
                             <span id="ledSystem" class="led"></span>
@@ -278,10 +287,6 @@ https://templatemo.com/tm-609-crypto-vault
                             <span id="ledOta" class="led"></span>
                         </div>
 
-                        <div class="status-row">
-                            <span>PLC Error</span>
-                            <span id="ledError" class="led"></span>
-                        </div>
                         <div class="status-row">
                             <span>Sible Atas</span>
                             <div id="sibleAtas" class="led"></div>
@@ -366,9 +371,15 @@ https://templatemo.com/tm-609-crypto-vault
                                 <label>Deadband</label>
                                 <input id="pressureDeadband" type="number" step="0.01" min="0">
                             </div>
+
                             <div class="form-group">
                                 <label>Overshoot</label>
                                 <input id="overshoot" type="number" step="0.01" min="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>OverLoad</label>
+                                <input id="overLoad" type="number" step="0.01" min="0">
                             </div>
 
                             <div class="form-group">
@@ -399,7 +410,7 @@ https://templatemo.com/tm-609-crypto-vault
                 </div>
             </div>
             <footer class="copyright">
-                Copyright &copy;  2026 Sang Jagoan
+                Copyright &copy; 2026 Sang Jagoan
                 <!-- Designed by <a href="https://templatemo.com" target="_blank"
                     rel="nofollow">TemplateMo</a> -->
                 <div id="liveDate"></div>

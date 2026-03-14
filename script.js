@@ -17,11 +17,18 @@ function updateElement(id, value) {
     el.textContent = value;
 }
 
-function setLed(id, state, colorTrue = "#00ff00", colorFalse = "#ff0000") {
+function setLed(id, state, colorTrue = "#00ff00", colorFalse = "var(--geuge)") {
     const el = document.getElementById(id);
     if (!el) return;
 
     el.setAttribute("fill", state ? colorTrue : colorFalse);
+}
+
+function formatUptime(seconds) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return `${h}h ${m}m ${s}s`;
 }
 
 function onMQTTData(topic, data) {
@@ -62,6 +69,16 @@ function onMQTTData(topic, data) {
 
         console.log("Indikator Led:", data);
     }
+
+    if (topic === "esp32/config/uptime") {
+
+        console.log("UPTIME:", topic, data);
+
+        const d = typeof data === "string" ? JSON.parse(data) : data;
+
+        document.getElementById("uptime").textContent = formatUptime(d.up);
+    }
+
 }
 
 function updateElectrical(d) {

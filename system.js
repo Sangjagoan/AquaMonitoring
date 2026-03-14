@@ -2,12 +2,8 @@
  SYSTEM MONITORING
 ======================================== */
 
-async function loadSystemStatus(d)
-{
+async function loadSystemStatus(d) {
     console.log("System status:", d);
-
-    document.getElementById("uptimeValue").textContent =
-        formatUptime(d.up);
 
     document.getElementById("heapValue").textContent =
         (d.hp / 1024).toFixed(1) + " KB";
@@ -52,28 +48,33 @@ function updateHealthUI(data) {
     else el.classList.add("red");
 }
 
-function formatUptime(seconds)
-{
+function formatUptime(seconds) {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
     return `${h}h ${m}m ${s}s`;
 }
 
-function onMQTTData(topic, data)
-{
-    console.log("SYSTEM RX:", topic, data);
+function onMQTTData(topic, data) {
 
-    if (topic === "esp32/panel/data")
-    {
+    if (topic === "esp32/panel/data") {
+        console.log("SYSTEM RX:", topic, data);
         loadSystemStatus(data);
         updateHealthUI(data);
     }
 
-    
+    if (topic === "esp32/config/uptime") {
+
+        console.log("UPTIME:", topic, data);
+
+        const d = typeof data === "string" ? JSON.parse(data) : data;
+
+        document.getElementById("uptimeValue").textContent = formatUptime(d.up);
+    }
+
+
 }
 
-window.addEventListener("load", () =>
-{
+window.addEventListener("load", () => {
     mqttStart();
 });

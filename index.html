@@ -36,10 +36,8 @@ https://templatemo.com/tm-609-crypto-vault
             <span></span>
         </div>
     </button>
-
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
     <div class="dashboard">
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
@@ -182,6 +180,9 @@ https://templatemo.com/tm-609-crypto-vault
                     <h1>Dashboard</h1>
                     <p class="header-subtitle">Realtime electrical monitoring from your ESP32 device</p>
                 </div>
+                <div class="uptime">
+                    <span id="uptime">0 s</span>
+                </div>
                 <div class="header-right">
                     <div class="header-search">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -237,7 +238,18 @@ https://templatemo.com/tm-609-crypto-vault
                                 </div>
                             </div>
                             <div class="chart-container">
-                                <svg class="line-chart" viewBox="0 0 700 200" preserveAspectRatio="xMidYMid meet">
+                                <g id="crosshair1" pointer-events="none">
+                                    <line id="crosshairX1" x1="0" y1="0" x2="0" y2="200" stroke="#ffffff"
+                                        stroke-width="1" opacity="0.5" />
+
+                                    <line id="crosshairY1" x1="0" y1="0" x2="700" y2="0" stroke="#ffffff"
+                                        stroke-width="1" opacity="0.5" />
+
+                                    <text id="crosshairText1" fill="#fff" font-size="12" text-anchor="middle"
+                                        dy="-5"></text>
+                                </g>
+                                <svg id="voltChart1" class="line-chart" viewBox="0 0 700 200"
+                                    preserveAspectRatio="xMidYMid meet">
                                     <defs>
                                         <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                                             <stop offset="0%" style="stop-color:#b87333" />
@@ -316,7 +328,18 @@ https://templatemo.com/tm-609-crypto-vault
                                 </div>
                             </div>
                             <div class="chart-container">
-                                <svg class="line-chart" viewBox="0 0 700 200" preserveAspectRatio="xMidYMid meet">
+                                <g id="crosshair2" pointer-events="none">
+                                    <line id="crosshairX2" x1="0" y1="0" x2="0" y2="200" stroke="#ffffff"
+                                        stroke-width="1" opacity="0.5" />
+
+                                    <line id="crosshairY2" x1="0" y1="0" x2="700" y2="0" stroke="#ffffff"
+                                        stroke-width="1" opacity="0.5" />
+
+                                    <text id="crosshairText2" fill="#fff" font-size="12" text-anchor="middle"
+                                        dy="-5"></text>
+                                </g>
+                                <svg id="voltChart2" class="line-chart" viewBox="0 0 700 200"
+                                    preserveAspectRatio="xMidYMid meet">
                                     <defs>
                                         <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                                             <stop offset="0%" style="stop-color:#b87333" />
@@ -394,7 +417,18 @@ https://templatemo.com/tm-609-crypto-vault
                                 </div>
                             </div>
                             <div class="chart-container">
-                                <svg class="line-chart" viewBox="0 0 700 200" preserveAspectRatio="xMidYMid meet">
+                                 <g id="crosshair2" pointer-events="none">
+                                    <line id="crosshairX3" x1="0" y1="0" x2="0" y2="200" stroke="#ffffff"
+                                        stroke-width="1" opacity="0.5" />
+
+                                    <line id="crosshairY3" x1="0" y1="0" x2="700" y2="0" stroke="#ffffff"
+                                        stroke-width="1" opacity="0.5" />
+
+                                    <text id="crosshairText3" fill="#fff" font-size="12" text-anchor="middle"
+                                        dy="-5"></text>
+                                </g>
+                                <svg id="cmChart" class="line-chart" viewBox="0 0 700 200"
+                                    preserveAspectRatio="xMidYMid meet">
                                     <defs>
                                         <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                                             <stop offset="0%" style="stop-color:#b87333" />
@@ -649,19 +683,19 @@ https://templatemo.com/tm-609-crypto-vault
                                     <path d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="url(#psiGradient)"
                                         stroke-width="20" stroke-linecap="round" />
                                     <!-- DANGER ZONE ARC -->
-                                    <path id="psiDangerArc" fill="none" stroke="#ff0000" stroke-width="20"
+                                    <path id="psiDangerArc" fill="none" stroke="var(--text-primary)" stroke-width="20"
                                         stroke-linecap="round" opacity="0.9" />
                                     <!-- LED INDICATOR -->
                                     <circle id="psiLED" cx="224" cy="56" r="8" fill="#400000" stroke="#ff0000"
                                         stroke-width="2" />
                                     <g id="psiTicks"></g>
                                     <g id="psiNeedle" transform="rotate(-90 150 150)">
-                                        <line x1="150" y1="150" x2="150" y2="55" stroke="#ffffff" stroke-width="5"
-                                            stroke-linecap="round" />
-                                        <circle cx="150" cy="150" r="12" fill="#ffffff" />
+                                        <line x1="150" y1="150" x2="150" y2="55" stroke="var(--text-primary)"
+                                            stroke-width="5" stroke-linecap="round" />
+                                        <circle cx="150" cy="150" r="12" fill="var(--text-primary)" />
                                     </g>
                                     <text id="psiValue" x="150" y="112" text-anchor="middle" font-size="20"
-                                        font-weight="600" letter-spacing="1" fill="#ffffff">0.0</text>
+                                        font-weight="600" letter-spacing="1" fill="var(--text-primary)">0.0</text>
 
                                     <text x="150" y="138" text-anchor="middle" font-size="16" fill="#9aa0a6">PSI</text>
                                 </svg>
@@ -690,9 +724,9 @@ https://templatemo.com/tm-609-crypto-vault
                                     <g id="kgTicks"></g>
 
                                     <g id="kgNeedle" transform="rotate(-90 150 150)">
-                                        <line x1="150" y1="150" x2="150" y2="55" stroke="#ffffff" stroke-width="5"
-                                            stroke-linecap="round" />
-                                        <circle cx="150" cy="150" r="12" fill="#ffffff" />
+                                        <line x1="150" y1="150" x2="150" y2="55" stroke="var(--text-primary)"
+                                            stroke-width="5" stroke-linecap="round" />
+                                        <circle cx="150" cy="150" r="12" fill="var(--text-primary)" />
                                     </g>
 
                                     <!-- LED kiri -->
@@ -702,7 +736,7 @@ https://templatemo.com/tm-609-crypto-vault
                                     <circle id="ledBuka" cx="213" cy="120" r="10" fill="#400" />
 
                                     <text id="kgValue" x="150" y="115" text-anchor="middle" font-size="20"
-                                        font-weight="bold" fill="#fff">0.0</text>
+                                        font-weight="bold" fill="var(--text-primary)">0.0</text>
 
                                     <text x="150" y="140" text-anchor="middle" font-size="18" fill="#aaa">KG</text>
 
@@ -729,12 +763,12 @@ https://templatemo.com/tm-609-crypto-vault
 
                                     <g id="barTicks"></g>
                                     <g id="barNeedle" transform="rotate(-90 150 150)">
-                                        <line x1="150" y1="150" x2="150" y2="55" stroke="#ffffff" stroke-width="5"
-                                            stroke-linecap="round" />
-                                        <circle cx="150" cy="150" r="12" fill="#ffffff" />
+                                        <line x1="150" y1="150" x2="150" y2="55" stroke="var(--text-primary)"
+                                            stroke-width="5" stroke-linecap="round" />
+                                        <circle cx="150" cy="150" r="12" fill="var(--text-primary)" />
                                     </g>
                                     <text id="barValue" x="150" y="115" text-anchor="middle" font-size="20"
-                                        font-weight="bold" fill="#fff">0.0</text>
+                                        font-weight="bold" fill="var(--text-primary)">0.0</text>
 
                                     <text x="150" y="140" text-anchor="middle" font-size="18" fill="#aaa">bar</text>
                                 </svg>
@@ -817,8 +851,8 @@ https://templatemo.com/tm-609-crypto-vault
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">Power Factor (cos φ)</div>
-                            <div class="stat-value" id="_pf">0.00</div>
-                            <div class="stat-change positive" id="pf">0.00</div>
+                            <div class="stat-value" id="pf">0.00</div>
+                            <div class="stat-change positive" id="_pf">0.00</div>
                         </div>
                     </div>
                 </div>
@@ -840,6 +874,8 @@ https://templatemo.com/tm-609-crypto-vault
     <script src="chart.js"></script>
     <script src="ui.js"></script>
     <script src="notifications.js"></script>
+    <script src="multimeter.js"></script>
+
 </body>
 
 </html>

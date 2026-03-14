@@ -21,7 +21,8 @@ const MQTT_CONFIG = {
     topic_Led_indikator: "esp32/indikator/state",
     topic_Wifi_status: "esp32/wifi/status",
     topic_Wifi_progress: "esp32/config/wifi/progress",
-    topic_ESP_RESTART: "esp32/config/esp/restart"
+    topic_ESP_RESTART: "esp32/config/esp/restart",
+    topic_UPTIME: "esp32/config/uptime"
 };
 
 let mqttClient = null;
@@ -57,6 +58,7 @@ function mqttStart() {
         mqttClient.subscribe(MQTT_CONFIG.topic_Wifi_status);
         mqttClient.subscribe(MQTT_CONFIG.topic_Wifi_progress);
         mqttClient.subscribe(MQTT_CONFIG.topic_ESP_RESTART);
+        mqttClient.subscribe(MQTT_CONFIG.topic_UPTIME);
 
         mqttClient.subscribe();
     });

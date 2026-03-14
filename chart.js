@@ -176,7 +176,7 @@ function pushVoltage(chart, v) {
         v
     });
 
-    trim(chart.raw, 86400);
+    trim(chart.raw, 600);
 
     if (!chart._m || Date.now() - chart._m > 60000) {
         chart._m = Date.now();
@@ -217,7 +217,9 @@ function drawChart(chart, lineId, areaId, labelId, labelContainerId) {
     if (chart.mode === "1Y") data = chart.day;
 
     const maxPoints = 60;
-    data = data.slice(-maxPoints);
+    const offset = chart.scrollOffset || 0;
+
+    data = data.slice(-(maxPoints + offset), -offset || undefined);
 
     if (!data || data.length < 2) return;
 
@@ -313,9 +315,32 @@ document.querySelectorAll(".chart-tab").forEach(btn => {
 
 function saveChartHistory() {
 
-    localStorage.setItem("c1", JSON.stringify(CHART1));
-    localStorage.setItem("c2", JSON.stringify(CHART2));
-    localStorage.setItem("c3", JSON.stringify(CHART3));
+    const c1 = {
+        min: CHART1.min,
+        hour: CHART1.hour,
+        day: CHART1.day
+    };
+
+    const c2 = {
+        min: CHART2.min,
+        hour: CHART2.hour,
+        day: CHART2.day
+    };
+
+    const c3 = {
+        min: CHART3.min,
+        hour: CHART3.hour,
+        day: CHART3.day
+    };
+
+    try {
+        localStorage.setItem("c1", JSON.stringify(c1));
+        localStorage.setItem("c2", JSON.stringify(c2));
+        localStorage.setItem("c3", JSON.stringify(c3));
+    } catch (e) {
+        console.warn("Storage penuh, reset history");
+        localStorage.clear();
+    }
 }
 
 function loadChartHistory() {
@@ -325,21 +350,18 @@ function loadChartHistory() {
     const c3 = JSON.parse(localStorage.getItem("c3") || "null");
 
     if (c1) {
-        CHART1.raw = c1.raw || [];
         CHART1.min = c1.min || [];
         CHART1.hour = c1.hour || [];
         CHART1.day = c1.day || [];
     }
 
     if (c2) {
-        CHART2.raw = c2.raw || [];
         CHART2.min = c2.min || [];
         CHART2.hour = c2.hour || [];
         CHART2.day = c2.day || [];
     }
 
     if (c3) {
-        CHART3.raw = c3.raw || [];
         CHART3.min = c3.min || [];
         CHART3.hour = c3.hour || [];
         CHART3.day = c3.day || [];
@@ -351,6 +373,129 @@ function chartRenderLoop() {
     drawChart(CHART1, "voltLine1", "voltArea1", "voltLabels1", "chartLabels1");
     drawChart(CHART2, "voltLine2", "voltArea2", "voltLabels2", "chartLabels2");
     drawChart(CHART3, "cmLine", "cmArea", "cmLabels", "chartLabels3");
+
+}
+
+function enableChartZoomPan(svgId) {
+
+    const svg = document.getElementById(svgId);
+
+    let viewBox = svg.viewBox.baseVal;
+
+    let isPanning = false;
+    let startX = 0;
+    let startY = 0;
+
+    svg.addEventListener("wheel", (e) => {
+
+        e.preventDefault();
+
+        const zoom = e.deltaY > 0 ? 1.1 : 0.9;
+
+        const mx = e.offsetX / svg.clientWidth;
+        const my = e.offsetY / svg.clientHeight;
+
+        const newWidth = viewBox.width * zoom;
+        const newHeight = viewBox.height * zoom;
+
+        viewBox.x += (viewBox.width - newWidth) * mx;
+        viewBox.y += (viewBox.height - newHeight) * my;
+
+        viewBox.width = newWidth;
+        viewBox.height = newHeight;
+
+    });
+
+    svg.addEventListener("mousedown", (e) => {
+
+        isPanning = true;
+        startX = e.clientX;
+        startY = e.clientY;
+
+    });
+
+    window.addEventListener("mousemove", (e) => {
+
+        if (!isPanning) return;
+
+        const dx = (e.clientX - startX) * viewBox.width / svg.clientWidth;
+        const dy = (e.clientY - startY) * viewBox.height / svg.clientHeight;
+
+        viewBox.x -= dx;
+        viewBox.y -= dy;
+
+        startX = e.clientX;
+        startY = e.clientY;
+
+    });
+
+    window.addEventListener("mouseup", () => {
+        isPanning = false;
+    });
+
+    svg.addEventListener("dblclick", () => {
+
+        svg.setAttribute("viewBox", "0 0 600 200");
+
+    });
+
+}
+
+function enableCrosshair(svgId, chart, textId, lineXId, lineYId) {
+
+    const svg = document.getElementById(svgId);
+
+    const lineX = document.getElementById(lineXId);
+    const lineY = document.getElementById(lineYId);
+    const text = document.getElementById(textId);
+
+    svg.addEventListener("mousemove", (e) => {
+
+        const rect = svg.getBoundingClientRect();
+
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        lineX.setAttribute("x1", x);
+        lineX.setAttribute("x2", x);
+
+        lineY.setAttribute("y1", y);
+        lineY.setAttribute("y2", y);
+
+        const data = chart.raw.map(v => v.v);
+        const index = Math.floor((x / rect.width) * data.length);
+
+        const value = data[index];
+
+        if (value !== undefined) {
+
+            text.setAttribute("x", x);
+            text.setAttribute("y", y);
+
+            text.textContent = value.toFixed(1) + " V";
+        }
+
+    });
+
+}
+
+function enableChartScroll(chart) {
+
+    let offset = 0;
+
+    window.addEventListener("wheel", (e) => {
+
+        if (e.shiftKey) {
+
+            offset += e.deltaY > 0 ? 10 : -10;
+
+            offset = Math.max(0, offset);
+
+            chart.scrollOffset = offset;
+
+        }
+
+    });
 
 }
 
@@ -451,6 +596,32 @@ window.addEventListener("load", () => {
     loadChartHistory();
     setInterval(saveChartHistory, 5000);
     setInterval(chartRenderLoop, 2000); // redraw tiap 1 detik
+    enableChartZoomPan("voltChart1");
+    enableChartZoomPan("voltChart2");
+    enableChartZoomPan("cmChart");
+    enableCrosshair(
+        "voltChart1",
+        CHART1,
+        "crosshairText1",
+        "crosshairX1",
+        "crosshairY1"
+    );
+
+    enableCrosshair(
+        "voltChart2",
+        CHART2,
+        "crosshairText2",
+        "crosshairX2",
+        "crosshairY2"
+    );
+
+    enableCrosshair(
+        "cmChart",
+        CHART3,
+        "crosshairText3",
+        "crosshairX3",
+        "crosshairY3"
+    );
 
 });
 

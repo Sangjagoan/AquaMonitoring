@@ -49,6 +49,10 @@ function scanWiFi() {
 
 function save() {
 
+    console.log("simpan wifi clicked");
+
+    if (!confirm(" pastikan ssid dan passwordnya sudah benar, simpan wifi akan membuat esp restart, apakah kamu yakin?, kalau sudah yakin tekan oke")) return;
+
     const ssid = document.getElementById("wifiSSID").value;
     const pass = document.getElementById("wifiPASS").value;
 
@@ -73,13 +77,47 @@ function save() {
     resultBox.className = "status";
 }
 
+// function restartEsp() {
+
+//     console.log("Reset wifi clicked");
+
+//     if (!confirm("Yakin mau Restart EPS?")) return;
+
+//     mqttClient.publish("esp32/config/esp/restart", "1");
+// }
+
 function restartEsp() {
 
-    console.log("Reset wifi clicked");
+    if (!confirm("⚠ Restart ESP32?\nPerangkat akan restart.")) return;
 
-    if (!confirm("Yakin mau Restart EPS?")) return;
+    if (!confirm("Konfirmasi lagi.\nkalau sudah yakin ESP akan restart.")) return;
 
-    mqttClient.publish("esp32/config/esp/restart", "1");
+    let countdown = 5;
+
+    const timer = setInterval(() => {
+
+        console.log("Restart dalam", countdown, "detik");
+
+        const resultBox = document.getElementById("maintenanceStatus");
+        if (resultBox) {
+            resultBox.innerText = "Restart dalam " + countdown + " detik...";
+            resultBox.className = "warning";
+        }
+
+        countdown--;
+
+        if (countdown < 0) {
+
+            clearInterval(timer);
+
+            mqttClient.publish("esp32/config/esp/restart", "1");
+
+            if (resultBox) {
+                resultBox.innerText = "Restarting ESP32...";
+            }
+        }
+
+    }, 1000);
 }
 
 function onMQTTWifi(topic, data) {

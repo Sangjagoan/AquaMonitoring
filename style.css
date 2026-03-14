@@ -46,6 +46,7 @@ https://templatemo.com/tm-609-crypto-vault
     --chart-grid: rgba(255, 255, 255, 0.05);
     --overlay: rgba(0, 0, 0, 0.5);
     --wifi-diconnected: rgba(255, 0, 0, 0.5);
+    --geuge: rgb(255, 0, 0);
 }
 
 /* ========================================
@@ -70,6 +71,7 @@ https://templatemo.com/tm-609-crypto-vault
     --chart-grid: rgba(0, 0, 0, 0.05);
     --overlay: rgba(0, 0, 0, 0.5);
     --wifi-diconnected: rgba(255, 0, 0, 0.5);
+    --geuge: rgb(85, 0, 255);
 }
 
 /* ========================================

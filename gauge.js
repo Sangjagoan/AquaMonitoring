@@ -248,7 +248,7 @@ function createTicks(groupId, min, max, stepMajor, stepMinor) {
         line.setAttribute("y2", y2);
 
         if (v % stepMajor === 0) {
-            line.setAttribute("stroke", "#fff");
+            line.setAttribute("stroke", "var(--text-primary)");
             line.setAttribute("stroke-width", "3");
 
             // NUMBER
@@ -260,7 +260,7 @@ function createTicks(groupId, min, max, stepMajor, stepMinor) {
             text.setAttribute("x", tx);
             text.setAttribute("y", ty + 5);
             text.setAttribute("text-anchor", "middle");
-            text.setAttribute("fill", "#fff");
+            text.setAttribute("fill", "var(--geuge)");
             text.setAttribute("font-size", "14");
             text.textContent = v;
 
