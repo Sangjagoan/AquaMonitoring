@@ -209,6 +209,15 @@ function trim(arr, max) {
 
 function drawChart(chart, lineId, areaId, labelId, labelContainerId) {
 
+    const lineEl = document.getElementById(lineId);
+    const areaEl = document.getElementById(areaId);
+
+    // jika chart tidak ada di halaman → stop
+    if (!lineEl || !areaEl) return;
+
+    const svg = lineEl.ownerSVGElement;
+    if (!svg) return;
+
     let data;
 
     if (chart.mode === "1D") data = chart.raw.map(x => x.v);
@@ -223,39 +232,35 @@ function drawChart(chart, lineId, areaId, labelId, labelContainerId) {
 
     if (!data || data.length < 2) return;
 
-    const svg = document.getElementById(lineId).ownerSVGElement;
     const width = svg.viewBox.baseVal.width;
     const height = svg.viewBox.baseVal.height;
+
     const minVolt = 150;
     const maxVolt = 260;
 
     const step = width / (maxPoints - 1);
 
-    let line = "", area = "";
+    let line = "";
+    let area = "";
 
     data.forEach((v, i) => {
-        let x = i * step;
-        let y = height - ((v - minVolt) / (maxVolt - minVolt)) * height;
+
+        const x = i * step;
+        const y = height - ((v - minVolt) / (maxVolt - minVolt)) * height;
 
         line += `${x},${y} `;
         area += `${x},${y} `;
     });
 
-    if (labelContainerId) {
+    if (labelContainerId)
         updateChartLabels(chart, labelContainerId);
-    }
 
     area += `${(data.length - 1) * step},200 0,200`;
-
-    const lineEl = document.getElementById(lineId);
-    const areaEl = document.getElementById(areaId);
-    const labelGroup = document.getElementById(labelId);
-
-    if (!lineEl || !areaEl) return;
 
     lineEl.setAttribute("points", line);
     areaEl.setAttribute("points", area);
 
+    const labelGroup = document.getElementById(labelId);
     if (!labelGroup) return;
 
     const fragment = document.createDocumentFragment();
@@ -379,6 +384,7 @@ function chartRenderLoop() {
 function enableChartZoomPan(svgId) {
 
     const svg = document.getElementById(svgId);
+    if (!svg) return;
 
     let viewBox = svg.viewBox.baseVal;
 
@@ -434,20 +440,20 @@ function enableChartZoomPan(svgId) {
     });
 
     svg.addEventListener("dblclick", () => {
-
         svg.setAttribute("viewBox", "0 0 600 200");
-
     });
-
 }
 
 function enableCrosshair(svgId, chart, textId, lineXId, lineYId) {
 
     const svg = document.getElementById(svgId);
+    if (!svg) return;
 
     const lineX = document.getElementById(lineXId);
     const lineY = document.getElementById(lineYId);
     const text = document.getElementById(textId);
+
+    if (!lineX || !lineY || !text) return;
 
     svg.addEventListener("mousemove", (e) => {
 
@@ -463,6 +469,7 @@ function enableCrosshair(svgId, chart, textId, lineXId, lineYId) {
         lineY.setAttribute("y2", y);
 
         const data = chart.raw.map(v => v.v);
+
         const index = Math.floor((x / rect.width) * data.length);
 
         const value = data[index];
@@ -474,9 +481,7 @@ function enableCrosshair(svgId, chart, textId, lineXId, lineYId) {
 
             text.textContent = value.toFixed(1) + " V";
         }
-
     });
-
 }
 
 function enableChartScroll(chart) {
@@ -499,98 +504,9 @@ function enableChartScroll(chart) {
 
 }
 
-/* ========================================
-           CHART AQUA MONITOR
-======================================== */
-function updateWaterDrop(id, value, max) {
-
-    const percent = Math.min(value / max, 1);
-
-    const dropHeight = 130;   // tinggi isi drop
-    const startY = 150;       // posisi bawah drop
-
-    const newHeight = dropHeight * percent;
-    const newY = startY - newHeight;
-
-    const fill = document.getElementById(id);
-
-    fill.setAttribute("y", newY);
-    fill.setAttribute("height", newHeight);
-}
-
-let currentLevel = 0;
-let currentTinggi = 0;
-let currentJarak = 0;
-
-function updateAquaBars(L, T, J) {
-    currentLevel = L;
-    currentTinggi = T;
-    currentJarak = J;
-
-    drawWave("waveLevel", L, 100, 100);
-    drawWave("waveTinggi", T, 249, 350);
-    drawWave("waveJarak", J, 249, 600);
-
-    const valueLevel = document.getElementById("valueLevel");
-    const valueTinggi = document.getElementById("valueTinggi");
-    const valueJarak = document.getElementById("valueJarak");
-
-    if (valueLevel) valueLevel.textContent = L.toFixed(0) + "%";
-    if (valueTinggi) valueTinggi.textContent = T.toFixed(0) + " cm";
-    if (valueJarak) valueJarak.textContent = J.toFixed(1) + " cm";
-}
-
-let waveOffset = 0;
-
-function drawWave(id, value, max, centerX) {
-
-    const percent = Math.min(value / max, 1);
-
-    const dropBottom = 210;
-    const dropHeight = 150;
-
-    const waterLevel = dropBottom - (dropHeight * percent);
-
-    const amplitude = 5;      // tinggi gelombang
-    const wavelength = 50;    // lebar gelombang
-
-    let path = `M ${centerX - 60} ${dropBottom} `;
-
-    for (let x = -60; x <= 60; x++) {
-        const y = waterLevel +
-            Math.sin((x + waveOffset) / wavelength * 2 * Math.PI) * amplitude;
-        path += `L ${centerX + x} ${y} `;
-    }
-
-    path += `L ${centerX + 60} ${dropBottom} Z`;
-
-    document.getElementById(id).setAttribute("d", path);
-}
-
-let lastFrame = 0;
-
-function animateWave(timestamp) {
-
-    if (timestamp - lastFrame < 33) {
-        requestAnimationFrame(animateWave);
-        return;
-    }
-
-    lastFrame = timestamp;
-
-    if (!document.hidden) {
-        waveOffset += 0.8;
-        drawWave("waveLevel", currentLevel, 100, 100);
-        drawWave("waveTinggi", currentTinggi, 239, 350);
-        drawWave("waveJarak", currentTinggi, 239, 600);
-    }
-
-    requestAnimationFrame(animateWave);
-}
 // ================ Chart AquaMonitor End========================//
 
 window.addEventListener("load", () => {
-    requestAnimationFrame(animateWave);
     setInterval(updateLiveDateTime, 1000);
     // initCardFullscreen();
     loadChartHistory();

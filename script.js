@@ -6,15 +6,8 @@ function num(v) {
 }
 
 function updateElement(id, value) {
-
     const el = document.getElementById(id);
-
-    if (!el) {
-        console.warn("ELEMENT TIDAK ADA:", id);
-        return;
-    }
-
-    el.textContent = value;
+    if (el) el.textContent = value;
 }
 
 function setLed(id, state, colorTrue = "#00ff00", colorFalse = "var(--geuge)") {
@@ -49,7 +42,7 @@ function onMQTTData(topic, data) {
 
         drawPressureCandles(PSI_CANDLE, "pressurePsiChart");
         drawPressureCandles(KG_CANDLE, "pressureKgChart");
-        ubdatedashboardPressureValues(data);
+        updateDashboardPressureValues(data);
         // =========================
         // PRESSURE GAUGE
         // =========================
@@ -76,7 +69,8 @@ function onMQTTData(topic, data) {
 
         const d = typeof data === "string" ? JSON.parse(data) : data;
 
-        document.getElementById("uptime").textContent = formatUptime(d.up);
+        updateElement("uptime", formatUptime(d.up));
+
     }
 
 }
@@ -92,21 +86,21 @@ function updateElectrical(d) {
     updateElement("_power", num(d.p2).toFixed(1));
     updateElement("_frequency", num(d.f2).toFixed(1));
     updateElement("_pf", num(d.pf2).toFixed(2));
+    updateElement("energy1", num(d.e1).toFixed(1));
+    updateElement("energy2", num(d.e2).toFixed(2));
 }
 
 function updatePressure(d) {
     gaugeUpdatePSI(num(d.psi));
     gaugeUpdateKG(num(d.kg));
-    gaugeUpdateBAR(num(d.br));
 }
 
-function ubdatedashboardPressureValues(data) {
+function updateDashboardPressureValues(data) {
     updateElement('kalmanPressureValue', data.kPsi.toFixed(0));
     updateElement('nonKalmanPressure', data.nkPsi.toFixed(0));
     updateElement('psi', data.psi.toFixed(2));
     updateElement('kg', data.kg.toFixed(2));
 }
-
 
 window.addEventListener("load", () => {
     mqttStart();

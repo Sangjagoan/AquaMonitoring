@@ -312,7 +312,102 @@ function createDangerArc(id, min, max, dangerStart, dangerEnd) {
     arc.setAttribute("d", d);
 }
 
+/* ========================================
+           CHART AQUA MONITOR
+======================================== */
+function updateWaterDrop(id, value, max) {
+
+    const percent = Math.min(value / max, 1);
+
+    const dropHeight = 130;   // tinggi isi drop
+    const startY = 150;       // posisi bawah drop
+
+    const newHeight = dropHeight * percent;
+    const newY = startY - newHeight;
+
+    const fill = document.getElementById(id);
+    if (!fill) return;
+
+
+    fill.setAttribute("y", newY);
+    fill.setAttribute("height", newHeight);
+}
+
+let currentLevel = 0;
+let currentTinggi = 0;
+let currentJarak = 0;
+
+function updateAquaBars(L, T, J) {
+    currentLevel = L;
+    currentTinggi = T;
+    currentJarak = J;
+
+    drawWave("waveLevel", L, 100, 100);
+    drawWave("waveTinggi", T, 249, 350);
+    drawWave("waveJarak", J, 249, 600);
+
+    const valueLevel = document.getElementById("valueLevel");
+    const valueTinggi = document.getElementById("valueTinggi");
+    const valueJarak = document.getElementById("valueJarak");
+
+    if (valueLevel) valueLevel.textContent = L.toFixed(0) + "%";
+    if (valueTinggi) valueTinggi.textContent = T.toFixed(0) + " cm";
+    if (valueJarak) valueJarak.textContent = J.toFixed(1) + " cm";
+}
+
+let waveOffset = 0;
+
+function drawWave(id, value, max, centerX) {
+
+    const el = document.getElementById(id);
+    if (!el) return;   // ← FIX penting
+
+    const percent = Math.min(value / max, 1);
+
+    const dropBottom = 210;
+    const dropHeight = 150;
+
+    const waterLevel = dropBottom - (dropHeight * percent);
+
+    const amplitude = 5;
+    const wavelength = 50;
+
+    let path = `M ${centerX - 60} ${dropBottom} `;
+
+    for (let x = -60; x <= 60; x++) {
+        const y = waterLevel +
+            Math.sin((x + waveOffset) / wavelength * 2 * Math.PI) * amplitude;
+        path += `L ${centerX + x} ${y} `;
+    }
+
+    path += `L ${centerX + 60} ${dropBottom} Z`;
+
+    el.setAttribute("d", path);
+}
+
+let lastFrame = 0;
+
+function animateWave(timestamp) {
+
+    if (timestamp - lastFrame < 33) {
+        requestAnimationFrame(animateWave);
+        return;
+    }
+
+    lastFrame = timestamp;
+
+    if (!document.hidden) {
+        waveOffset += 0.8;
+        drawWave("waveLevel", currentLevel, 100, 100);
+        drawWave("waveTinggi", currentTinggi, 239, 350);
+        drawWave("waveJarak", currentTinggi, 239, 600);
+    }
+
+    requestAnimationFrame(animateWave);
+}
+
 window.addEventListener("load", () => {
+    requestAnimationFrame(animateWave);
     createTicks("psiTicks", 0, 40, 10, 5);
     createTicks("kgTicks", 0, 3, 1, 0.5);
     createTicks("barTicks", 0, 10, 1, 0.5);
