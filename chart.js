@@ -561,6 +561,11 @@ function updateChart(value, history, lineId, areaId) {
 let sparkHistory = {};
 
 function sparkline(lineId, areaId, value) {
+    const lineEl = document.getElementById(lineId);
+    const areaEl = document.getElementById(areaId);
+
+    // jika elemen belum ada → stop
+    if(!lineEl || !areaEl) return;
 
     if (!sparkHistory[lineId])
         sparkHistory[lineId] = [];

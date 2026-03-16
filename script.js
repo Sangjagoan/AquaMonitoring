@@ -115,7 +115,6 @@ function updateDashboardPressureValues(data) {
 }
 
 window.addEventListener("load", () => {
-    // sparkline("voltLine1","voltArea1",value)
 
     mqttStart();
 });
