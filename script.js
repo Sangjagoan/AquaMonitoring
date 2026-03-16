@@ -28,8 +28,19 @@ function onMQTTData(topic, data) {
     if (topic === "esp32/panel/data") {
         console.log("MQTT RX:", topic, data);
         updateAquaBars(data.lvl, data.tAir, data.jar);
-        // CHART ENGINE
         updateElectrical(data);
+
+        sparkline("sparkVoltLine1", "sparkVoltArea1", data.v1);
+        sparkline("sparkVoltLine2", "sparkVoltArea2", data.v2);
+        sparkline("sparkAmpLine1", "sparkAmpArea1", data.a1);
+        sparkline("sparkAmpLine2", "sparkAmpArea2", data.a1);
+        sparkline("sparkPowerLine1","sparkPowerArea1", data.p1);
+        sparkline("sparkPowerLine2","sparkPowerArea2", data.p2);
+        sparkline("sparkEnergyLine1","sparkEnergyArea1", data.e1);
+        sparkline("sparkEnergyLine2","sparkEnergyArea2", data.e2);
+        sparkline("sparkFreqLine1","sparkFreqArea1", data.f1);
+        sparkline("sparkFreqLine2","sparkFreqArea2", data.f2);
+
         pushVoltage(CHART1, data.v1);
         pushVoltage(CHART2, data.v2);
         pushVoltage(CHART3, data.tAir);
@@ -52,6 +63,7 @@ function onMQTTData(topic, data) {
             Number(data.br)
 
         );
+
     }
 
     if (topic === "esp32/indikator/state") {
@@ -103,5 +115,7 @@ function updateDashboardPressureValues(data) {
 }
 
 window.addEventListener("load", () => {
+    // sparkline("voltLine1","voltArea1",value)
+
     mqttStart();
 });

@@ -504,6 +504,107 @@ function enableChartScroll(chart) {
 
 }
 
+let voltageHistory1 = [];
+let voltageHistory2 = [];
+
+function updateVoltageChart(v1, v2) {
+
+    updateChart(v1, voltageHistory1, "sparkVoltLine1", "sparkVoltArea1");
+    updateChart(v2, voltageHistory2, "sparkVoltLine2", "sparkVoltArea2");
+
+}
+
+function updateChart(value, history, lineId, areaId) {
+
+    history.push(value);
+
+    if (history.length > 20)
+        history.shift();
+
+    // minimal 2 titik supaya step tidak rusak
+    if (history.length < 2) return;
+
+    const step = 200 / (history.length - 1);
+
+    const minV = 210;
+    const maxV = 235;
+
+    let points = [];
+    let areaPath = "";
+
+    history.forEach((val, i) => {
+
+        const x = i * step;
+
+        const y = 35 - ((val - minV) / (maxV - minV)) * 20;
+
+        points.push(`${x},${y}`);
+
+        if (i === 0)
+            areaPath += `M ${x} ${y}`;
+        else
+            areaPath += ` L ${x} ${y}`;
+
+    });
+
+    const lastX = (history.length - 1) * step;
+
+    areaPath += ` L ${lastX} 40 L 0 40 Z`;
+
+    document.getElementById(lineId)
+        .setAttribute("points", points.join(" "));
+
+    document.getElementById(areaId)
+        .setAttribute("d", areaPath);
+}
+
+let sparkHistory = {};
+
+function sparkline(lineId, areaId, value) {
+
+    if (!sparkHistory[lineId])
+        sparkHistory[lineId] = [];
+
+    const history = sparkHistory[lineId];
+
+    history.push(value);
+
+    if (history.length > 20)
+        history.shift();
+
+    if (history.length < 2) return;
+
+    const step = 200 / (history.length - 1);
+
+    const minV = Math.min(...history) - 1;
+    const maxV = Math.max(...history) + 1;
+
+
+    let points = [];
+    let areaPath = "";
+
+    history.forEach((val, i) => {
+
+        const x = i * step;
+        const y = 35 - ((val - minV) / (maxV - minV)) * 20;
+
+        points.push(`${x},${y}`);
+
+        if (i === 0)
+            areaPath += `M ${x} ${y}`;
+        else
+            areaPath += ` L ${x} ${y}`;
+
+    });
+
+    const lastX = (history.length - 1) * step;
+
+    areaPath += ` L ${lastX} 40 L 0 40 Z`;
+
+    document.getElementById(lineId).setAttribute("points", points.join(" "));
+    document.getElementById(areaId).setAttribute("d", areaPath);
+}
+
 // ================ Chart AquaMonitor End========================//
 
 window.addEventListener("load", () => {

@@ -223,119 +223,231 @@ https://templatemo.com/tm-609-crypto-vault
             <div class="content-wrapper">
                 <!-- Left Column -->
                 <div class="content-left">
-                    <!-- Bottom Row -->
-                    <div class="bottom-row">
-                        <!-- PSI GAUGE -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h2 class="card-title">Psi</h2>
-                            </div>
-                            <div class="donut-chart-container">
-                                <svg viewBox="0 0 300 180" class="gauge-svg">
-                                    <defs>
-                                        <linearGradient id="psiGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" stop-color="#2b4eff" />
-                                            <stop offset="50%" stop-color="#ffe600" />
-                                            <stop offset="100%" stop-color="#ff1e1e" />
-                                        </linearGradient>
-                                    </defs>
-                                    <path d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="url(#psiGradient)"
-                                        stroke-width="20" stroke-linecap="round" />
-                                    <!-- DANGER ZONE ARC -->
-                                    <path id="psiDangerArc" fill="none" stroke="var(--text-primary)" stroke-width="20"
-                                        stroke-linecap="round" opacity="0.9" />
-                                    <!-- LED INDICATOR -->
-                                    <circle id="psiLED" cx="224" cy="56" r="8" fill="#400000" stroke="#ff0000"
-                                        stroke-width="2" />
-                                    <g id="psiTicks"></g>
-                                    <g id="psiNeedle" transform="rotate(-90 150 150)">
-                                        <line x1="150" y1="150" x2="150" y2="55" stroke="var(--text-primary)"
-                                            stroke-width="5" stroke-linecap="round" />
-                                        <circle cx="150" cy="150" r="12" fill="var(--text-primary)" />
-                                    </g>
-                                    <text id="psiValue" x="150" y="112" text-anchor="middle" font-size="20"
-                                        font-weight="600" letter-spacing="1" fill="var(--text-primary)">0.0</text>
-
-                                    <text x="150" y="138" text-anchor="middle" font-size="16" fill="#9aa0a6">PSI</text>
-                                </svg>
-                            </div>
-                        </div>
-
-                        <!-- KG GAUGE -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h2 class="card-title">Kg</h2>
-                            </div>
-                            <div class="donut-chart-container">
-                                <svg viewBox="0 0 300 180" class="gauge-svg">
-
-                                    <defs>
-                                        <linearGradient id="kgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" stop-color="#00c6ff" />
-                                            <stop offset="50%" stop-color="#00ff88" />
-                                            <stop offset="100%" stop-color="#ff8800" />
-                                        </linearGradient>
-                                    </defs>
-                                    <!-- ARC -->
-                                    <path d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="url(#kgGradient)"
-                                        stroke-width="20" stroke-linecap="round" />
-
-                                    <g id="kgTicks"></g>
-
-                                    <g id="kgNeedle" transform="rotate(-90 150 150)">
-                                        <line x1="150" y1="150" x2="150" y2="55" stroke="var(--text-primary)"
-                                            stroke-width="5" stroke-linecap="round" />
-                                        <circle cx="150" cy="150" r="12" fill="var(--text-primary)" />
-                                    </g>
-
-                                    <!-- LED kiri -->
-                                    <circle id="ledTutup" cx="90" cy="120" r="10" fill="#400" />
-
-                                    <!-- LED kanan -->
-                                    <circle id="ledBuka" cx="213" cy="120" r="10" fill="#400" />
-
-                                    <text id="kgValue" x="150" y="115" text-anchor="middle" font-size="20"
-                                        font-weight="bold" fill="var(--text-primary)">0.0</text>
-
-                                    <text x="150" y="140" text-anchor="middle" font-size="18" fill="#aaa">KG</text>
-
-                                </svg>
-                            </div>
-                        </div>
-                        <!-- BAR -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h2 class="card-title">Bar</h2>
-                            </div>
-                            <div class="donut-chart-container">
-                                <svg viewBox="0 0 300 180" class="gauge-svg">
-                                    <defs>
-                                        <linearGradient id="barGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" stop-color="#00c6ff" />
-                                            <stop offset="50%" stop-color="#00ff88" />
-                                            <stop offset="100%" stop-color="#ff8800" />
-                                        </linearGradient>
-                                    </defs>
-
-                                    <path d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="url(#barGradient)"
-                                        stroke-width="20" stroke-linecap="round" />
-
-                                    <g id="barTicks"></g>
-                                    <g id="barNeedle" transform="rotate(-90 150 150)">
-                                        <line x1="150" y1="150" x2="150" y2="55" stroke="var(--text-primary)"
-                                            stroke-width="5" stroke-linecap="round" />
-                                        <circle cx="150" cy="150" r="12" fill="var(--text-primary)" />
-                                    </g>
-                                    <text id="barValue" x="150" y="115" text-anchor="middle" font-size="20"
-                                        font-weight="bold" fill="var(--text-primary)">0.0</text>
-
-                                    <text x="150" y="140" text-anchor="middle" font-size="18" fill="#aaa">bar</text>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
                     <!-- Charts Grid -->
                     <div class="charts-grid">
+                        <div class="stat-card energy-card">
+                            <div class="energy-card">
+                                <div class="energy-top">
+                                    <div class="energy-left">
+                                        <span class="label">VOLTAGE_1</span>
+                                        <span class="badge">REAL-TIME</span>
+                                    </div>
+                                </div>
+                                <div class="energy-main">
+                                    <div class="energy-value">
+                                        <span id="voltage">220</span>
+                                        <span class="unit">V</span>
+                                    </div>
+                                    <svg class="energy-chart" viewBox="0 0 200 40">
+                                        <defs>
+                                            <linearGradient id="voltFill1" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#39c2ff" stop-opacity="0.35" />
+                                                <stop offset="100%" stop-color="#39c2ff" stop-opacity="0" />
+                                            </linearGradient>
+                                        </defs>
+                                        <!-- area -->
+                                        <path id="sparkVoltArea1" fill="url(#voltFill1)" d="M0 25 L40 24 L80 24 L120 23 L160 23 L200 22
+                                             L200 40 L0 40 Z" />
+                                        <!-- line -->
+                                        <polyline id="sparkVoltLine1" fill="none" stroke="#39c2ff" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            points="0,25 40,24 80,24 120,23 160,23 200,22" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card energy-card">
+                            <div class="energy-card">
+                                <div class="energy-top">
+                                    <div class="energy-left">
+                                        <span class="label">VOLTAGE_2</span>
+                                        <span class="badge">REAL-TIME</span>
+                                    </div>
+                                </div>
+                                <div class="energy-main">
+                                    <div class="energy-value">
+                                        <span id="_voltage">220</span>
+                                        <span class="unit">V</span>
+                                    </div>
+                                    <svg class="energy-chart" viewBox="0 0 200 40">
+                                        <defs>
+                                            <linearGradient id="voltFill2" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#39c2ff" stop-opacity="0.35" />
+                                                <stop offset="100%" stop-color="#39c2ff" stop-opacity="0" />
+                                            </linearGradient>
+                                        </defs>
+                                        <!-- area -->
+                                        <path id="sparkVoltArea2" fill="url(#voltFill2)" d="M0 25 L40 24 L80 24 L120 23 L160 23 L200 22
+                                             L200 40 L0 40 Z" />
+                                        <!-- line -->
+                                        <polyline id="sparkVoltLine2" fill="none" stroke="#39c2ff" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            points="0,25 40,24 80,24 120,23 160,23 200,22" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card energy-card">
+                            <div class="energy-card">
+                                <div class="energy-top">
+                                    <span class="label">CURRENT_1</span>
+                                    <span class="badge">REAL-TIME</span>
+                                </div>
+
+                                <div class="energy-main">
+                                    <div class="energy-value">
+                                        <span id="current">0</span>
+                                        <span class="unit">A</span>
+                                    </div>
+
+                                    <svg class="energy-chart" viewBox="0 0 200 40">
+                                        <defs>
+                                            <linearGradient id="ampFill" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#4ade80" stop-opacity="0.35" />
+                                                <stop offset="100%" stop-color="#4ade80" stop-opacity="0" />
+                                            </linearGradient>
+                                        </defs>
+
+                                        <path id="sparkAmpArea1" fill="url(#ampFill)" />
+                                        <polyline id="sparkAmpLine1" fill="none" stroke="#4ade80" stroke-width="2" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card energy-card">
+                            <div class="energy-card">
+                                <div class="energy-top">
+                                    <span class="label">CURRENT_2</span>
+                                    <span class="badge">REAL-TIME</span>
+                                </div>
+
+                                <div class="energy-main">
+                                    <div class="energy-value">
+                                        <span id="_current">0</span>
+                                        <span class="unit">A</span>
+                                    </div>
+
+                                    <svg class="energy-chart" viewBox="0 0 200 40">
+                                        <defs>
+                                            <linearGradient id="ampFill" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#4ade80" stop-opacity="0.35" />
+                                                <stop offset="100%" stop-color="#4ade80" stop-opacity="0" />
+                                            </linearGradient>
+                                        </defs>
+
+                                        <path id="sparkAmpArea2" fill="url(#ampFill)" />
+                                        <polyline id="sparkAmpLine2" fill="none" stroke="#4ade80" stroke-width="2" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card energy-card">
+                            <div class="energy-card">
+                                <div class="energy-top">
+                                    <span class="label">POWER_1</span>
+                                    <span class="badge">REAL-TIME</span>
+                                </div>
+
+                                <div class="energy-main">
+                                    <div class="energy-value">
+                                        <span id="power">0</span>
+                                        <span class="unit">W</span>
+                                    </div>
+                                    <svg class="energy-chart" viewBox="0 0 200 40">
+                                        <defs>
+                                            <linearGradient id="powerFill" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.35" />
+                                                <stop offset="100%" stop-color="#f59e0b" stop-opacity="0" />
+                                            </linearGradient>
+                                        </defs>
+
+                                        <path id="sparkPowerArea1" fill="url(#powerFill)" />
+                                        <polyline id="sparkPowerLine1" fill="none" stroke="#f59e0b" stroke-width="2" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card energy-card">
+                            <div class="energy-card">
+                                <div class="energy-top">
+                                    <span class="label">POWER_2</span>
+                                    <span class="badge">REAL-TIME</span>
+                                </div>
+
+                                <div class="energy-main">
+                                    <div class="energy-value">
+                                        <span id="_power">0</span>
+                                        <span class="unit">W</span>
+                                    </div>
+                                    <svg class="energy-chart" viewBox="0 0 200 40">
+                                        <defs>
+                                            <linearGradient id="powerFill" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.35" />
+                                                <stop offset="100%" stop-color="#f59e0b" stop-opacity="0" />
+                                            </linearGradient>
+                                        </defs>
+
+                                        <path id="sparkPowerArea2" fill="url(#powerFill)" />
+                                        <polyline id="sparkPowerLine2" fill="none" stroke="#f59e0b" stroke-width="2" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card energy-card">
+                            <div class="energy-card">
+                                <div class="energy-top">
+                                    <span class="label">ENERGY_1</span>
+                                    <span class="badge">REAL-TIME</span>
+                                </div>
+
+                                <div class="energy-main">
+                                    <div class="energy-value">
+                                        <span id="energy1">0</span>
+                                        <span class="unit">kWh</span>
+                                    </div>
+                                    <svg class="energy-chart" viewBox="0 0 200 40">
+                                        <defs>
+                                            <linearGradient id="energyFill" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#ec4899" stop-opacity="0.35" />
+                                                <stop offset="100%" stop-color="#ec4899" stop-opacity="0" />
+                                            </linearGradient>
+                                        </defs>
+
+                                        <path id="sparkEnergyArea1" fill="url(#energyFill)" />
+                                        <polyline id="sparkEnergyLine1" fill="none" stroke="#ec4899" stroke-width="2" />
+                                    </svg>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stat-card energy-card">
+                            <div class="energy-card">
+                                <div class="energy-top">
+                                    <span class="label">ENERGY_2</span>
+                                    <span class="badge">REAL-TIME</span>
+                                </div>
+
+                                <div class="energy-main">
+                                    <div class="energy-value">
+                                        <span id="energy2">0</span>
+                                        <span class="unit">kWh</span>
+                                    </div>
+                                    <svg class="energy-chart" viewBox="0 0 200 40">
+                                        <defs>
+                                            <linearGradient id="energyFill" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#ec4899" stop-opacity="0.35" />
+                                                <stop offset="100%" stop-color="#ec4899" stop-opacity="0" />
+                                            </linearGradient>
+                                        </defs>
+
+                                        <path id="sparkEnergyArea2" fill="url(#energyFill)" />
+                                        <polyline id="sparkEnergyLine2" fill="none" stroke="#ec4899" stroke-width="2" />
+                                    </svg>
+
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Asset Performance -->
                         <div class="card chart-card">
                             <div class="card-header">
@@ -421,85 +533,167 @@ https://templatemo.com/tm-609-crypto-vault
                                 </svg>
                             </div>
                         </div>
+
                     </div>
                 </div>
-
                 <!-- Right Column - Stats -->
                 <div class="content-right">
-                    <div class="stat-card primary">
-                        <div class="stat-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M4 4 L12 20 L20 4" />
-                            </svg>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-label">🔋 Voltage (V)</div>
-                            <div class="stat-value" id="voltage">220<span class="unit">V</span></div>
-                            <div class="stat-change positive" id="_voltage">0<span class="unit">V</span></div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M6 20 L12 4 L18 20" />
-                                <line x1="8.5" y1="14" x2="15.5" y2="14" />
-                            </svg>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-label">⚡ Current (A)</div>
-                            <div class="stat-value" id="current">0<span class="unit">A</span></div>
-                            <div class="stat-change positive" id="_current">0<span class="unit">A</span></div>
+                    <div class="stat-card energy-card">
+                        <div class="energy-card">
+                            <div class="energy-top">
+                                <span class="label">FREQUENCY_1</span>
+                                <span class="badge">REAL-TIME</span>
+                            </div>
+                            <div class="energy-main">
+                                <div class="energy-value">
+                                    <span id="frequency">0</span>
+                                    <span class="unit">Hz</span>
+                                </div>
+                                <svg class="energy-chart" viewBox="0 0 200 40">
+                                    <defs>
+                                        <linearGradient id="freqFill" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.35" />
+                                            <stop offset="100%" stop-color="#a78bfa" stop-opacity="0" />
+                                        </linearGradient>
+                                    </defs>
+
+                                    <path id="sparkFreqArea1" fill="url(#freqFill)" />
+                                    <polyline id="sparkFreqLine1" fill="none" stroke="#a78bfa" stroke-width="2" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="3 4 7 20 12 10 17 20 21 4" />
-                            </svg>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-label">🔌 Power (W)</div>
-                            <div class="stat-value" id="power">0<span class="unit">W</span></div>
-                            <div class="stat-change positive" id="_power">0<span class="unit">W</span></div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <!-- H -->
-                                <line x1="4" y1="4" x2="4" y2="20" />
-                                <line x1="10" y1="4" x2="10" y2="20" />
-                                <line x1="4" y1="12" x2="10" y2="12" />
-                                <!-- z -->
-                                <polyline points="14 6 20 6 14 18 20 18" />
-                            </svg>
-                        </div>
-                        <div class="stat-content">
-                            <div class="stat-label">⏱ Frequency (Hz)</div>
-                            <div class="stat-value" id="frequency">0<span class="unit">Hz</span></div>
-                            <div class="stat-change positive" id="_frequency">0<span class="unit">Hz</span></div>
+                    <div class="stat-card energy-card">
+                        <div class="energy-card">
+                            <div class="energy-top">
+                                <span class="label">FREQUENCY_2</span>
+                                <span class="badge">REAL-TIME</span>
+                            </div>
+                            <div class="energy-main">
+                                <div class="energy-value">
+                                    <span id="_frequency">0</span>
+                                    <span class="unit">Hz</span>
+                                </div>
+                                <svg class="energy-chart" viewBox="0 0 200 40">
+                                    <defs>
+                                        <linearGradient id="freqFill" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.35" />
+                                            <stop offset="100%" stop-color="#a78bfa" stop-opacity="0" />
+                                        </linearGradient>
+                                    </defs>
+                                    <path id="sparkFreqArea2" fill="url(#freqFill)" />
+                                    <polyline id="sparkFreqLine2" fill="none" stroke="#a78bfa" stroke-width="2" />
+                                </svg>
+                            </div>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" id="icon-pf">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <!-- lingkaran -->
-                                <circle cx="12" cy="12" r="8" />
-                                <!-- garis sudut fase -->
-                                <line x1="12" y1="12" x2="18" y2="9" />
-                                <!-- garis referensi -->
-                                <line x1="12" y1="12" x2="18" y2="12" />
+
+                    <!-- PSI GAUGE -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Psi</h2>
+                        </div>
+                        <div class="donut-chart-container">
+                            <svg viewBox="0 0 300 180" class="gauge-svg">
+                                <defs>
+                                    <linearGradient id="psiGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#2b4eff" />
+                                        <stop offset="50%" stop-color="#ffe600" />
+                                        <stop offset="100%" stop-color="#ff1e1e" />
+                                    </linearGradient>
+                                </defs>
+                                <path d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="url(#psiGradient)"
+                                    stroke-width="20" stroke-linecap="round" />
+                                <!-- DANGER ZONE ARC -->
+                                <path id="psiDangerArc" fill="none" stroke="var(--text-primary)" stroke-width="20"
+                                    stroke-linecap="round" opacity="0.9" />
+                                <!-- LED INDICATOR -->
+                                <circle id="psiLED" cx="224" cy="56" r="8" fill="#400000" stroke="#ff0000"
+                                    stroke-width="2" />
+                                <g id="psiTicks"></g>
+                                <g id="psiNeedle" transform="rotate(-90 150 150)">
+                                    <line x1="150" y1="150" x2="150" y2="55" stroke="var(--text-primary)"
+                                        stroke-width="5" stroke-linecap="round" />
+                                    <circle cx="150" cy="150" r="12" fill="var(--text-primary)" />
+                                </g>
+                                <text id="psiValue" x="150" y="112" text-anchor="middle" font-size="20"
+                                    font-weight="600" letter-spacing="1" fill="var(--text-primary)">0.0</text>
+
+                                <text x="150" y="138" text-anchor="middle" font-size="16" fill="#9aa0a6">PSI</text>
                             </svg>
                         </div>
-                        <div class="stat-content">
-                            <div class="stat-label">Power Factor (cos φ)</div>
-                            <div class="stat-value" id="pf">0.00</div>
-                            <div class="stat-change positive" id="_pf">0.00</div>
+                    </div>
+
+                    <!-- KG GAUGE -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Kg</h2>
+                        </div>
+                        <div class="donut-chart-container">
+                            <svg viewBox="0 0 300 180" class="gauge-svg">
+
+                                <defs>
+                                    <linearGradient id="kgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#00c6ff" />
+                                        <stop offset="50%" stop-color="#00ff88" />
+                                        <stop offset="100%" stop-color="#ff8800" />
+                                    </linearGradient>
+                                </defs>
+                                <!-- ARC -->
+                                <path d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="url(#kgGradient)"
+                                    stroke-width="20" stroke-linecap="round" />
+
+                                <g id="kgTicks"></g>
+
+                                <g id="kgNeedle" transform="rotate(-90 150 150)">
+                                    <line x1="150" y1="150" x2="150" y2="55" stroke="var(--text-primary)"
+                                        stroke-width="5" stroke-linecap="round" />
+                                    <circle cx="150" cy="150" r="12" fill="var(--text-primary)" />
+                                </g>
+
+                                <!-- LED kiri -->
+                                <circle id="ledTutup" cx="90" cy="120" r="10" fill="#400" />
+
+                                <!-- LED kanan -->
+                                <circle id="ledBuka" cx="213" cy="120" r="10" fill="#400" />
+
+                                <text id="kgValue" x="150" y="115" text-anchor="middle" font-size="20"
+                                    font-weight="bold" fill="var(--text-primary)">0.0</text>
+
+                                <text x="150" y="140" text-anchor="middle" font-size="18" fill="#aaa">KG</text>
+
+                            </svg>
+                        </div>
+                    </div>
+                    <!-- BAR -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Bar</h2>
+                        </div>
+                        <div class="donut-chart-container">
+                            <svg viewBox="0 0 300 180" class="gauge-svg">
+                                <defs>
+                                    <linearGradient id="barGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#00c6ff" />
+                                        <stop offset="50%" stop-color="#00ff88" />
+                                        <stop offset="100%" stop-color="#ff8800" />
+                                    </linearGradient>
+                                </defs>
+
+                                <path d="M30 150 A120 120 0 0 1 270 150" fill="none" stroke="url(#barGradient)"
+                                    stroke-width="20" stroke-linecap="round" />
+
+                                <g id="barTicks"></g>
+                                <g id="barNeedle" transform="rotate(-90 150 150)">
+                                    <line x1="150" y1="150" x2="150" y2="55" stroke="var(--text-primary)"
+                                        stroke-width="5" stroke-linecap="round" />
+                                    <circle cx="150" cy="150" r="12" fill="var(--text-primary)" />
+                                </g>
+                                <text id="barValue" x="150" y="115" text-anchor="middle" font-size="20"
+                                    font-weight="bold" fill="var(--text-primary)">0.0</text>
+
+                                <text x="150" y="140" text-anchor="middle" font-size="18" fill="#aaa">bar</text>
+                            </svg>
                         </div>
                     </div>
                 </div>
