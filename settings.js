@@ -1,3 +1,5 @@
+
+const devices = {};
 function updateWifiIcon(rssi, connected) {
 
     const arc2 = document.getElementById("arc2");
@@ -77,15 +79,6 @@ function save() {
     resultBox.className = "status";
 }
 
-// function restartEsp() {
-
-//     console.log("Reset wifi clicked");
-
-//     if (!confirm("Yakin mau Restart EPS?")) return;
-
-//     mqttClient.publish("esp32/config/esp/restart", "1");
-// }
-
 function restartEsp() {
 
     if (!confirm("⚠ Restart ESP32?\nPerangkat akan restart.")) return;
@@ -120,6 +113,42 @@ function restartEsp() {
     }, 1000);
 }
 
+function initResetPzem() {
+
+    if (!confirm("Reset energy meter?")) return;
+
+    const payload = {
+        confirm: "YES"
+    };
+
+    mqttClient.publish(
+        "esp32/panel/pzem/reset",
+        JSON.stringify(payload)
+    );
+
+}
+
+function renderDevices() {
+    const container = document.getElementById("devices");
+    if (!container) return;
+
+    let html = "";
+
+    for (const id in devices) {
+        const d = devices[id];
+
+        html += `
+            <div class="card">
+                <h3>${id}</h3>
+                <p>Pressure: ${d.kg ?? '-'}</p>
+                <p>Level: ${d.lvl ?? '-'}</p>
+            </div>
+        `;
+    }
+
+    container.innerHTML = html;
+}
+
 function onMQTTWifi(topic, data) {
 
     // ===== WIFI STATUS =====
@@ -145,7 +174,7 @@ function onMQTTWifi(topic, data) {
 
     // ===== WIFI SCAN RESULT =====
     if (topic === "panel/wifi/list") {
-
+        renderDevices();
         const list = JSON.parse(data);
 
         const select = document.getElementById("wifiSSID");

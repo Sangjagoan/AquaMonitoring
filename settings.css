@@ -283,3 +283,11 @@
 #mqttStatus.disconnected {
     color: #ff5252;
 }
+
+
+#devices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+}

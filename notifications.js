@@ -74,7 +74,12 @@ function renderNotifications() {
 function onMQTTAlarm(topic, data) {
     if (topic === "esp32/panel/alarm") {
 
-console.log("ALARM RX:", topic, data);
+        const parts = topic.split("/");
+        const deviceId = parts[1]; // ← ambil ID device
+
+        console.log("Device:", deviceId, data);
+
+        console.log("ALARM RX:", topic, data);
         addNotification(data.msg, data.type);
 
     }

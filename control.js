@@ -1,4 +1,5 @@
-
+const devices = {};
+let activeDevice = null;
 // 🌙 Day / Night Mode Control
 document.querySelectorAll('input[name="mode"]').forEach(radio => {
     radio.addEventListener("change", () => {
@@ -139,8 +140,8 @@ function savePressureSetting() {
         low: parseFloat(p_low.value),
 
         deadband: parseFloat(pressureDeadband.value),
-        over: parseFloat(overshoot.value),
-        overLoad: parseFloat(overLoad.value),
+        overShoot: parseFloat(over_shoot.value),
+        overLoad: parseFloat(over_Load.value),
         pulseMin: parseInt(p_pulseMin.value),
         pulseMax: parseInt(p_pulseMax.value),
         lockTime: parseInt(pressureLock.value),
@@ -169,7 +170,7 @@ function updateHealth(health, state) {
     }
 }
 
-function toggleHealth(state){
+function toggleHealth(state) {
 
     if (!mqttClient || !mqttClient.connected) return;
 
@@ -184,9 +185,57 @@ function toggleHealth(state){
 
 }
 
-function onMQTTData(topic, data) {
+function updateDeviceSelector() {
 
-    if (topic === "esp32/config/daynight/state") {
+    const select = document.getElementById("deviceSelect");
+    if (!select) return;
+
+    select.innerHTML = "";
+
+    for (const id in devices) {
+        select.innerHTML += `<option value="${id}">${id}</option>`;
+    }
+
+    select.value = activeDevice;
+}
+
+function renderDevices() {
+
+    const container = document.getElementById("devices");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    for (const id in devices) {
+
+        const d = devices[id];
+
+        container.innerHTML += `
+            <div class="card">
+                <h4>${id}</h4>
+                <p>Health: ${d.hlt ? "OK" : "ERROR"}</p>
+                <p>Run: ${d.run}</p>
+                <p>WiFi: ${d.wifi}</p>
+            </div>
+        `;
+    }
+}
+
+function onMQTTData(topic, data) {
+    const parts = topic.split("/");
+    if (parts.length < 3) return;
+
+    const deviceId = parts[1];
+    const type = parts[2];
+    const sub = parts[3];
+
+    // filter device valid
+    if (!deviceId.startsWith("ESP32_")) return;
+
+    if (type === "daynight" && sub === "state") {
+
+        if (deviceId !== activeDevice) return;
+
         updateSystemStateUI(data);
         updateDayNightUI(data);
 
@@ -195,24 +244,39 @@ function onMQTTData(topic, data) {
         errLed.classList.remove("green", "red", "blink");
 
         if (data.plcState.includes("Error")) {
-            errLed.classList.add("red");
-            errLed.classList.add("blink");
-        }
-        else {
+            errLed.classList.add("red", "blink");
+        } else {
             errLed.classList.add("green");
         }
-
-        console.log("state:", data);
+        console.table(devices);
     }
 
-    if (topic === "esp32/panel/heartbeat") {
+    if (type === "heartbeat") {
+
+        if (!devices[deviceId]) {
+            devices[deviceId] = {};
+        }
+
+        // 🔥 merge data
+        devices[deviceId] = {
+            ...devices[deviceId],
+            ...data
+        };
+
+        if (!activeDevice) {
+            activeDevice = deviceId;
+        }
+
+        updateDeviceSelector();
+        renderDevices();
+
+        // 🚨 FILTER UI
+        if (deviceId !== activeDevice) return;
+
         const hb = data;
 
         const toggle = document.getElementById("systemError");
-
-        if (toggle) {
-            toggle.checked = hb.hlt;
-        }
+        if (toggle) toggle.checked = hb.hlt;
 
         updateHealth("systemError", hb.hlt);
         setLed("ledSystem", hb.hlt);
@@ -220,41 +284,43 @@ function onMQTTData(topic, data) {
         setLed("ledWifi", hb.wifi);
         setLed("sibleAtas", hb.sa);
         setLed("sibleBawah", hb.sb);
-        // OTA khusus
+
         const otaLed = document.getElementById("ledOta");
         otaLed.classList.remove("green", "red", "yellow");
 
-        if (hb.ota)
-            otaLed.classList.add("yellow");
-        else
-            otaLed.classList.add("green");
-        console.log("heartbeat:", data);
+        if (hb.ota) otaLed.classList.add("yellow");
+        else otaLed.classList.add("green");
+        
+        console.table(data);
     }
 
-    if (topic === "esp32/panel/pump/state") {
+    if (type === "pump" && sub === "state") {
 
-        const pump = data || {}
+        if (deviceId !== activeDevice) return;
 
-        levelStop.value = pump.stop ?? ""
-        levelOne.value = pump.one ?? ""
-        levelDay.value = pump.day ?? ""
-        levelNight.value = pump.night ?? ""
-        kedalam.value = pump.kp ?? ""
-        jarakSensorDariPermukaanAtas.value = pump.js ?? ""
+        const pump = data || {};
 
-        console.log("pump:", data);
+        levelStop.value = pump.stop ?? "";
+        levelOne.value = pump.one ?? "";
+        levelDay.value = pump.day ?? "";
+        levelNight.value = pump.night ?? "";
+        kedalam.value = pump.kp ?? "";
+        jarakSensorDariPermukaanAtas.value = pump.js ?? "";
+        
+        console.table(data);
     }
 
-    if (topic === "esp32/panel/valve/state") {
+    if (type === "valve" && sub === "state") {
+
         const stop = data
         updateValve("utara", stop.utara)
         updateValve("selatan", stop.selatan)
 
-        console.log("valve:", data)
+        console.table(data);
 
     }
 
-    if (topic === "esp32/panel/pressure/state") {
+    if (type === "pressure" && sub === "state") {
 
         const p = data || {};
 
@@ -266,14 +332,22 @@ function onMQTTData(topic, data) {
         pressureLock.value = p.lock ?? "";
         p_pulseMin.value = p.pulseMin ?? "";
         p_pulseMax.value = p.pulseMax ?? "";
-        overshoot.value = p.ovr ?? "";
-        overLoad.value = p.ol ?? "";
+        over_shoot.value = p.ovr ?? "";
+        over_Load.value = p.ol ?? "";
 
         p_settle.value = p.settle ?? "";
 
-        console.log("pressure:", data);
+        console.table(data);
+
     }
 }
+
+document.addEventListener("change", (e) => {
+    if (e.target.id === "deviceSelect") {
+        activeDevice = e.target.value;
+        console.log("Selected Device:", activeDevice);
+    }
+});
 
 window.addEventListener("load", () => {
     mqttStart();

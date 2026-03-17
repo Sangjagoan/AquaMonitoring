@@ -1,6 +1,9 @@
 
 "use strict";
-let redrawCounter = 0;
+window.devices = window.devices || {};
+window.activeDevice = window.activeDevice || null;
+
+const devices = window.devices;
 function num(v) {
     return Number(v) || 0;
 }
@@ -25,8 +28,36 @@ function formatUptime(seconds) {
 }
 
 function onMQTTData(topic, data) {
-    if (topic === "esp32/panel/data") {
-        console.log("MQTT RX:", topic, data);
+
+    const parts = topic.split("/");
+    if (parts.length < 3) return;
+
+    const deviceId = parts[1];
+    const type = parts[2];
+    const sub = parts[3];
+
+    // skip kalau bukan device valid
+    if (!deviceId.startsWith("ESP32_")) return;
+
+    // =========================
+    // DATA
+    // =========================
+    if (type === "data") {
+
+        if (!devices[deviceId]) {
+            devices[deviceId] = {};
+        }
+
+        devices[deviceId] = data;
+
+        if (!window.activeDevice) {
+            window.activeDevice = deviceId;
+        }
+
+        if (deviceId !== window.activeDevice) return;
+
+        console.log("ALL DEVICES:", devices);
+
         updateAquaBars(data.lvl, data.tAir, data.jar);
         updateElectrical(data);
 
@@ -34,57 +65,68 @@ function onMQTTData(topic, data) {
         sparkline("sparkVoltLine2", "sparkVoltArea2", data.v2);
         sparkline("sparkAmpLine1", "sparkAmpArea1", data.a1);
         sparkline("sparkAmpLine2", "sparkAmpArea2", data.a1);
-        sparkline("sparkPowerLine1","sparkPowerArea1", data.p1);
-        sparkline("sparkPowerLine2","sparkPowerArea2", data.p2);
-        sparkline("sparkEnergyLine1","sparkEnergyArea1", data.e1);
-        sparkline("sparkEnergyLine2","sparkEnergyArea2", data.e2);
-        sparkline("sparkFreqLine1","sparkFreqArea1", data.f1);
-        sparkline("sparkFreqLine2","sparkFreqArea2", data.f2);
+
+        sparkline("sparkPowerLine1", "sparkPowerArea1", data.p1);
+        sparkline("sparkPowerLine2", "sparkPowerArea2", data.p2);
+
+        sparkline("sparkEnergyLine1", "sparkEnergyArea1", data.e1);
+        sparkline("sparkEnergyLine2", "sparkEnergyArea2", data.e2);
+
+        sparkline("sparkFreqLine1", "sparkFreqArea1", data.f1);
+        sparkline("sparkFreqLine2", "sparkFreqArea2", data.f2);
 
         pushVoltage(CHART1, data.v1);
         pushVoltage(CHART2, data.v2);
         pushVoltage(CHART3, data.tAir);
-        chartRenderLoop(); // render langsung
-        // =========================
-        // PRESSURE CANDLE
-        // =========================
-        pushPressureCandle(PSI_CANDLE, (data.psi));
-        pushPressureCandle(KG_CANDLE, (data.kg));
+
+        chartRenderLoop();
+
+        pushPressureCandle(PSI_CANDLE, data.psi);
+        pushPressureCandle(KG_CANDLE, data.kg);
 
         drawPressureCandles(PSI_CANDLE, "pressurePsiChart");
         drawPressureCandles(KG_CANDLE, "pressureKgChart");
+
         updateDashboardPressureValues(data);
-        // =========================
-        // PRESSURE GAUGE
-        // =========================
+
         updatePressureGauges(
             Number(data.psi),
             Number(data.kg),
             Number(data.br)
-
         );
-
     }
 
-    if (topic === "esp32/indikator/state") {
-        const hb = data;
+    // =========================
+    // INDIKATOR
+    // =========================
+    if (type === "state") {
 
-        setLed("ledTutup", hb.ot);
-        setLed("ledBuka", hb.ob);
+        if (!devices[deviceId]) devices[deviceId] = {};
+        devices[deviceId].indikator = data;
 
-        console.log("Indikator Led:", data);
+        if (deviceId !== window.activeDevice) return;
+
+        setLed("ledTutup", data.ot);
+        setLed("ledBuka", data.ob);
+        
+        console.log(" STATE:", data);
     }
 
-    if (topic === "esp32/config/uptime") {
-
-        console.log("UPTIME:", topic, data);
+    // =========================
+    // UPTIME
+    // =========================
+    if (type === "uptime") {
 
         const d = typeof data === "string" ? JSON.parse(data) : data;
 
+        if (!devices[deviceId]) devices[deviceId] = {};
+        devices[deviceId].uptime = d;
+
+        if (deviceId !== window.activeDevice) return;
+
         updateElement("uptime", formatUptime(d.up));
-
+        console.log(" UPTIME:", data);
     }
-
 }
 
 function updateElectrical(d) {

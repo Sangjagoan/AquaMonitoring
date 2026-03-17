@@ -201,6 +201,10 @@ https://templatemo.com/tm-609-crypto-vault
                     <div class="status-title">Uptime</div>
                     <div class="status-value" id="espUptime">-</div>
                 </div>
+                
+                <div class="status-card">
+                    <div id="devices"></div>
+                </div>
 
             </div>
             <!-- Settings Tabs -->
@@ -209,6 +213,7 @@ https://templatemo.com/tm-609-crypto-vault
                 <button class="settings-tab" data-tab="mqtt">MQTT</button>
                 <button class="settings-tab" data-tab="connected">WiFi</button>
                 <button class="settings-tab" data-tab="preferences">Firmware</button>
+                <button class="settings-tab" data-tab="maintenance">Device Maintenance</button>
             </div>
             <!-- DEVICE SETTINGS -->
             <div class="settings-content active" id="device">
@@ -457,15 +462,17 @@ https://templatemo.com/tm-609-crypto-vault
 
                     <div class="status" id="webStatus"></div>
                 </div>
-
+            </div>
+            <!-- Device Maintenance -->
+            <div class="settings-content" id="maintenance">
                 <div class="card">
                     <div class="card-header">
                         <h2 class="card-title">Device Maintenance</h2>
                     </div>
 
-                    <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                    <div class="btn-group">
 
-                        <button id="resetPzemBtn" class="btn danger" onclick="initResetPzem()">
+                        <button id="resetPzemBtn" class="btn secondary" onclick="initResetPzem()">
                             Reset Energy Counter
                         </button>
 
