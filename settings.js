@@ -151,31 +151,19 @@ function renderDevices() {
 
 function onMQTTWifi(topic, data) {
 
-    // ===== WIFI STATUS =====
-    if (topic === "esp32/config/wifi/state") {
+    const parts = topic.split("/");
+    if (parts.length < 3) return;
 
-        const resultBox = document.getElementById("wifiInf");
+    const deviceId = parts[1];
+    const type = parts[2];
+    const sub = parts[3];
 
-        if (!resultBox) return;
-
-        if (data === "CONNECTED") {
-
-            resultBox.innerText = "CONNECTED";
-            resultBox.className = "success";
-
-        } else {
-
-            resultBox.innerText = "DISCONNECTED";
-            resultBox.className = "fail";
-        }
-
-        return;
-    }
-
+    // skip kalau bukan device valid
+    if (!deviceId.startsWith("ESP32_")) return;
     // ===== WIFI SCAN RESULT =====
-    if (topic === "panel/wifi/list") {
-        renderDevices();
-        const list = JSON.parse(data);
+    if (type === "wifi" && sub === "list") {
+
+        const list = typeof data === "string" ? JSON.parse(data) : data;
 
         const select = document.getElementById("wifiSSID");
         if (!select) return;
@@ -203,14 +191,13 @@ function onMQTTWifi(topic, data) {
             }
 
             select.appendChild(option);
-
         });
 
-        return;
+        console.log("📡 WIFI LIST:", list);
     }
 
     // ===== WIFI STATUS DETAIL =====
-    if (topic === "esp32/wifi/status") {
+    if (type === "wifi" && sub === "status") {
 
         const wifi = typeof data === "string" ? JSON.parse(data) : data;
 

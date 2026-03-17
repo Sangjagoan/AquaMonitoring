@@ -6,22 +6,23 @@ const MQTT_CONFIG = {
     username: "espuser",
     password: "Esp32Cloud2026!",
 
-    topic_data: "esp32/+/data",
-    topic_state: "esp32/+/state",
+    topic_wifi_state: "esp32/config/wifi/state",
+    topic_wifi_set: "esp32/config/wifi/set",
+    topic_Led_indikator: "esp32/indikator/state",
+    topic_Wifi_progress: "esp32/config/wifi/progress",
+    topic_ESP_RESTART: "esp32/config/esp/restart",
+
+    topic_Wifi_status: "esp32/+/wifi/status",
+    topic_Pressure_state: "esp32/+/pressure/state",
+    topic_pump_state: "esp32/+/pump/state",
+    topic_valve_state: "esp32/+/valve/state",
+    topic_wifi_list: "esp32/+/wifi/list",
     topic_heartbeat: "esp32/+/heartbeat",
     topic_daynight: "esp32/+/daynight/state",
     topic_notif: "esp32/+/alarm",
-    topic_pump_state: "esp32/+/pump/state",
-    topic_valve_state: "esp32/+/valve/state",
-    topic_wifi_list: "panel/wifi/list",
-    topic_wifi_state: "esp32/config/wifi/state",
-    topic_wifi_set: "esp32/config/wifi/set",
-    topic_Pressure_state: "esp32/+/pressure/state",
-    topic_Led_indikator: "esp32/indikator/state",
-    topic_Wifi_status: "esp32/wifi/status",
-    topic_Wifi_progress: "esp32/config/wifi/progress",
-    topic_ESP_RESTART: "esp32/config/esp/restart",
-    topic_UPTIME: "esp32/+/uptime"
+    topic_UPTIME: "esp32/+/uptime",
+    topic_data: "esp32/+/data",
+    topic_state: "esp32/+/state"
 };
 
 let mqttClient = null;

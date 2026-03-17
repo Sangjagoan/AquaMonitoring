@@ -56,14 +56,24 @@ function formatUptime(seconds) {
 }
 
 function onMQTTData(topic, data) {
+    const parts = topic.split("/");
+    if (parts.length < 3) return;
 
-    if (topic === "esp32/panel/data") {
+    const deviceId = parts[1];
+    const type = parts[2];
+    const sub = parts[3];
+
+    // filter device valid
+    if (!deviceId.startsWith("ESP32_")) return;
+
+    if (type === "data") {
+
         console.log("SYSTEM RX:", topic, data);
         loadSystemStatus(data);
         updateHealthUI(data);
     }
 
-    if (topic === "esp32/config/uptime") {
+    if (type === "uptime") {
 
         console.log("UPTIME:", topic, data);
 
