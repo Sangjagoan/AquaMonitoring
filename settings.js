@@ -39,6 +39,25 @@ function updateWifiIcon(rssi, connected) {
     if (level >= 3) arc4.setAttribute("stroke", color);
 }
 
+function publishDevice(suffix, payload) {
+
+    if (!window.activeDevice) {
+        console.warn("No active device");
+        return;
+    }
+
+    const topic = `esp32/${window.activeDevice}/${suffix}`;
+
+    // 🔥 AUTO HANDLE stringify
+    const finalPayload = typeof payload === "string"
+        ? payload
+        : JSON.stringify(payload);
+
+    mqttClient.publish(topic, finalPayload);
+
+    console.log("MQTT SEND:", topic, finalPayload);
+}
+
 function scanWiFi() {
 
     const select = document.getElementById("wifiSSID");
@@ -51,7 +70,8 @@ function scanWiFi() {
         return;
     }
 
-    mqttClient.publish("panel/cmd/wifi/scan", "{}");
+    publishDevice("cmd/wifi/scan", payload);
+    
 }
 
 function save() {
@@ -73,10 +93,7 @@ function save() {
         password: pass
     };
 
-    mqttClient.publish(
-        "esp32/config/wifi/set",
-        JSON.stringify(payload)
-    );
+    publishDevice( "esp32/config/wifi/set", payload);
 
     const resultBox = document.getElementById("wifiResult");
 
@@ -87,7 +104,6 @@ function save() {
 function restartEsp() {
 
     if (!confirm("⚠ Restart ESP32?\nPerangkat akan restart.")) return;
-
     if (!confirm("Konfirmasi lagi.\nkalau sudah yakin ESP akan restart.")) return;
 
     let countdown = 5;
@@ -108,7 +124,8 @@ function restartEsp() {
 
             clearInterval(timer);
 
-            mqttClient.publish("esp32/config/esp/restart", "1");
+            // 🔥 FIX: pakai publishDevice + TANPA payload
+            publishDevice("config/esp/restart", "1");
 
             if (resultBox) {
                 resultBox.innerText = "Restarting ESP32...";
@@ -126,10 +143,7 @@ function initResetPzem() {
         confirm: "YES"
     };
 
-    mqttClient.publish(
-        "esp32/panel/pzem/reset",
-        JSON.stringify(payload)
-    );
+    publishDevice( "panel/pzem/reset", payload);
 
 }
 

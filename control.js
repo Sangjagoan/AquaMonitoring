@@ -26,9 +26,14 @@ function publishDevice(suffix, payload) {
 
     const topic = `esp32/${window.activeDevice}/${suffix}`;
 
-    mqttClient.publish(topic, payload);
+    // 🔥 AUTO HANDLE stringify
+    const finalPayload = typeof payload === "string"
+        ? payload
+        : JSON.stringify(payload);
 
-    console.log("MQTT SEND:", topic, payload);
+    mqttClient.publish(topic, finalPayload);
+
+    console.log("MQTT SEND:", topic, finalPayload);
 }
 
 function saveDayNightConfigMQTT() {
@@ -50,7 +55,8 @@ function saveDayNightConfigMQTT() {
         nightEnd: parseInt(document.getElementById("nightEnd").value)
     };
 
-    publishDevice("config/daynight/set", JSON.stringify(payload));
+    // 🔥 FIX: kirim object langsung
+    publishDevice("config/daynight/set", payload);
 
     updateDayNightUI();
     console.log("Config sent:", payload);
@@ -138,10 +144,7 @@ function savePumpSetting() {
 
     })
 
-    mqttClient.publish(
-        "esp32/panel/pump/set",
-        payload
-    )
+    publishDevice("esp32/panel/pump/set", payload);
 
 }
 
@@ -164,10 +167,7 @@ function savePressureSetting() {
 
     });
 
-    mqttClient.publish(
-        "esp32/panel/pressure/set",
-        payload
-    );
+    publishDevice("esp32/panel/pressure/set", payload);
 
 }
 
@@ -192,10 +192,7 @@ function toggleHealth(state) {
         hlt: state
     });
 
-    mqttClient.publish(
-        "esp32/panel/system/set",
-        payload
-    );
+    publishDevice( "esp32/panel/system/set", payload);
 
 }
 
