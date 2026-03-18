@@ -72,7 +72,18 @@ function renderNotifications() {
 }
 
 function onMQTTAlarm(topic, data) {
-    if (topic === "esp32/panel/alarm") {
+    
+    const parts = topic.split("/");
+    if (parts.length < 3) return;
+
+    const deviceId = parts[1];
+    const type = parts[2];
+    const sub = parts[3];
+
+    // skip kalau bukan device valid
+    if (!deviceId.startsWith("ESP32_")) return;
+
+    if (type === "alarm") {
 
         const parts = topic.split("/");
         const deviceId = parts[1]; // ← ambil ID device

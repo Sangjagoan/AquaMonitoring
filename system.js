@@ -1,6 +1,13 @@
+
+"use strict";
+window.activeDevice = localStorage.getItem("activeDevice") || null;
 /* ========================================
  SYSTEM MONITORING
 ======================================== */
+
+// 🔥 ambil dari global
+window.devices
+window.activeDevice
 
 async function loadSystemStatus(d) {
     console.log("System status:", d);
@@ -64,16 +71,30 @@ function onMQTTData(topic, data) {
     const sub = parts[3];
 
     // filter device valid
-    if (!deviceId.startsWith("ESP32_")) return;
+    if (!window.devices) window.devices = {};
 
-    if (type === "data") {
-
-        console.log("SYSTEM RX:", topic, data);
-        loadSystemStatus(data);
-        updateHealthUI(data);
+    if (!window.devices[deviceId]) {
+        window.devices[deviceId] = {};
     }
 
-    if (type === "uptime") {
+    Object.assign(window.devices[deviceId], data);
+
+    if (typeof updateDeviceSelector === "function") {
+        updateDeviceSelector();
+    }
+
+    if (!window.activeDevice && !localStorage.getItem("activeDevice")) {
+        window.activeDevice = deviceId;
+    }
+
+    if (type === "data" && deviceId === window.activeDevice) {
+        loadSystemStatus(data);
+        updateHealthUI(data);
+
+        console.log("SYSTEM RX:", topic, data);
+    }
+
+    if (type === "uptime" && deviceId === window.activeDevice) {
 
         console.log("UPTIME:", topic, data);
 

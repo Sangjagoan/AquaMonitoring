@@ -1,9 +1,9 @@
 "use strict";
 
+window.activeDevice = localStorage.getItem("activeDevice") || null;
 /* ========================================
    PRESSURE CANDLE ENGINE
 ======================================== */
-
 const PSI_CANDLE = createCandle();
 const KG_CANDLE = createCandle();
 const BAR_CANDLE = createCandle();

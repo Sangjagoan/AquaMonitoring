@@ -1,4 +1,5 @@
 "use strict";
+
 const MQTT_CONFIG = {
 
     host: "wss://c2ba5bec181b4ffab0e46ac233be0a3b.s1.eu.hivemq.cloud:8884/mqtt",
@@ -6,12 +7,11 @@ const MQTT_CONFIG = {
     username: "espuser",
     password: "Esp32Cloud2026!",
 
-    topic_wifi_state: "esp32/config/wifi/state",
-    topic_wifi_set: "esp32/config/wifi/set",
-    topic_Led_indikator: "esp32/indikator/state",
-    topic_Wifi_progress: "esp32/config/wifi/progress",
-    topic_ESP_RESTART: "esp32/config/esp/restart",
+    topic_wifi_state: "esp32/+/config/wifi/state",
+    topic_wifi_set: "esp32/+/config/wifi/set",
+    topic_ESP_RESTART: "esp32/+/config/esp/restart",
 
+    topic_Wifi_progress: "esp32/+/wifi/progress",
     topic_Wifi_status: "esp32/+/wifi/status",
     topic_Pressure_state: "esp32/+/pressure/state",
     topic_pump_state: "esp32/+/pump/state",
@@ -22,7 +22,8 @@ const MQTT_CONFIG = {
     topic_notif: "esp32/+/alarm",
     topic_UPTIME: "esp32/+/uptime",
     topic_data: "esp32/+/data",
-    topic_state: "esp32/+/state"
+    topic_state: "esp32/+/state",
+    topic_Led_indikator: "esp32/+/indikator/state"
 };
 
 let mqttClient = null;
@@ -95,30 +96,22 @@ function setLed(id, state) {
 function mqttOnMessage(topic, payload) {
 
     const message = payload.toString();
+    let data = null;
 
-    // kirim ke handler WiFi dulu
-    if (typeof onMQTTWifi === "function")
-        onMQTTWifi(topic, message);
-
-    // hanya parse JSON jika memang JSON
-    if (message.startsWith("{") || message.startsWith("[")) {
-
-        try {
-
-            const data = JSON.parse(message);
-
-            if (typeof onMQTTData === "function")
-                onMQTTData(topic, data);
-
-            if (typeof onMQTTAlarm === "function")
-                onMQTTAlarm(topic, data);
-
-        } catch (e) {
-
-            console.error("JSON parse error:", e);
-
-        }
-
+    try {
+        data = JSON.parse(message);
+    } catch (e) {
+        console.warn("Non JSON message:", message);
+        return;
     }
 
+    // kirim ke semua handler
+    if (typeof onMQTTWifi === "function")
+        onMQTTWifi(topic, data);
+
+    if (typeof onMQTTData === "function")
+        onMQTTData(topic, data);
+
+    if (typeof onMQTTAlarm === "function")
+        onMQTTAlarm(topic, data);
 }

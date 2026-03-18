@@ -1,5 +1,11 @@
-const devices = {};
-let activeDevice = null;
+"use strict";
+
+window.activeDevice = localStorage.getItem("activeDevice") || null;
+
+// 🔥 ambil dari global
+const devices = window.devices;
+window.activeDevice
+
 // 🌙 Day / Night Mode Control
 document.querySelectorAll('input[name="mode"]').forEach(radio => {
     radio.addEventListener("change", () => {
@@ -10,6 +16,20 @@ document.querySelectorAll('input[name="mode"]').forEach(radio => {
         document.getElementById("nightEnd").disabled = disabled;
     });
 });
+
+function publishDevice(suffix, payload) {
+
+    if (!window.activeDevice) {
+        console.warn("No active device");
+        return;
+    }
+
+    const topic = `esp32/${window.activeDevice}/${suffix}`;
+
+    mqttClient.publish(topic, payload);
+
+    console.log("MQTT SEND:", topic, payload);
+}
 
 function saveDayNightConfigMQTT() {
 
@@ -30,11 +50,7 @@ function saveDayNightConfigMQTT() {
         nightEnd: parseInt(document.getElementById("nightEnd").value)
     };
 
-    mqttClient.publish(
-        "esp32/config/daynight/set",
-        JSON.stringify(payload),
-        { qos: 1, retain: false }
-    );
+    publishDevice("config/daynight/set", JSON.stringify(payload));
 
     updateDayNightUI();
     console.log("Config sent:", payload);
@@ -91,10 +107,8 @@ function toggleValve(valve, state) {
         state: state ? "on" : "off"
     });
 
-    mqttClient.publish(
-        "esp32/panel/stopkran/set",
-        payload
-    );
+    publishDevice("panel/stopkran/set", payload);
+
 }
 
 function updateValve(valve, state) {
@@ -185,42 +199,6 @@ function toggleHealth(state) {
 
 }
 
-function updateDeviceSelector() {
-
-    const select = document.getElementById("deviceSelect");
-    if (!select) return;
-
-    select.innerHTML = "";
-
-    for (const id in devices) {
-        select.innerHTML += `<option value="${id}">${id}</option>`;
-    }
-
-    select.value = activeDevice;
-}
-
-function renderDevices() {
-
-    const container = document.getElementById("devices");
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    for (const id in devices) {
-
-        const d = devices[id];
-
-        container.innerHTML += `
-            <div class="card">
-                <h4>${id}</h4>
-                <p>Health: ${d.hlt ? "OK" : "ERROR"}</p>
-                <p>Run: ${d.run}</p>
-                <p>WiFi: ${d.wifi}</p>
-            </div>
-        `;
-    }
-}
-
 function onMQTTData(topic, data) {
     const parts = topic.split("/");
     if (parts.length < 3) return;
@@ -229,12 +207,25 @@ function onMQTTData(topic, data) {
     const type = parts[2];
     const sub = parts[3];
 
-    // filter device valid
+
     if (!deviceId.startsWith("ESP32_")) return;
 
-    if (type === "daynight" && sub === "state") {
+    // init global
+    if (!window.devices) window.devices = {};
 
-        if (deviceId !== activeDevice) return;
+    // simpan data
+    if (!window.devices[deviceId]) {
+        window.devices[deviceId] = {};
+    }
+    Object.assign(window.devices[deviceId], data);
+
+    // set active device pertama
+    if (!window.activeDevice) {
+        window.activeDevice = deviceId;
+        localStorage.setItem("activeDevice", deviceId);
+    }
+
+    if (type === "daynight" && sub === "state" && deviceId === window.activeDevice) {
 
         updateSystemStateUI(data);
         updateDayNightUI(data);
@@ -251,27 +242,7 @@ function onMQTTData(topic, data) {
         console.table(devices);
     }
 
-    if (type === "heartbeat") {
-
-        if (!devices[deviceId]) {
-            devices[deviceId] = {};
-        }
-
-        // 🔥 merge data
-        devices[deviceId] = {
-            ...devices[deviceId],
-            ...data
-        };
-
-        if (!activeDevice) {
-            activeDevice = deviceId;
-        }
-
-        updateDeviceSelector();
-        renderDevices();
-
-        // 🚨 FILTER UI
-        if (deviceId !== activeDevice) return;
+    if (type === "heartbeat" && deviceId === window.activeDevice) {
 
         const hb = data;
 
@@ -290,13 +261,11 @@ function onMQTTData(topic, data) {
 
         if (hb.ota) otaLed.classList.add("yellow");
         else otaLed.classList.add("green");
-        
+
         console.table(data);
     }
 
-    if (type === "pump" && sub === "state") {
-
-        if (deviceId !== activeDevice) return;
+    if (type === "pump" && sub === "state" && deviceId === window.activeDevice) {
 
         const pump = data || {};
 
@@ -306,11 +275,11 @@ function onMQTTData(topic, data) {
         levelNight.value = pump.night ?? "";
         kedalam.value = pump.kp ?? "";
         jarakSensorDariPermukaanAtas.value = pump.js ?? "";
-        
+
         console.table(data);
     }
 
-    if (type === "valve" && sub === "state") {
+    if (type === "valve" && sub === "state" && deviceId === window.activeDevice) {
 
         const stop = data
         updateValve("utara", stop.utara)
@@ -320,7 +289,7 @@ function onMQTTData(topic, data) {
 
     }
 
-    if (type === "pressure" && sub === "state") {
+    if (type === "pressure" && sub === "state" && deviceId === window.activeDevice) {
 
         const p = data || {};
 
@@ -341,13 +310,6 @@ function onMQTTData(topic, data) {
 
     }
 }
-
-document.addEventListener("change", (e) => {
-    if (e.target.id === "deviceSelect") {
-        activeDevice = e.target.value;
-        console.log("Selected Device:", activeDevice);
-    }
-});
 
 window.addEventListener("load", () => {
     mqttStart();

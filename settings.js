@@ -1,5 +1,10 @@
+"use strict";
 
-const devices = {};
+let deviceNames = JSON.parse(localStorage.getItem("deviceNames") || "{}");
+
+window.devices
+window.activeDevice
+
 function updateWifiIcon(rssi, connected) {
 
     const arc2 = document.getElementById("arc2");
@@ -128,102 +133,57 @@ function initResetPzem() {
 
 }
 
-function renderDevices() {
-    const container = document.getElementById("devices");
-    if (!container) return;
-
-    let html = "";
-
-    for (const id in devices) {
-        const d = devices[id];
-
-        html += `
-            <div class="card">
-                <h3>${id}</h3>
-                <p>Pressure: ${d.kg ?? '-'}</p>
-                <p>Level: ${d.lvl ?? '-'}</p>
-            </div>
-        `;
-    }
-
-    container.innerHTML = html;
-}
-
 function onMQTTWifi(topic, data) {
+
+    console.log("MQTT RX:", data);
+    console.log("ACTIVE DEVICE:", window.activeDevice);
 
     const parts = topic.split("/");
     if (parts.length < 3) return;
 
     const deviceId = parts[1];
-    const type = parts[2];
-    const sub = parts[3];
+    const type = parts[2] || "";
+    const sub = parts[3] || "";
 
-    // skip kalau bukan device valid
     if (!deviceId.startsWith("ESP32_")) return;
-    // ===== WIFI SCAN RESULT =====
-    if (type === "wifi" && sub === "list") {
 
-        const list = typeof data === "string" ? JSON.parse(data) : data;
+    // ✅ INIT GLOBAL
+    window.devices = window.devices || {};
 
-        const select = document.getElementById("wifiSSID");
-        if (!select) return;
-
-        select.innerHTML = "";
-
-        let currentSSID = document.getElementById("SSID")?.innerText || "";
-        currentSSID = currentSSID.match(/[A-Za-z0-9_\-]+/)?.[0] || "";
-
-        list.sort((a, b) => b.rssi - a.rssi);
-
-        list.forEach(net => {
-
-            const option = document.createElement("option");
-
-            const bars = getWifiBars(net.rssi);
-            const lock = net.enc ? "🔒" : "";
-            const active = (net.ssid === currentSSID) ? "⭐" : "";
-
-            option.value = net.ssid;
-            option.textContent = `${bars} ${net.ssid} (${net.rssi} dBm) ${lock} ${active}`;
-
-            if (net.ssid === currentSSID) {
-                option.selected = true;
-            }
-
-            select.appendChild(option);
-        });
-
-        console.log("📡 WIFI LIST:", list);
+    if (!window.devices[deviceId]) {
+        window.devices[deviceId] = {};
     }
 
-    // ===== WIFI STATUS DETAIL =====
+    Object.assign(window.devices[deviceId], data);
+
+    // ✅ AUTO SET DEVICE PERTAMA
+    if (!window.activeDevice) {
+        window.activeDevice = deviceId;
+        localStorage.setItem("activeDevice", deviceId);
+    }
+
+    // ✅ FILTER
+    if (deviceId !== window.activeDevice) return;
+
+
+    if (typeof updateDeviceSelector === "function") {
+        updateDeviceSelector();
+    }
+
+    if (typeof renderDevices === "function") {
+        renderDevices();
+    }
+
+    // ===== WIFI STATUS =====
     if (type === "wifi" && sub === "status") {
 
-        const wifi = typeof data === "string" ? JSON.parse(data) : data;
-
-        const resultBox = document.getElementById("wifiResult");
+        const wifi = data;
 
         document.getElementById("SSID").innerText = wifi.ssid || "-";
         document.getElementById("wifiIP").innerText = wifi.ip || "-";
         document.getElementById("wifiSignal").innerText = wifi.rssi + " dBm";
 
         updateWifiIcon(wifi.rssi, wifi.connected);
-
-        if (wifi.connected) {
-
-            resultBox.innerText = "CONNECTED";
-            resultBox.className = "success";
-
-        } else {
-
-            resultBox.innerText = "DISCONNECTED";
-            resultBox.className = "error";
-        }
-    }
-
-    if (topic === "esp32/config/wifi/progress") {
-
-        console.log("Progress Wifi:", data);
     }
 }
 

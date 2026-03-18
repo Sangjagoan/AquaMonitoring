@@ -29,9 +29,7 @@ https://templatemo.com/tm-609-crypto-vault
             <span></span>
         </div>
     </button>
-
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
     <div class="dashboard">
         <aside class="sidebar" id="sidebar">
             <div class="logo">
@@ -201,11 +199,6 @@ https://templatemo.com/tm-609-crypto-vault
                     <div class="status-title">Uptime</div>
                     <div class="status-value" id="espUptime">-</div>
                 </div>
-                
-                <div class="status-card">
-                    <div id="devices"></div>
-                </div>
-
             </div>
             <!-- Settings Tabs -->
             <div class="settings-tabs">
@@ -217,36 +210,14 @@ https://templatemo.com/tm-609-crypto-vault
             </div>
             <!-- DEVICE SETTINGS -->
             <div class="settings-content active" id="device">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Device Configuration</h3>
-                        <p class="card-description">ESP32 device settings</p>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Device Name</label>
-                        <input type="text" id="deviceName" class="form-input" placeholder="ESP32 AquaMonitor">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Device ID</label>
-                        <input type="text" id="deviceID" class="form-input" placeholder="ESP32-001">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Location</label>
-                        <input type="text" id="deviceLocation" class="form-input" placeholder="Water Tank Room">
-                    </div>
-
-                    <div class="btn-group">
-                        <button class="btn primary" onclick="saveDevice()">Save Device</button>
-                    </div>
+                <div style="display:flex; gap:10px; align-items:center; margin-top:10px;">
+                    <label style="font-size:12px;">Device:</label>
+                    <select id="deviceSelect" class="form-input" style="width:200px;"></select>
                 </div>
             </div>
             <!-- MQTT SETTINGS -->
             <div class="settings-content" id="mqtt">
                 <div class="card">
-
                     <div class="card-header">
                         <h3 class="card-title">MQTT Configuration</h3>
                         <p class="card-description">Configure MQTT broker connection</p>
@@ -280,7 +251,6 @@ https://templatemo.com/tm-609-crypto-vault
                     <div class="btn-group">
                         <button class="btn primary" onclick="saveMQTT()">Save MQTT</button>
                     </div>
-
                 </div>
             </div>
             <!-- Connected Accounts -->
@@ -496,6 +466,8 @@ https://templatemo.com/tm-609-crypto-vault
     </div>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script src="mqtt.js"></script>
+    <script src="device.js"></script>
+    <script src="ui-devices.js"></script>
     <script src="settings.js"></script>
     <script src="ui.js"></script>
     <script src="notifications.js"></script>

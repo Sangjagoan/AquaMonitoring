@@ -1,6 +1,8 @@
 "use strict";
 let serverOffset = 0;
 let lastServerTime = null;
+
+window.activeDevice = localStorage.getItem("activeDevice") || null;
 /* ========================================
    Full Pages
 ======================================== */
@@ -46,6 +48,21 @@ function initCardFullscreen() {
         card.classList.remove("card-fullscreen");
         document.querySelector(".card-overlay")?.remove();
     }
+}
+
+function getDeviceChart(deviceId) {
+
+    window.deviceCharts = window.deviceCharts || {};
+
+    if (!window.deviceCharts[deviceId]) {
+        window.deviceCharts[deviceId] = {
+            c1: createChart(),
+            c2: createChart(),
+            c3: createChart()
+        };
+    }
+
+    return window.deviceCharts[deviceId];
 }
 
 /* ========================================
@@ -302,18 +319,20 @@ document.querySelectorAll(".chart-tab").forEach(btn => {
 
         btn.classList.add("active");
 
+        const charts = getDeviceChart(window.activeDevice);
+
         if (chartId === "1") {
-            CHART1.mode = mode;
-            drawChart(CHART1, "voltLine1", "voltArea1", "voltLabels1", "chartLabels1");
+            charts.c1.mode = mode;
+            drawChart(charts.c1, "voltLine1", "voltArea1", "voltLabels1", "chartLabels1");
         }
 
         if (chartId === "2") {
-            CHART2.mode = mode;
-            drawChart(CHART2, "voltLine2", "voltArea2", "voltLabels2", "chartLabels2");
+            charts.c2.mode = mode;
+            drawChart(charts.c2, "voltLine2", "voltArea2", "voltLabels2", "chartLabels2");
         }
         if (chartId === "3") {
-            CHART3.mode = mode;
-            drawChart(CHART3, "cmLine", "cmArea", "cmLabels", "chartLabels3");
+            charts.c3.mode = mode;
+            drawChart(charts.c3, "cmLine", "cmArea", "cmLabels", "chartLabels3");
         }
     }
 });
@@ -339,9 +358,10 @@ function saveChartHistory() {
     };
 
     try {
-        localStorage.setItem("c1", JSON.stringify(c1));
-        localStorage.setItem("c2", JSON.stringify(c2));
-        localStorage.setItem("c3", JSON.stringify(c3));
+        const id = window.activeDevice;
+        localStorage.setItem(`c1_${id}`, JSON.stringify(c1));
+        localStorage.setItem(`c2_${id}`, JSON.stringify(c2));
+        localStorage.setItem(`c3_${id}`, JSON.stringify(c3));
     } catch (e) {
         console.warn("Storage penuh, reset history");
         localStorage.clear();
@@ -504,16 +524,6 @@ function enableChartScroll(chart) {
 
 }
 
-let voltageHistory1 = [];
-let voltageHistory2 = [];
-
-function updateVoltageChart(v1, v2) {
-
-    updateChart(v1, voltageHistory1, "sparkVoltLine1", "sparkVoltArea1");
-    updateChart(v2, voltageHistory2, "sparkVoltLine2", "sparkVoltArea2");
-
-}
-
 function updateChart(value, history, lineId, areaId) {
 
     history.push(value);
@@ -565,7 +575,7 @@ function sparkline(lineId, areaId, value) {
     const areaEl = document.getElementById(areaId);
 
     // jika elemen belum ada → stop
-    if(!lineEl || !areaEl) return;
+    if (!lineEl || !areaEl) return;
 
     if (!sparkHistory[lineId])
         sparkHistory[lineId] = [];
@@ -617,13 +627,22 @@ window.addEventListener("load", () => {
     // initCardFullscreen();
     loadChartHistory();
     setInterval(saveChartHistory, 5000);
-    setInterval(chartRenderLoop, 2000); // redraw tiap 1 detik
+    setInterval(() => {
+        if (!window.activeDevice) return;
+
+        const charts = getDeviceChart(window.activeDevice);
+
+        drawChart(charts.c1, "voltLine1", "voltArea1", "voltLabels1", "chartLabels1");
+        drawChart(charts.c2, "voltLine2", "voltArea2", "voltLabels2", "chartLabels2");
+        drawChart(charts.c3, "cmLine", "cmArea", "cmLabels", "chartLabels3");
+
+    }, 2000);
     enableChartZoomPan("voltChart1");
     enableChartZoomPan("voltChart2");
     enableChartZoomPan("cmChart");
     enableCrosshair(
         "voltChart1",
-        CHART1,
+        getDeviceChart(window.activeDevice).c1,
         "crosshairText1",
         "crosshairX1",
         "crosshairY1"
@@ -631,7 +650,7 @@ window.addEventListener("load", () => {
 
     enableCrosshair(
         "voltChart2",
-        CHART2,
+        getDeviceChart(window.activeDevice).c2,
         "crosshairText2",
         "crosshairX2",
         "crosshairY2"
@@ -639,7 +658,7 @@ window.addEventListener("load", () => {
 
     enableCrosshair(
         "cmChart",
-        CHART3,
+        getDeviceChart(window.activeDevice).c3,
         "crosshairText3",
         "crosshairX3",
         "crosshairY3"

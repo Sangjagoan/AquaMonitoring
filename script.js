@@ -1,11 +1,14 @@
 
 "use strict";
-window.devices = window.devices || {};
-window.activeDevice = window.activeDevice || null;
 
+let deviceNames = JSON.parse(localStorage.getItem("deviceNames") || "{}");
+
+// 🔥 ambil dari global
 const devices = window.devices;
+window.activeDevice
+
 function num(v) {
-    return Number(v) || 0;
+    return Number(v || 0);
 }
 
 function updateElement(id, value) {
@@ -36,97 +39,106 @@ function onMQTTData(topic, data) {
     const type = parts[2];
     const sub = parts[3];
 
-    // skip kalau bukan device valid
-    if (!deviceId.startsWith("ESP32_")) return;
+    // validasi device
+    if (!deviceId.includes("ESP32") && !deviceId.includes("MTQ")) return;
 
-    // =========================
-    // DATA
-    // =========================
+    if (typeof data !== "object" || data === null) return;
+
+    // init global
+    if (!window.devices) window.devices = {};
+
+    // simpan data
+    if (!window.devices[deviceId]) {
+        window.devices[deviceId] = {};
+    }
+    Object.assign(window.devices[deviceId], data);
+
+    // set active device pertama
+    if (!window.activeDevice) {
+        window.activeDevice = deviceId;
+        localStorage.setItem("activeDevice", deviceId);
+    }
+
     if (type === "data") {
 
-        if (!devices[deviceId]) {
-            devices[deviceId] = {};
+        const charts = getDeviceChart(deviceId);
+
+        // 🔥 SELALU simpan data (semua device)
+        pushVoltage(charts.c1, data.v1);
+        pushVoltage(charts.c2, data.v2);
+        pushVoltage(charts.c3, data.tAir);
+
+        // hanya render kalau aktif
+        if (deviceId === window.activeDevice) {
+
+            updateUIFromDevice();
+
+            pushPressureCandle(PSI_CANDLE, data.psi);
+            pushPressureCandle(KG_CANDLE, data.kg);
+
+            drawPressureCandles(PSI_CANDLE, "pressurePsiChart");
+            drawPressureCandles(KG_CANDLE, "pressureKgChart");
         }
-
-        devices[deviceId] = data;
-
-        if (!window.activeDevice) {
-            window.activeDevice = deviceId;
-        }
-
-        if (deviceId !== window.activeDevice) return;
-
-        console.log("ALL DEVICES:", devices);
-
-        updateAquaBars(data.lvl, data.tAir, data.jar);
-        updateElectrical(data);
-
-        sparkline("sparkVoltLine1", "sparkVoltArea1", data.v1);
-        sparkline("sparkVoltLine2", "sparkVoltArea2", data.v2);
-        sparkline("sparkAmpLine1", "sparkAmpArea1", data.a1);
-        sparkline("sparkAmpLine2", "sparkAmpArea2", data.a1);
-
-        sparkline("sparkPowerLine1", "sparkPowerArea1", data.p1);
-        sparkline("sparkPowerLine2", "sparkPowerArea2", data.p2);
-
-        sparkline("sparkEnergyLine1", "sparkEnergyArea1", data.e1);
-        sparkline("sparkEnergyLine2", "sparkEnergyArea2", data.e2);
-
-        sparkline("sparkFreqLine1", "sparkFreqArea1", data.f1);
-        sparkline("sparkFreqLine2", "sparkFreqArea2", data.f2);
-
-        pushVoltage(CHART1, data.v1);
-        pushVoltage(CHART2, data.v2);
-        pushVoltage(CHART3, data.tAir);
-
-        chartRenderLoop();
-
-        pushPressureCandle(PSI_CANDLE, data.psi);
-        pushPressureCandle(KG_CANDLE, data.kg);
-
-        drawPressureCandles(PSI_CANDLE, "pressurePsiChart");
-        drawPressureCandles(KG_CANDLE, "pressureKgChart");
-
-        updateDashboardPressureValues(data);
-
-        updatePressureGauges(
-            Number(data.psi),
-            Number(data.kg),
-            Number(data.br)
-        );
     }
 
     // =========================
-    // INDIKATOR
+    // STATE
     // =========================
-    if (type === "state") {
-
-        if (!devices[deviceId]) devices[deviceId] = {};
-        devices[deviceId].indikator = data;
-
-        if (deviceId !== window.activeDevice) return;
+    if (type === "indikator" && sub === "state" && deviceId === window.activeDevice) {
 
         setLed("ledTutup", data.ot);
         setLed("ledBuka", data.ob);
-        
-        console.log(" STATE:", data);
     }
 
     // =========================
     // UPTIME
     // =========================
-    if (type === "uptime") {
+    if (type === "uptime" && deviceId === window.activeDevice) {
 
         const d = typeof data === "string" ? JSON.parse(data) : data;
 
-        if (!devices[deviceId]) devices[deviceId] = {};
-        devices[deviceId].uptime = d;
-
-        if (deviceId !== window.activeDevice) return;
-
         updateElement("uptime", formatUptime(d.up));
-        console.log(" UPTIME:", data);
+
+        console.log("UPTIME:", data);
     }
+}
+
+function updateUIFromDevice() {
+    const id = window.activeDevice;
+    if (!id) return;
+
+    const d = window.devices[id];
+    if (!d) return;
+
+    const charts = getDeviceChart(id);
+
+    console.log("RENDER DEVICE:", id, d);
+
+    updateAquaBars(d.lvl, d.tAir, d.jar);
+    updateElectrical(d);
+
+    sparkline("sparkVoltLine1", "sparkVoltArea1", d.v1);
+    sparkline("sparkVoltLine2", "sparkVoltArea2", d.v2);
+
+    sparkline("sparkAmpLine1", "sparkAmpArea1", d.a1);
+    sparkline("sparkAmpLine2", "sparkAmpArea2", d.a2);
+
+    sparkline("sparkPowerLine1", "sparkPowerArea1", d.p1);
+    sparkline("sparkPowerLine2", "sparkPowerArea2", d.p2);
+
+    sparkline("sparkEnergyLine1", "sparkEnergyArea1", d.e1);
+    sparkline("sparkEnergyLine2", "sparkEnergyArea2", d.e2);
+
+    sparkline("sparkFreqLine1", "sparkFreqArea1", d.f1);
+    sparkline("sparkFreqLine2", "sparkFreqArea2", d.f2);
+
+    updateDashboardPressureValues(d);
+
+    updatePressureGauges(
+        Number(d.psi),
+        Number(d.kg),
+        Number(d.br)
+    );
 }
 
 function updateElectrical(d) {
@@ -150,10 +162,10 @@ function updatePressure(d) {
 }
 
 function updateDashboardPressureValues(data) {
-    updateElement('kalmanPressureValue', data.kPsi.toFixed(0));
-    updateElement('nonKalmanPressure', data.nkPsi.toFixed(0));
-    updateElement('psi', data.psi.toFixed(2));
-    updateElement('kg', data.kg.toFixed(2));
+    updateElement('kalmanPressureValue', num(data.kPsi).toFixed(0));
+    updateElement('nonKalmanPressure', num(data.nkPsi).toFixed(0));
+    updateElement('psi', num(data.psi).toFixed(2));
+    updateElement('kg', num(data.kg).toFixed(2));
 }
 
 window.addEventListener("load", () => {
