@@ -114,4 +114,10 @@ function mqttOnMessage(topic, payload) {
 
     if (typeof onMQTTAlarm === "function")
         onMQTTAlarm(topic, data);
+
+    console.log("devices", window.devices);
+
+     if (typeof renderDevices === "function") {
+        renderDevices();
+    }
 }
