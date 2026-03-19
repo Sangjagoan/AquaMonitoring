@@ -47,6 +47,7 @@ https://templatemo.com/tm-609-crypto-vault
     --overlay: rgba(0, 0, 0, 0.5);
     --wifi-diconnected: rgba(255, 0, 0, 0.5);
     --geuge: rgb(255, 0, 0);
+    --device: #3a3a3c;
 }
 
 /* ========================================
@@ -72,6 +73,7 @@ https://templatemo.com/tm-609-crypto-vault
     --overlay: rgba(0, 0, 0, 0.5);
     --wifi-diconnected: rgba(255, 0, 0, 0.5);
     --geuge: rgb(85, 0, 255);
+    --device: rgb(255, 0, 0);
 }
 
 /* ========================================
@@ -882,6 +884,7 @@ TAMBAHAN
     background: #2a2a31;
 }
 
-.uptime{
-    color:var(--text-muted);
+.uptime {
+    color: var(--text-muted);
+    position: initial;
 }

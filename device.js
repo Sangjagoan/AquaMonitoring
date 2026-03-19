@@ -34,12 +34,14 @@ document.addEventListener("change", (e) => {
         window.activeDevice = e.target.value;
         localStorage.setItem("activeDevice", window.activeDevice);
 
-        console.log("SWITCH DEVICE:", window.activeDevice);
+    const selec = document.getElementById(window.activeDevice);
+    if (!selec) return;
 
         // 🔥 refresh semua UI
         if (typeof renderDevices === "function") renderDevices();
         if (typeof refreshDeviceUI === "function") refreshDeviceUI();
     }
+    
 });
 
 
@@ -80,6 +82,7 @@ function switchDevice(deviceId) {
 
     window.activeDevice = deviceId;
     localStorage.setItem("activeDevice", deviceId);
+    localStorage.setItem("activeDevices", deviceId);
 
     renderDevices();
 

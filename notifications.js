@@ -23,7 +23,7 @@ function initNotifications() {
 
 }
 
-function addNotification(msg, type = "info") {
+function addNotification(msg, type = "info", value) {
 
     if (!alarmEnabled) return;
 
@@ -32,6 +32,7 @@ function addNotification(msg, type = "info") {
     const notif = {
         msg,
         type,
+        value,
         time
     };
 
@@ -41,7 +42,6 @@ function addNotification(msg, type = "info") {
         notifications.pop();
 
     renderNotifications();
-
 }
 
 function renderNotifications() {
@@ -55,16 +55,28 @@ function renderNotifications() {
 
     notifications.forEach(n => {
 
+        const unitMap = {
+            "_Current OverLoad": "A",
+            "Pressure High": "bar"
+        };
+
+        const unit = unitMap[n.msg] || "";
+
+        const hasValue = n.value !== undefined && n.value !== null;
+
+        const text = hasValue
+            ? `${n.msg} (${n.value}${unit ? " " + unit : ""})`
+            : n.msg;
+
         const li = document.createElement("li");
 
         li.innerHTML = `
-            <b>${n.type.toUpperCase()}</b><br>
-            ${n.msg}<br>
-            <small>${n.time}</small>
-            `;
+        <b>${n.type.toUpperCase()}</b><br>
+        ${text}<br>
+        <small>${n.time}</small>
+        `;
 
         list.appendChild(li);
-
     });
 
     count.textContent = notifications.length;
@@ -72,29 +84,36 @@ function renderNotifications() {
 }
 
 function onMQTTAlarm(topic, data) {
-    
+
     const parts = topic.split("/");
     if (parts.length < 3) return;
 
     const deviceId = parts[1];
     const type = parts[2];
-    const sub = parts[3];
 
     // skip kalau bukan device valid
     if (!deviceId.startsWith("ESP32_")) return;
 
     if (type === "alarm") {
 
-        const parts = topic.split("/");
-        const deviceId = parts[1]; // ← ambil ID device
-
-        console.log("Device:", deviceId, data);
-
         console.log("ALARM RX:", topic, data);
-        addNotification(data.msg, data.type);
+        console.log("ALARM DATA:", data);
+        // 🔥 pastikan device ada
+        if (!window.devices[deviceId]) {
+            window.devices[deviceId] = {};
+        }
 
+        // 🔥 simpan alarm ke device
+        window.devices[deviceId].alarm = data;
+
+        // 🔥 simpan waktu (biar bisa expire kalau mau)
+        window.devices[deviceId].alarmTime = Date.now();
+
+        // 🔥 notif popup
+        addNotification(data.msg, data.type, data.value);
+        // 🔥 refresh UI
+        renderDevices();
     }
-
 }
 
 window.addEventListener("load", () => {

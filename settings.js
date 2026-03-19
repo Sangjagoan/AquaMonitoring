@@ -192,9 +192,12 @@ function onMQTTWifi(topic, data) {
         document.getElementById("SSID").innerText = wifi.ssid || "-";
         document.getElementById("wifiIP").innerText = wifi.ip || "-";
         document.getElementById("wifiSignal").innerText = wifi.rssi + " dBm";
+        
+        document.getElementById("deviceIP").innerText = wifi.ip || "-";
+        document.getElementById("wifiRSSI").innerText = wifi.rssi + " dBm";
 
         updateWifiIcon(wifi.rssi, wifi.connected);
-    }
+    }wifiRSSI
 }
 
 function getWifiBars(rssi) {

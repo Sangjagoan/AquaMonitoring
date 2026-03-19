@@ -327,12 +327,17 @@
 }
 
 /* =============== */
-.active-device {
-    border: 2px solid #ff9f43;
-    box-shadow: 0 0 15px rgba(255, 159, 67, 0.8);
-    background: linear-gradient(
-        145deg,
-        rgba(255, 159, 67, 0.1),
-        rgba(255, 159, 67, 0.02)
-    );
+
+.card {
+    border: 1px solid #333;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    transition: 0.2s;
+}
+
+.card.active-device {
+    border: 2px solid var(--accent-copper);
+    background: var(--border);
+    box-shadow: 0 0 10px var(--accent-copper);
 }
