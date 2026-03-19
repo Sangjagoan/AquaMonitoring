@@ -2,10 +2,8 @@
 
 window.activeDevice = localStorage.getItem("activeDevice") || null;
 
-// 🔥 ambil dari global
-const devices = window.devices;
+window.devices
 window.activeDevice
-
 // 🌙 Day / Night Mode Control
 document.querySelectorAll('input[name="mode"]').forEach(radio => {
     radio.addEventListener("change", () => {
@@ -31,9 +29,9 @@ function publishDevice(suffix, payload) {
         ? payload
         : JSON.stringify(payload);
 
-    mqttClient.publish(topic, finalPayload);
-
     console.log("MQTT SEND:", topic, finalPayload);
+
+    mqttClient.publish(topic, finalPayload);
 }
 
 function saveDayNightConfigMQTT() {
@@ -108,10 +106,10 @@ function setLed(id, state, colorTrue = "green", colorFalse = "red") {
 
 function toggleValve(valve, state) {
 
-    const payload = JSON.stringify({
+    const payload = {
         valve: valve,
         state: state ? "on" : "off"
-    });
+    };
 
     publishDevice("panel/stopkran/set", payload);
 
@@ -144,7 +142,7 @@ function savePumpSetting() {
 
     })
 
-    publishDevice("esp32/panel/pump/set", payload);
+    publishDevice("panel/pump/set", payload);
 
 }
 
@@ -167,7 +165,7 @@ function savePressureSetting() {
 
     });
 
-    publishDevice("esp32/panel/pressure/set", payload);
+    publishDevice("panel/pressure/set", payload);
 
 }
 
@@ -192,7 +190,7 @@ function toggleHealth(state) {
         hlt: state
     });
 
-    publishDevice( "esp32/panel/system/set", payload);
+    publishDevice("panel/system/set", payload);
 
 }
 
@@ -204,23 +202,33 @@ function onMQTTData(topic, data) {
     const type = parts[2];
     const sub = parts[3];
 
-
     if (!deviceId.startsWith("ESP32_")) return;
 
-    // init global
-    if (!window.devices) window.devices = {};
+    // ✅ INIT GLOBAL
+    window.devices = window.devices || {};
 
-    // simpan data
     if (!window.devices[deviceId]) {
         window.devices[deviceId] = {};
     }
+
     Object.assign(window.devices[deviceId], data);
 
-    // set active device pertama
+    // ✅ AUTO SET DEVICE PERTAMA
     if (!window.activeDevice) {
         window.activeDevice = deviceId;
-        localStorage.setItem("activeDevice", deviceId);
+        localStorage.setItem("device", deviceId);
     }
+
+    if (typeof updateDeviceSelector === "function") {
+        updateDeviceSelector();
+    }
+
+    if (typeof renderDevices === "function") {
+        renderDevices();
+    }
+
+    // ✅ FILTER
+    if (deviceId !== window.activeDevice) return;
 
     if (type === "daynight" && sub === "state" && deviceId === window.activeDevice) {
 

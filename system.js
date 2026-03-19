@@ -1,14 +1,12 @@
 
 "use strict";
+
 window.activeDevice = localStorage.getItem("activeDevice") || null;
+window.devices
+window.activeDevice
 /* ========================================
  SYSTEM MONITORING
 ======================================== */
-
-// 🔥 ambil dari global
-window.devices
-window.activeDevice
-
 async function loadSystemStatus(d) {
     console.log("System status:", d);
 
@@ -63,6 +61,7 @@ function formatUptime(seconds) {
 }
 
 function onMQTTData(topic, data) {
+
     const parts = topic.split("/");
     if (parts.length < 3) return;
 
@@ -70,8 +69,11 @@ function onMQTTData(topic, data) {
     const type = parts[2];
     const sub = parts[3];
 
-    // filter device valid
-    if (!window.devices) window.devices = {};
+   
+    if (!deviceId.startsWith("ESP32_")) return;
+
+    // ✅ INIT GLOBAL
+    window.devices = window.devices || {};
 
     if (!window.devices[deviceId]) {
         window.devices[deviceId] = {};
@@ -79,14 +81,23 @@ function onMQTTData(topic, data) {
 
     Object.assign(window.devices[deviceId], data);
 
+    // ✅ AUTO SET DEVICE PERTAMA
+    if (!window.activeDevice) {
+        window.activeDevice = deviceId;
+        localStorage.setItem("device", deviceId);
+    }
+
     if (typeof updateDeviceSelector === "function") {
         updateDeviceSelector();
     }
 
-    if (!window.activeDevice && !localStorage.getItem("activeDevice")) {
-        window.activeDevice = deviceId;
+    if (typeof renderDevices === "function") {
+        renderDevices();
     }
 
+    // ✅ FILTER
+    if (deviceId !== window.activeDevice) return;
+    
     if (type === "data" && deviceId === window.activeDevice) {
         loadSystemStatus(data);
         updateHealthUI(data);
@@ -102,8 +113,6 @@ function onMQTTData(topic, data) {
 
         document.getElementById("uptimeValue").textContent = formatUptime(d.up);
     }
-
-
 }
 
 window.addEventListener("load", () => {

@@ -292,8 +292,82 @@
     margin-top: 20px;
 }
 
+/* devices analisa */
+
+.header {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0px;
+}
+
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-device {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--bg-card);
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s ease;
+    color:var(--text-primary);
+    border-color: var(--accent-copper);
+}
+
+.header-device:focus-within {
+    border-color: var(--accent-copper);
+}
+
+
 /* ++++++++++++++++++ */
-.active-device {
+/* .active-device {
     border: 2px solid #4fc3f7;
     box-shadow: 0 0 10px rgba(79,195,247,0.5);
+} */
+
+/* .device-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
 }
+
+.card {
+    background: #1e1e1e;
+    border-radius: 12px;
+    padding: 12px;
+    transition: 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+} */
+
+
+/* .device-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.card {
+    background: #1e1e1e;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.card h3 {
+    cursor: pointer;
+    margin: 0;
+}
+
+.card h3:hover {
+    opacity: 0.7;
+} */

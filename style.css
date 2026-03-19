@@ -881,3 +881,7 @@ TAMBAHAN
 .notification-dropdown li:hover {
     background: #2a2a31;
 }
+
+.uptime{
+    color:var(--text-muted);
+}

@@ -59,6 +59,14 @@ function onMQTTData(topic, data) {
         localStorage.setItem("activeDevice", deviceId);
     }
 
+    if (typeof updateDeviceSelector === "function") {
+        updateDeviceSelector();
+    }
+
+    if (typeof renderDevices === "function") {
+        renderDevices();
+    }
+
     if (type === "data") {
 
         const charts = getDeviceChart(deviceId);

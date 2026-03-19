@@ -166,9 +166,14 @@ https://templatemo.com/tm-609-crypto-vault
         </aside>
 
         <main class="main-content">
-            <div class="page-header">
+            <div class="header">
+                <div class="page-header">
                 <h1>Settings</h1>
                 <p>Manage your account preferences and security</p>
+                </div>
+                <div class="header-right">
+                    <select class="header-device" id="deviceSelect"></select>
+                </div>
             </div>
             <!-- Settings Tabs -->
             <div class="settings-tabs">
@@ -419,9 +424,10 @@ https://templatemo.com/tm-609-crypto-vault
         </main>
     </div>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="ui-devices.js"></script>
     <script src="mqtt.js"></script>
-    <script src="device.js"></script>
     <script src="control.js"></script>
+    <script src="device.js"></script>
     <script src="ui.js"></script>
 </body>
 

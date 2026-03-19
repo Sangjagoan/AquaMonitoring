@@ -19,6 +19,13 @@ https://templatemo.com/tm-609-crypto-vault
     margin-bottom: 32px;
 }
 
+.header-analisa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0px;
+}
+
 .header h1 {
     font-size: 28px;
     font-weight: 700;
@@ -37,7 +44,7 @@ https://templatemo.com/tm-609-crypto-vault
     gap: 20px;
 }
 
-.header-search {
+.header-devices {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -46,31 +53,30 @@ https://templatemo.com/tm-609-crypto-vault
     border-radius: 10px;
     border: 1px solid var(--border);
     transition: border-color 0.2s ease;
-}
-
-.header-search:focus-within {
+    color:var(--text-primary);
     border-color: var(--accent-copper);
 }
 
-.header-search svg {
-    color: var(--text-muted);
+.header-devices:focus-within {
+    border-color: var(--accent-copper);
 }
 
-.header-search input {
-    background: none;
-    border: none;
-    color: var(--text-primary);
-    font-size: 15px;
-    width: 180px;
-    font-family: inherit;
+
+.header-device {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--bg-card);
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s ease;
+    color:var(--text-primary);
+    border-color: var(--accent-copper);
 }
 
-.header-search input::placeholder {
-    color: var(--text-muted);
-}
-
-.header-search input:focus {
-    outline: none;
+.header-device:focus-within {
+    border-color: var(--accent-copper);
 }
 
 .notification-btn {

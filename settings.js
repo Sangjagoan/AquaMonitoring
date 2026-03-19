@@ -1,7 +1,5 @@
 "use strict";
-
-let deviceNames = JSON.parse(localStorage.getItem("deviceNames") || "{}");
-
+window.activeDevice = localStorage.getItem("activeDevice") || null;
 window.devices
 window.activeDevice
 
@@ -70,8 +68,8 @@ function scanWiFi() {
         return;
     }
 
-    publishDevice("cmd/wifi/scan", payload);
-    
+    publishDevice("cmd/wifi/scan", {});
+
 }
 
 function save() {
@@ -93,7 +91,7 @@ function save() {
         password: pass
     };
 
-    publishDevice( "esp32/config/wifi/set", payload);
+    publishDevice("config/wifi/set", payload);
 
     const resultBox = document.getElementById("wifiResult");
 
@@ -143,21 +141,20 @@ function initResetPzem() {
         confirm: "YES"
     };
 
-    publishDevice( "panel/pzem/reset", payload);
+    publishDevice("panel/pzem/reset", payload);
 
 }
 
 function onMQTTWifi(topic, data) {
 
     console.log("MQTT RX:", data);
-    console.log("ACTIVE DEVICE:", window.activeDevice);
-
     const parts = topic.split("/");
     if (parts.length < 3) return;
 
     const deviceId = parts[1];
     const type = parts[2] || "";
     const sub = parts[3] || "";
+
 
     if (!deviceId.startsWith("ESP32_")) return;
 
@@ -173,12 +170,8 @@ function onMQTTWifi(topic, data) {
     // ✅ AUTO SET DEVICE PERTAMA
     if (!window.activeDevice) {
         window.activeDevice = deviceId;
-        localStorage.setItem("activeDevice", deviceId);
+        localStorage.setItem("device", deviceId);
     }
-
-    // ✅ FILTER
-    if (deviceId !== window.activeDevice) return;
-
 
     if (typeof updateDeviceSelector === "function") {
         updateDeviceSelector();
@@ -187,6 +180,9 @@ function onMQTTWifi(topic, data) {
     if (typeof renderDevices === "function") {
         renderDevices();
     }
+
+    // ✅ FILTER
+    if (deviceId !== window.activeDevice) return;
 
     // ===== WIFI STATUS =====
     if (type === "wifi" && sub === "status") {
@@ -213,4 +209,5 @@ function getWifiBars(rssi) {
 
 window.addEventListener("load", () => {
     mqttStart();
+
 });
