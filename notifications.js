@@ -13,27 +13,34 @@ function initNotifications() {
     });
 
     document.addEventListener("click", (e) => {
-
-        if (!btn.contains(e.target) &&
-            !dropdown.contains(e.target)) {
+        if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
             dropdown.classList.remove("active");
         }
-
     });
-
 }
 
-function addNotification(msg, type = "info", value) {
+function addNotification(msg, type = "info", value, deviceId) {
 
     if (!alarmEnabled) return;
 
     const time = new Date().toLocaleTimeString();
 
+    // 🔥 anti duplicate
+    const last = notifications[0];
+    if (last &&
+        last.msg === msg &&
+        last.type === type &&
+        last.deviceId === deviceId) {
+        return;
+    }
+
     const notif = {
         msg,
         type,
         value,
-        time
+        time,
+        deviceId,
+        createdAt: Date.now() // 🔥 expiry
     };
 
     notifications.unshift(notif);
@@ -51,36 +58,47 @@ function renderNotifications() {
 
     if (!list) return;
 
+    const now = Date.now();
+
+    // 🔥 auto expire (15 detik)
+    notifications = notifications.filter(n => (now - n.createdAt) < 15000);
+
     list.innerHTML = "";
 
-    notifications.forEach(n => {
+    notifications.filter(n => n.deviceId === window.activeDevice) // 🔥 penting
+        .forEach(n => {
 
-        const unitMap = {
-            "_Current OverLoad": "A",
-            "Pressure High": "bar"
-        };
+            const unitMap = {
+                "_Current OverLoad": "A",
+                "Pressure OVERLOAD": "bar",
+                "Voltage Overload": "V"
+            };
 
-        const unit = unitMap[n.msg] || "";
+            const unit = unitMap[n.msg] || "";
 
-        const hasValue = n.value !== undefined && n.value !== null;
+            const hasValue = n.value !== undefined && n.value !== null;
 
-        const text = hasValue
-            ? `${n.msg} (${n.value}${unit ? " " + unit : ""})`
-            : n.msg;
+            const text = hasValue
+                ? `${n.msg} (${n.value}${unit ? " " + unit : ""})`
+                : n.msg;
 
-        const li = document.createElement("li");
+            const li = document.createElement("li");
 
-        li.innerHTML = `
+            li.innerHTML = `
         <b>${n.type.toUpperCase()}</b><br>
         ${text}<br>
         <small>${n.time}</small>
         `;
 
-        list.appendChild(li);
-    });
+            list.appendChild(li);
+        });
 
-    count.textContent = notifications.length;
+    const activeNotifs = notifications.filter(n =>
+    n.deviceId === window.activeDevice &&
+    n.type !== "clear" // 🔥 jangan hitung normal
+);
 
+count.textContent = activeNotifs.length;
 }
 
 function onMQTTAlarm(topic, data) {
@@ -91,32 +109,48 @@ function onMQTTAlarm(topic, data) {
     const deviceId = parts[1];
     const type = parts[2];
 
-    // skip kalau bukan device valid
     if (!deviceId.startsWith("ESP32_")) return;
 
+    if (data.type === "clear" && window.devices[deviceId]?.alarmTime) {
+        const age = Date.now() - window.devices[deviceId].alarmTime;
+        if (age < 3000) return; // tahan 3 detik
+    }
+
+    if (data.type === "clear") {
+
+        delete window.devices[deviceId].alarm;
+
+        // 🔥 hapus semua notif device ini
+        notifications = notifications.filter(n => n.deviceId !== deviceId);
+
+        // 🔥 tambahkan state normal
+        addNotification(data.msg, data.type, data.value, deviceId);
+
+        renderDevices();
+        renderNotifications();
+        return;
+    }
     if (type === "alarm") {
 
-        console.log("ALARM RX:", topic, data);
         console.log("ALARM DATA:", data);
-        // 🔥 pastikan device ada
+
         if (!window.devices[deviceId]) {
             window.devices[deviceId] = {};
         }
 
-        // 🔥 simpan alarm ke device
         window.devices[deviceId].alarm = data;
-
-        // 🔥 simpan waktu (biar bisa expire kalau mau)
         window.devices[deviceId].alarmTime = Date.now();
 
-        // 🔥 notif popup
-        addNotification(data.msg, data.type, data.value);
-        // 🔥 refresh UI
+        // 🔥 hapus notif lama device ini
+        notifications = notifications.filter(n => n.deviceId !== deviceId);
+
+        // 🔥 WAJIB: tambahkan notif baru
+        addNotification(data.msg, data.type, data.value, deviceId);
+
         renderDevices();
     }
 }
 
 window.addEventListener("load", () => {
     initNotifications();
-
 });
