@@ -1,5 +1,26 @@
 let notifications = [];
 let alarmEnabled = true;
+let lastSoundTime = 0;
+
+const soundMap = {
+    error: new Audio("/sound/error.mp3"),
+    warning: new Audio("/sound/warning.mp3"),
+    clear: new Audio("/sound/clear.mp3")
+};
+
+function playNotifSound(type) {
+    const now = Date.now();
+
+    if (now - lastSoundTime < 1000) return; // 🔥 minimal 1 detik
+
+    const s = soundMap[type];
+    if (!s) return;
+
+    s.currentTime = 0;
+    s.play().catch(() => { });
+
+    lastSoundTime = now;
+}
 
 function initNotifications() {
 
@@ -94,11 +115,18 @@ function renderNotifications() {
         });
 
     const activeNotifs = notifications.filter(n =>
-    n.deviceId === window.activeDevice &&
-    n.type !== "clear" // 🔥 jangan hitung normal
-);
+        n.deviceId === window.activeDevice &&
+        n.type !== "clear" // 🔥 jangan hitung normal
+    );
 
-count.textContent = activeNotifs.length;
+    // 🔥 pulse logic
+    if (activeNotifs.length > 0) {
+        count.classList.add("pulse");
+    } else {
+        count.classList.remove("pulse");
+    }
+
+    count.textContent = activeNotifs.length;
 }
 
 function onMQTTAlarm(topic, data) {
@@ -125,6 +153,7 @@ function onMQTTAlarm(topic, data) {
 
         // 🔥 tambahkan state normal
         addNotification(data.msg, data.type, data.value, deviceId);
+        playNotifSound(data.type);
 
         renderDevices();
         renderNotifications();
@@ -146,9 +175,11 @@ function onMQTTAlarm(topic, data) {
 
         // 🔥 WAJIB: tambahkan notif baru
         addNotification(data.msg, data.type, data.value, deviceId);
+        playNotifSound(data.type);
 
         renderDevices();
     }
+
 }
 
 window.addEventListener("load", () => {
