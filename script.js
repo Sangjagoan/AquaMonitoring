@@ -86,6 +86,9 @@ function onMQTTData(topic, data) {
 
             drawPressureCandles(PSI_CANDLE, "pressurePsiChart");
             drawPressureCandles(KG_CANDLE, "pressureKgChart");
+
+            const el = document.getElementById("mqttStatus");
+
         }
     }
 

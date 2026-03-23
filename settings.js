@@ -1,7 +1,6 @@
 "use strict";
 window.activeDevice = localStorage.getItem("activeDevice") || null;
-window.devices
-window.activeDevice
+window.devices = window.devices || {};
 
 function updateWifiIcon(rssi, connected) {
 
@@ -192,12 +191,28 @@ function onMQTTWifi(topic, data) {
         document.getElementById("SSID").innerText = wifi.ssid || "-";
         document.getElementById("wifiIP").innerText = wifi.ip || "-";
         document.getElementById("wifiSignal").innerText = wifi.rssi + " dBm";
-        
+
         document.getElementById("deviceIP").innerText = wifi.ip || "-";
         document.getElementById("wifiRSSI").innerText = wifi.rssi + " dBm";
 
         updateWifiIcon(wifi.rssi, wifi.connected);
-    }wifiRSSI
+    }
+
+    if (type === "data") {
+
+        if (deviceId !== window.activeDevice) return;
+
+        const el = document.getElementById("mqttStatus");
+
+        // hanya render kalau aktif
+        const statusMap = {
+            true: "Connected",
+            false: "Disconnected"
+        };
+
+        el.innerText = statusMap[data.mq] ?? "-";
+
+    }
 }
 
 function getWifiBars(rssi) {

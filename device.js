@@ -83,7 +83,15 @@ function switchDevice(deviceId) {
 
     window.activeDevice = deviceId;
     localStorage.setItem("activeDevice", deviceId);
-    localStorage.setItem("activeDevices", deviceId);
+
+    // 🔥 RESET dulu biar gak nyangkut
+    const el = document.getElementById("mqttStatus");
+    if (el) el.innerText = "-";
+
+    // 🔥 LOAD dari cache device
+    if (typeof updateDeviceUI === "function") {
+        updateDeviceUI(deviceId);
+    }
 
     renderDevices();
 
@@ -93,6 +101,21 @@ function switchDevice(deviceId) {
             block: "center"
         });
     }, 100);
+}
+
+function updateDeviceUI(deviceId) {
+
+    const device = window.devices?.[deviceId];
+    const el = document.getElementById("mqttStatus");
+
+    if (!el) return;
+
+    if (!device || device.mq === undefined) {
+        el.innerText = "-";
+        return;
+    }
+
+    el.innerText = device.mq ? "Connected" : "Disconnected";
 }
 
 
