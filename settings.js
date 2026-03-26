@@ -187,7 +187,7 @@ function onMQTTWifi(topic, data) {
     if (type === "wifi" && sub === "status") {
 
         const wifi = data;
-
+        console.log("wifi", data);
         document.getElementById("SSID").innerText = wifi.ssid || "-";
         document.getElementById("wifiIP").innerText = wifi.ip || "-";
         document.getElementById("wifiSignal").innerText = wifi.rssi + " dBm";
@@ -196,6 +196,14 @@ function onMQTTWifi(topic, data) {
         document.getElementById("wifiRSSI").innerText = wifi.rssi + " dBm";
 
         updateWifiIcon(wifi.rssi, wifi.connected);
+        const statusEl = document.getElementById("wifiStatus");
+        if (wifi.connected) {
+            statusEl.innerText = "CONNECTED";
+            statusEl.style.color = "var(--text-primary)"
+        } else {
+            statusEl.innerText = "DISCONNECTED";
+            statusEl.style.color = "var(--device)"
+        }
     }
 
     if (type === "data") {

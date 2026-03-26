@@ -137,12 +137,21 @@ function savePumpSetting() {
         one: parseFloat(levelOne.value),
         day: parseFloat(levelDay.value),
         night: parseFloat(levelNight.value),
+    })
+
+    publishDevice("panel/pump/set", payload);
+
+}
+
+function saveCalibrasi() {
+
+    const payload = JSON.stringify({
         kp: parseFloat(kedalam.value),
         js: parseFloat(jarakSensorDariPermukaanAtas.value)
 
     })
 
-    publishDevice("panel/pump/set", payload);
+    publishDevice("panel/calis/set", payload);
 
 }
 
@@ -166,6 +175,25 @@ function savePressureSetting() {
     });
 
     publishDevice("panel/pressure/set", payload);
+
+}
+
+function saveAlarmSettings() {
+
+    const payload = JSON.stringify({
+        lowUltra: parseFloat(low_u.value),
+        losUltra: parseFloat(los_u.value),
+        lowPress: parseFloat(low_p.value),
+        overPress: parseFloat(over_p.value),
+        lowVolt: parseFloat(low_v.value),
+        low_Volt: parseFloat(low__v.value),
+        overVolt: parseFloat(over_v.value),
+        over_Volt: parseFloat(over__v.value),
+        overCur: parseFloat(over_c.value),
+        over_Cur: parseFloat(over__c.value)
+    });
+
+    publishDevice("panel/alarm/sensor/set", payload);
 
 }
 
@@ -278,6 +306,13 @@ function onMQTTData(topic, data) {
         levelOne.value = pump.one ?? "";
         levelDay.value = pump.day ?? "";
         levelNight.value = pump.night ?? "";
+        console.table(data);
+    }
+
+    if (type === "calis" && sub === "state" && deviceId === window.activeDevice) {
+
+        const pump = data || {};
+
         kedalam.value = pump.kp ?? "";
         jarakSensorDariPermukaanAtas.value = pump.js ?? "";
 
@@ -311,6 +346,23 @@ function onMQTTData(topic, data) {
 
         p_settle.value = p.settle ?? "";
 
+        console.table(data);
+
+    }
+
+    if (type === "alarm" && sub === "sensor" && deviceId === window.activeDevice) {
+
+        const p = data || {};
+        low_u.value = p.lwu ?? "";
+        los_u.value = p.lsu ?? "";
+        low_p.value = p.lp ?? "";
+        over_p.value = p.op ?? "";
+        low_v.value = p.lv ?? "";
+        low__v.value = p.l_v ?? "";
+        over_v.value = p.ov ?? "";
+        over__v.value = p.o_v ?? "";
+        over_c.value = p.oc ?? "";
+        over__c.value = p.o_c ?? "";
         console.table(data);
 
     }

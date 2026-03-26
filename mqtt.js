@@ -15,6 +15,7 @@ const MQTT_CONFIG = {
     topic_Wifi_status: "esp32/+/wifi/status",
     topic_Pressure_state: "esp32/+/pressure/state",
     topic_pump_state: "esp32/+/pump/state",
+    topic_calis_state: "esp32/+/calis/state",
     topic_valve_state: "esp32/+/valve/state",
     topic_wifi_list: "esp32/+/wifi/list",
     topic_heartbeat: "esp32/+/heartbeat",
@@ -23,7 +24,8 @@ const MQTT_CONFIG = {
     topic_UPTIME: "esp32/+/uptime",
     topic_data: "esp32/+/data",
     topic_state: "esp32/+/state",
-    topic_Led_indikator: "esp32/+/indikator/state"
+    topic_Led_indikator: "esp32/+/indikator/state",
+    topic_ALARM_SENSOR: "esp32/+/alarm/sensor"
 };
 
 let mqttClient = null;
@@ -60,8 +62,8 @@ function mqttStart() {
         mqttClient.subscribe(MQTT_CONFIG.topic_Wifi_progress);
         mqttClient.subscribe(MQTT_CONFIG.topic_ESP_RESTART);
         mqttClient.subscribe(MQTT_CONFIG.topic_UPTIME);
-
-        mqttClient.subscribe();
+        mqttClient.subscribe(MQTT_CONFIG.topic_calis_state);
+        mqttClient.subscribe(MQTT_CONFIG.topic_ALARM_SENSOR);
     });
 
     mqttClient.on("close", () => {
