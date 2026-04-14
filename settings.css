@@ -1,3 +1,4 @@
+
 /* ========================================
    CSS Reset & Base
 ======================================== */
@@ -111,13 +112,8 @@
     font-weight: 500;
 }
 
-.status.success {
-    color: #4caf50;
-}
-
-.status.error {
-    color: #f44336;
-}
+.status.success { color: #4caf50; }
+.status.error { color: #f44336; }
 
 .btn.danger {
     background: #c23b3b;
@@ -162,17 +158,9 @@
     border-radius: 20px;
 }
 
-.badge.success {
-    background: #0f6529;
-}
-
-.badge.warning {
-    background: #d89b00;
-}
-
-.badge.danger {
-    background: #c23b3b;
-}
+.badge.success { background:#0f6529; }
+.badge.warning { background:#d89b00; }
+.badge.danger  { background:#c23b3b; }
 
 .memory-bar {
     height: 10px;
@@ -184,17 +172,17 @@
 .memory-fill {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #00ff88, #ffcc00, #d3c3c3);
+    background: linear-gradient(90deg,#00ff88,#ffcc00,#d3c3c3);
     border-radius: 10px;
 }
 
 .debug-box {
-    background: var(--border);
-    padding: 15px;
-    border-radius: 12px;
-    max-height: 250px;
-    overflow: auto;
-    font-size: 12px;
+    background:var(--border);
+    padding:15px;
+    border-radius:12px;
+    max-height:250px;
+    overflow:auto;
+    font-size:12px;
 }
 
 .wifi-status-card {
@@ -227,7 +215,7 @@
 }
 
 .mode-indicator span {
-
+    
     font-weight: bold;
 }
 
@@ -237,107 +225,4 @@
 
 .mode-indicator span.night {
     color: #ffae00;
-}
-
-/* ================= DEVICE STATUS ================= */
-
-.device-status-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-    margin: 20px 0 25px 0;
-}
-
-.status-card {
-    background: var(--bg-secondary);
-    padding: 18px;
-    border-radius: 12px;
-    border: 1px solid var(--border-color);
-}
-
-.status-title {
-    font-size: 13px;
-    opacity: 0.7;
-    margin-bottom: 6px;
-}
-
-.status-value {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--accent-color);
-}
-
-.status-value {
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--accent-color);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-#mqttStatus.connected {
-    color: #00e676;
-}
-
-#mqttStatus.disconnected {
-    color: #ff5252;
-}
-
-
-#devices {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 12px;
-    margin-top: 20px;
-}
-
-/* devices analisa */
-
-.header {
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0px;
-}
-
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.header-device {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: var(--bg-card);
-    padding: 10px 16px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    transition: border-color 0.2s ease;
-    color:var(--text-primary);
-    border-color: var(--accent-copper);
-}
-
-.header-device:focus-within {
-    border-color: var(--accent-copper);
-}
-
-/* =============== */
-
-.card {
-    border: 1px solid #333;
-    padding: 12px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    transition: 0.2s;
-}
-
-.card.active-device {
-    border: 2px solid var(--accent-copper);
-    background: var(--border);
-    box-shadow: 0 0 10px var(--accent-copper);
 }

@@ -1,12 +1,11 @@
 "use strict";
 
-window.activeDevice = localStorage.getItem("activeDevice") || null;
 /* ========================================
    PRESSURE CANDLE ENGINE
 ======================================== */
+
 const PSI_CANDLE = createCandle();
 const KG_CANDLE = createCandle();
-const BAR_CANDLE = createCandle();
 
 function createCandle() {
     return {
@@ -109,11 +108,10 @@ function drawPressureCandles(engine, svgId) {
     });
 }
 
-function updatePressureGauges(psi, kg, br) {
+function updatePressureGauges(psi, kg) {
 
-    updateGauge("psiNeedle", "psiValue", psi, 0, 40);
+    updateGauge("psiNeedle", "psiValue", psi, 0, 50);
     updateGauge("kgNeedle", "kgValue", kg, 0, 3);
-    updateGauge("barNeedle", "barValue", br, 0, 10);
 }
 
 function updateGauge(needleId, valueId, value, min, max) {
@@ -248,7 +246,7 @@ function createTicks(groupId, min, max, stepMajor, stepMinor) {
         line.setAttribute("y2", y2);
 
         if (v % stepMajor === 0) {
-            line.setAttribute("stroke", "var(--text-primary)");
+            line.setAttribute("stroke", "#fff");
             line.setAttribute("stroke-width", "3");
 
             // NUMBER
@@ -260,7 +258,7 @@ function createTicks(groupId, min, max, stepMajor, stepMinor) {
             text.setAttribute("x", tx);
             text.setAttribute("y", ty + 5);
             text.setAttribute("text-anchor", "middle");
-            text.setAttribute("fill", "var(--geuge)");
+            text.setAttribute("fill", "#fff");
             text.setAttribute("font-size", "14");
             text.textContent = v;
 
@@ -312,104 +310,8 @@ function createDangerArc(id, min, max, dangerStart, dangerEnd) {
     arc.setAttribute("d", d);
 }
 
-/* ========================================
-           CHART AQUA MONITOR
-======================================== */
-function updateWaterDrop(id, value, max) {
-
-    const percent = Math.min(value / max, 1);
-
-    const dropHeight = 130;   // tinggi isi drop
-    const startY = 150;       // posisi bawah drop
-
-    const newHeight = dropHeight * percent;
-    const newY = startY - newHeight;
-
-    const fill = document.getElementById(id);
-    if (!fill) return;
-
-
-    fill.setAttribute("y", newY);
-    fill.setAttribute("height", newHeight);
-}
-
-let currentLevel = 0;
-let currentTinggi = 0;
-let currentJarak = 0;
-
-function updateAquaBars(L, T, J) {
-    currentLevel = L;
-    currentTinggi = T;
-    currentJarak = J;
-
-    drawWave("waveLevel", L, 100, 100);
-    drawWave("waveTinggi", T, 249, 350);
-    drawWave("waveJarak", J, 249, 600);
-
-    const valueLevel = document.getElementById("valueLevel");
-    const valueTinggi = document.getElementById("valueTinggi");
-    const valueJarak = document.getElementById("valueJarak");
-
-    if (valueLevel) valueLevel.textContent = L.toFixed(0) + "%";
-    if (valueTinggi) valueTinggi.textContent = T.toFixed(0) + " cm";
-    if (valueJarak) valueJarak.textContent = J.toFixed(1) + " cm";
-}
-
-let waveOffset = 0;
-
-function drawWave(id, value, max, centerX) {
-
-    const el = document.getElementById(id);
-    if (!el) return;   // ← FIX penting
-
-    const percent = Math.min(value / max, 1);
-
-    const dropBottom = 210;
-    const dropHeight = 150;
-
-    const waterLevel = dropBottom - (dropHeight * percent);
-
-    const amplitude = 5;
-    const wavelength = 50;
-
-    let path = `M ${centerX - 60} ${dropBottom} `;
-
-    for (let x = -60; x <= 60; x++) {
-        const y = waterLevel +
-            Math.sin((x + waveOffset) / wavelength * 2 * Math.PI) * amplitude;
-        path += `L ${centerX + x} ${y} `;
-    }
-
-    path += `L ${centerX + 60} ${dropBottom} Z`;
-
-    el.setAttribute("d", path);
-}
-
-let lastFrame = 0;
-
-function animateWave(timestamp) {
-
-    if (timestamp - lastFrame < 33) {
-        requestAnimationFrame(animateWave);
-        return;
-    }
-
-    lastFrame = timestamp;
-
-    if (!document.hidden) {
-        waveOffset += 0.8;
-        drawWave("waveLevel", currentLevel, 100, 100);
-        drawWave("waveTinggi", currentTinggi, 239, 350);
-        drawWave("waveJarak", currentTinggi, 239, 600);
-    }
-
-    requestAnimationFrame(animateWave);
-}
-
 window.addEventListener("load", () => {
-    requestAnimationFrame(animateWave);
-    createTicks("psiTicks", 0, 40, 10, 5);
+    createTicks("psiTicks", 0, 50, 10, 5);
     createTicks("kgTicks", 0, 3, 1, 0.5);
-    createTicks("barTicks", 0, 10, 1, 0.5);
     createDangerArc("psiDangerArc", 0, 50, 40, 50); // 0	nilai minimum gauge 50	nilai maksimum gauge 40	awal zona bahaya 50	akhir zona bahaya
 });

@@ -19,13 +19,6 @@ https://templatemo.com/tm-609-crypto-vault
     margin-bottom: 32px;
 }
 
-.header-analisa {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0px;
-}
-
 .header h1 {
     font-size: 28px;
     font-weight: 700;
@@ -44,7 +37,7 @@ https://templatemo.com/tm-609-crypto-vault
     gap: 20px;
 }
 
-.header-devices {
+.header-search {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -53,30 +46,31 @@ https://templatemo.com/tm-609-crypto-vault
     border-radius: 10px;
     border: 1px solid var(--border);
     transition: border-color 0.2s ease;
-    color:var(--text-primary);
+}
+
+.header-search:focus-within {
     border-color: var(--accent-copper);
 }
 
-.header-devices:focus-within {
-    border-color: var(--accent-copper);
+.header-search svg {
+    color: var(--text-muted);
 }
 
-
-.header-device {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: var(--bg-card);
-    padding: 10px 16px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    transition: border-color 0.2s ease;
-    color:var(--text-primary);
-    border-color: var(--accent-copper);
+.header-search input {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 15px;
+    width: 180px;
+    font-family: inherit;
 }
 
-.header-device:focus-within {
-    border-color: var(--accent-copper);
+.header-search input::placeholder {
+    color: var(--text-muted);
+}
+
+.header-search input:focus {
+    outline: none;
 }
 
 .notification-btn {
@@ -186,7 +180,7 @@ https://templatemo.com/tm-609-crypto-vault
 .content-right {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px;
 }
 
 /* ========================================
@@ -416,21 +410,10 @@ https://templatemo.com/tm-609-crypto-vault
     border-radius: 50%;
 }
 
-.legend-dot.btc {
-    background-color: #f7931a;
-}
-
-.legend-dot.eth {
-    background-color: #627eea;
-}
-
-.legend-dot.usdt {
-    background-color: #26a17b;
-}
-
-.legend-dot.other {
-    background-color: #b87333;
-}
+.legend-dot.btc { background-color: #f7931a; }
+.legend-dot.eth { background-color: #627eea; }
+.legend-dot.usdt { background-color: #26a17b; }
+.legend-dot.other { background-color: #b87333; }
 
 /* Gauge */
 .gauge-container {
@@ -858,85 +841,4 @@ https://templatemo.com/tm-609-crypto-vault
     .donut-chart-container {
         flex-direction: column;
     }
-}
-
-/* Led Indikator */
-
-
-.led {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: #444;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
-}
-
-
-.led.green {
-    background: #00ff9c;
-    box-shadow: 0 0 12px #00ff9c;
-}
-
-.led.red {
-    background: #ff3c3c;
-    box-shadow: 0 0 12px #ff3c3c;
-}
-
-/* Volt Meter */
-.energy-card {
-    padding: 20px;
-}
-
-.energy-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-}
-
-.label {
-    font-size: 13px;
-    color: #9aa3af;
-    font-weight: 600;
-}
-
-.badge {
-    background: #e8f6ff;
-    color: #1da1f2;
-    padding: 3px 8px;
-    font-size: 11px;
-    border-radius: 8px;
-}
-
-.energy-value {
-    font-size: 38px;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-.unit {
-    font-size: 18px;
-    opacity: 0.7;
-}
-
-.energy-chart {
-    width: 100%;
-    height: 60px;
-}
-.energy-chart polyline{
-transition:all .25s ease;
-}
-
-.energy-chart path{
-transition:all .25s ease;
-}
-
-#notifCount {
-    animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
 }
