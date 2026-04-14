@@ -37,7 +37,6 @@ https://templatemo.com/tm-609-crypto-vault
             <span></span>
         </div>
     </button>
-
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -176,9 +175,15 @@ https://templatemo.com/tm-609-crypto-vault
 
         <!-- Main Content -->
         <main class="main-content">
-            <div class="page-header">
-                <h1>System Monitor</h1>
-                <p>Realtime diagnostics, memory usage and PLC status overview</p>
+
+            <div class="header">
+                <div class="page-header">
+                    <h1>System Monitor</h1>
+                    <p>Realtime diagnostics, memory usage and PLC status overview</p>
+                </div>
+                <div class="header-right">
+                    <select class="header-device" id="deviceSelect"></select>
+                </div>
             </div>
             <div class="grid-2">
 
@@ -280,15 +285,16 @@ https://templatemo.com/tm-609-crypto-vault
             </div>
             <!-- Copyright -->
             <footer class="copyright">
-                Copyright &copy; 2026 CryptoVault. Designed by <a href="https://templatemo.com" target="_blank"
-                    rel="nofollow">TemplateMo</a>
-
+                Copyright &copy; 2026 Sang Jagoan
+                <!-- Designed by <a href="https://templatemo.com" target="_blank"
+                    rel="nofollow">TemplateMo</a> -->
                 <div id="liveDate"></div>
                 <div id="liveClock"></div>
             </footer>
         </main>
         <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
         <script src="mqtt.js"></script>
+        <script src="device.js"></script>
         <script src="system.js"></script>
         <script src="ui.js"></script>
 </body>

@@ -1,6 +1,8 @@
 "use strict";
 let serverOffset = 0;
 let lastServerTime = null;
+
+window.activeDevice = localStorage.getItem("activeDevice") || null;
 /* ========================================
    Full Pages
 ======================================== */
@@ -46,6 +48,21 @@ function initCardFullscreen() {
         card.classList.remove("card-fullscreen");
         document.querySelector(".card-overlay")?.remove();
     }
+}
+
+function getDeviceChart(deviceId) {
+
+    window.deviceCharts = window.deviceCharts || {};
+
+    if (!window.deviceCharts[deviceId]) {
+        window.deviceCharts[deviceId] = {
+            c1: createChart(),
+            c2: createChart(),
+            c3: createChart()
+        };
+    }
+
+    return window.deviceCharts[deviceId];
 }
 
 /* ========================================
@@ -176,7 +193,7 @@ function pushVoltage(chart, v) {
         v
     });
 
-    trim(chart.raw, 86400);
+    trim(chart.raw, 600);
 
     if (!chart._m || Date.now() - chart._m > 60000) {
         chart._m = Date.now();
@@ -209,6 +226,15 @@ function trim(arr, max) {
 
 function drawChart(chart, lineId, areaId, labelId, labelContainerId) {
 
+    const lineEl = document.getElementById(lineId);
+    const areaEl = document.getElementById(areaId);
+
+    // jika chart tidak ada di halaman → stop
+    if (!lineEl || !areaEl) return;
+
+    const svg = lineEl.ownerSVGElement;
+    if (!svg) return;
+
     let data;
 
     if (chart.mode === "1D") data = chart.raw.map(x => x.v);
@@ -217,43 +243,41 @@ function drawChart(chart, lineId, areaId, labelId, labelContainerId) {
     if (chart.mode === "1Y") data = chart.day;
 
     const maxPoints = 60;
-    data = data.slice(-maxPoints);
+    const offset = chart.scrollOffset || 0;
+
+    data = data.slice(-(maxPoints + offset), -offset || undefined);
 
     if (!data || data.length < 2) return;
 
-    const svg = document.getElementById(lineId).ownerSVGElement;
     const width = svg.viewBox.baseVal.width;
     const height = svg.viewBox.baseVal.height;
+
     const minVolt = 150;
     const maxVolt = 260;
 
     const step = width / (maxPoints - 1);
 
-    let line = "", area = "";
+    let line = "";
+    let area = "";
 
     data.forEach((v, i) => {
-        let x = i * step;
-        let y = height - ((v - minVolt) / (maxVolt - minVolt)) * height;
+
+        const x = i * step;
+        const y = height - ((v - minVolt) / (maxVolt - minVolt)) * height;
 
         line += `${x},${y} `;
         area += `${x},${y} `;
     });
 
-    if (labelContainerId) {
+    if (labelContainerId)
         updateChartLabels(chart, labelContainerId);
-    }
 
     area += `${(data.length - 1) * step},200 0,200`;
-
-    const lineEl = document.getElementById(lineId);
-    const areaEl = document.getElementById(areaId);
-    const labelGroup = document.getElementById(labelId);
-
-    if (!lineEl || !areaEl) return;
 
     lineEl.setAttribute("points", line);
     areaEl.setAttribute("points", area);
 
+    const labelGroup = document.getElementById(labelId);
     if (!labelGroup) return;
 
     const fragment = document.createDocumentFragment();
@@ -295,27 +319,53 @@ document.querySelectorAll(".chart-tab").forEach(btn => {
 
         btn.classList.add("active");
 
+        const charts = getDeviceChart(window.activeDevice);
+
         if (chartId === "1") {
-            CHART1.mode = mode;
-            drawChart(CHART1, "voltLine1", "voltArea1", "voltLabels1", "chartLabels1");
+            charts.c1.mode = mode;
+            drawChart(charts.c1, "voltLine1", "voltArea1", "voltLabels1", "chartLabels1");
         }
 
         if (chartId === "2") {
-            CHART2.mode = mode;
-            drawChart(CHART2, "voltLine2", "voltArea2", "voltLabels2", "chartLabels2");
+            charts.c2.mode = mode;
+            drawChart(charts.c2, "voltLine2", "voltArea2", "voltLabels2", "chartLabels2");
         }
         if (chartId === "3") {
-            CHART3.mode = mode;
-            drawChart(CHART3, "cmLine", "cmArea", "cmLabels", "chartLabels3");
+            charts.c3.mode = mode;
+            drawChart(charts.c3, "cmLine", "cmArea", "cmLabels", "chartLabels3");
         }
     }
 });
 
 function saveChartHistory() {
 
-    localStorage.setItem("c1", JSON.stringify(CHART1));
-    localStorage.setItem("c2", JSON.stringify(CHART2));
-    localStorage.setItem("c3", JSON.stringify(CHART3));
+    const c1 = {
+        min: CHART1.min,
+        hour: CHART1.hour,
+        day: CHART1.day
+    };
+
+    const c2 = {
+        min: CHART2.min,
+        hour: CHART2.hour,
+        day: CHART2.day
+    };
+
+    const c3 = {
+        min: CHART3.min,
+        hour: CHART3.hour,
+        day: CHART3.day
+    };
+
+    try {
+        const id = window.activeDevice;
+        localStorage.setItem(`c1_${id}`, JSON.stringify(c1));
+        localStorage.setItem(`c2_${id}`, JSON.stringify(c2));
+        localStorage.setItem(`c3_${id}`, JSON.stringify(c3));
+    } catch (e) {
+        console.warn("Storage penuh, reset history");
+        localStorage.clear();
+    }
 }
 
 function loadChartHistory() {
@@ -325,21 +375,18 @@ function loadChartHistory() {
     const c3 = JSON.parse(localStorage.getItem("c3") || "null");
 
     if (c1) {
-        CHART1.raw = c1.raw || [];
         CHART1.min = c1.min || [];
         CHART1.hour = c1.hour || [];
         CHART1.day = c1.day || [];
     }
 
     if (c2) {
-        CHART2.raw = c2.raw || [];
         CHART2.min = c2.min || [];
         CHART2.hour = c2.hour || [];
         CHART2.day = c2.day || [];
     }
 
     if (c3) {
-        CHART3.raw = c3.raw || [];
         CHART3.min = c3.min || [];
         CHART3.hour = c3.hour || [];
         CHART3.day = c3.day || [];
@@ -354,103 +401,267 @@ function chartRenderLoop() {
 
 }
 
-/* ========================================
-           CHART AQUA MONITOR
-======================================== */
-function updateWaterDrop(id, value, max) {
+function enableChartZoomPan(svgId) {
 
-    const percent = Math.min(value / max, 1);
+    const svg = document.getElementById(svgId);
+    if (!svg) return;
 
-    const dropHeight = 130;   // tinggi isi drop
-    const startY = 150;       // posisi bawah drop
+    let viewBox = svg.viewBox.baseVal;
 
-    const newHeight = dropHeight * percent;
-    const newY = startY - newHeight;
+    let isPanning = false;
+    let startX = 0;
+    let startY = 0;
 
-    const fill = document.getElementById(id);
+    svg.addEventListener("wheel", (e) => {
 
-    fill.setAttribute("y", newY);
-    fill.setAttribute("height", newHeight);
+        e.preventDefault();
+
+        const zoom = e.deltaY > 0 ? 1.1 : 0.9;
+
+        const mx = e.offsetX / svg.clientWidth;
+        const my = e.offsetY / svg.clientHeight;
+
+        const newWidth = viewBox.width * zoom;
+        const newHeight = viewBox.height * zoom;
+
+        viewBox.x += (viewBox.width - newWidth) * mx;
+        viewBox.y += (viewBox.height - newHeight) * my;
+
+        viewBox.width = newWidth;
+        viewBox.height = newHeight;
+
+    });
+
+    svg.addEventListener("mousedown", (e) => {
+
+        isPanning = true;
+        startX = e.clientX;
+        startY = e.clientY;
+
+    });
+
+    window.addEventListener("mousemove", (e) => {
+
+        if (!isPanning) return;
+
+        const dx = (e.clientX - startX) * viewBox.width / svg.clientWidth;
+        const dy = (e.clientY - startY) * viewBox.height / svg.clientHeight;
+
+        viewBox.x -= dx;
+        viewBox.y -= dy;
+
+        startX = e.clientX;
+        startY = e.clientY;
+
+    });
+
+    window.addEventListener("mouseup", () => {
+        isPanning = false;
+    });
+
+    svg.addEventListener("dblclick", () => {
+        svg.setAttribute("viewBox", "0 0 600 200");
+    });
 }
 
-let currentLevel = 0;
-let currentTinggi = 0;
-let currentJarak = 0;
+function enableCrosshair(svgId, chart, textId, lineXId, lineYId) {
 
-function updateAquaBars(L, T, J) {
-    currentLevel = L;
-    currentTinggi = T;
-    currentJarak = J;
+    const svg = document.getElementById(svgId);
+    if (!svg) return;
 
-    drawWave("waveLevel", L, 100, 100);
-    drawWave("waveTinggi", T, 239, 350);
-    drawWave("waveJarak", J, 239, 600);
+    const lineX = document.getElementById(lineXId);
+    const lineY = document.getElementById(lineYId);
+    const text = document.getElementById(textId);
 
-    const valueLevel = document.getElementById("valueLevel");
-    const valueTinggi = document.getElementById("valueTinggi");
-    const valueJarak = document.getElementById("valueJarak");
+    if (!lineX || !lineY || !text) return;
 
-    if (valueLevel) valueLevel.textContent = L.toFixed(0) + "%";
-    if (valueTinggi) valueTinggi.textContent = T.toFixed(0) + " cm";
-    if (valueJarak) valueJarak.textContent = J.toFixed(1) + " cm";
+    svg.addEventListener("mousemove", (e) => {
+
+        const rect = svg.getBoundingClientRect();
+
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        lineX.setAttribute("x1", x);
+        lineX.setAttribute("x2", x);
+
+        lineY.setAttribute("y1", y);
+        lineY.setAttribute("y2", y);
+
+        const data = chart.raw.map(v => v.v);
+
+        const index = Math.floor((x / rect.width) * data.length);
+
+        const value = data[index];
+
+        if (value !== undefined) {
+
+            text.setAttribute("x", x);
+            text.setAttribute("y", y);
+
+            text.textContent = value.toFixed(1) + " V";
+        }
+    });
 }
 
-let waveOffset = 0;
+function enableChartScroll(chart) {
 
-function drawWave(id, value, max, centerX) {
+    let offset = 0;
 
-    const percent = Math.min(value / max, 1);
+    window.addEventListener("wheel", (e) => {
 
-    const dropBottom = 210;
-    const dropHeight = 150;
+        if (e.shiftKey) {
 
-    const waterLevel = dropBottom - (dropHeight * percent);
+            offset += e.deltaY > 0 ? 10 : -10;
 
-    const amplitude = 5;      // tinggi gelombang
-    const wavelength = 50;    // lebar gelombang
+            offset = Math.max(0, offset);
 
-    let path = `M ${centerX - 60} ${dropBottom} `;
+            chart.scrollOffset = offset;
 
-    for (let x = -60; x <= 60; x++) {
-        const y = waterLevel +
-            Math.sin((x + waveOffset) / wavelength * 2 * Math.PI) * amplitude;
-        path += `L ${centerX + x} ${y} `;
-    }
+        }
 
-    path += `L ${centerX + 60} ${dropBottom} Z`;
+    });
 
-    document.getElementById(id).setAttribute("d", path);
 }
 
-let lastFrame = 0;
+function updateChart(value, history, lineId, areaId) {
 
-function animateWave(timestamp) {
+    history.push(value);
 
-    if (timestamp - lastFrame < 33) {
-        requestAnimationFrame(animateWave);
-        return;
-    }
+    if (history.length > 20)
+        history.shift();
 
-    lastFrame = timestamp;
+    // minimal 2 titik supaya step tidak rusak
+    if (history.length < 2) return;
 
-    if (!document.hidden) {
-        waveOffset += 0.8;
-        drawWave("waveLevel", currentLevel, 100, 100);
-        drawWave("waveTinggi", currentTinggi, 239, 350);
-        drawWave("waveJarak", currentTinggi, 239, 600);
-    }
+    const step = 200 / (history.length - 1);
 
-    requestAnimationFrame(animateWave);
+    const minV = 210;
+    const maxV = 235;
+
+    let points = [];
+    let areaPath = "";
+
+    history.forEach((val, i) => {
+
+        const x = i * step;
+
+        const y = 35 - ((val - minV) / (maxV - minV)) * 20;
+
+        points.push(`${x},${y}`);
+
+        if (i === 0)
+            areaPath += `M ${x} ${y}`;
+        else
+            areaPath += ` L ${x} ${y}`;
+
+    });
+
+    const lastX = (history.length - 1) * step;
+
+    areaPath += ` L ${lastX} 40 L 0 40 Z`;
+
+    document.getElementById(lineId)
+        .setAttribute("points", points.join(" "));
+
+    document.getElementById(areaId)
+        .setAttribute("d", areaPath);
 }
+
+let sparkHistory = {};
+
+function sparkline(lineId, areaId, value) {
+    const lineEl = document.getElementById(lineId);
+    const areaEl = document.getElementById(areaId);
+
+    // jika elemen belum ada → stop
+    if (!lineEl || !areaEl) return;
+
+    if (!sparkHistory[lineId])
+        sparkHistory[lineId] = [];
+
+    const history = sparkHistory[lineId];
+
+    history.push(value);
+
+    if (history.length > 20)
+        history.shift();
+
+    if (history.length < 2) return;
+
+    const step = 200 / (history.length - 1);
+
+    const minV = Math.min(...history) - 1;
+    const maxV = Math.max(...history) + 1;
+
+
+    let points = [];
+    let areaPath = "";
+
+    history.forEach((val, i) => {
+
+        const x = i * step;
+        const y = 35 - ((val - minV) / (maxV - minV)) * 20;
+
+        points.push(`${x},${y}`);
+
+        if (i === 0)
+            areaPath += `M ${x} ${y}`;
+        else
+            areaPath += ` L ${x} ${y}`;
+
+    });
+
+    const lastX = (history.length - 1) * step;
+
+    areaPath += ` L ${lastX} 40 L 0 40 Z`;
+
+    document.getElementById(lineId).setAttribute("points", points.join(" "));
+    document.getElementById(areaId).setAttribute("d", areaPath);
+}
+
 // ================ Chart AquaMonitor End========================//
 
 window.addEventListener("load", () => {
-    requestAnimationFrame(animateWave);
     setInterval(updateLiveDateTime, 1000);
-    initCardFullscreen();
+    // initCardFullscreen();
     loadChartHistory();
     setInterval(saveChartHistory, 5000);
-    setInterval(chartRenderLoop, 2000); // redraw tiap 1 detik
+    setInterval(() => {
+        if (!window.activeDevice) return;
+
+        const charts = getDeviceChart(window.activeDevice);
+
+        drawChart(charts.c1, "voltLine1", "voltArea1", "voltLabels1", "chartLabels1");
+        drawChart(charts.c2, "voltLine2", "voltArea2", "voltLabels2", "chartLabels2");
+        drawChart(charts.c3, "cmLine", "cmArea", "cmLabels", "chartLabels3");
+
+    }, 2000);
+    enableChartZoomPan("voltChart1");
+    enableChartZoomPan("voltChart2");
+    enableChartZoomPan("cmChart");
+    enableCrosshair(
+        "voltChart1",
+        getDeviceChart(window.activeDevice).c1,
+        "crosshairText1",
+        "crosshairX1",
+        "crosshairY1"
+    );
+
+    enableCrosshair(
+        "voltChart2",
+        getDeviceChart(window.activeDevice).c2,
+        "crosshairText2",
+        "crosshairX2",
+        "crosshairY2"
+    );
+
+    enableCrosshair(
+        "cmChart",
+        getDeviceChart(window.activeDevice).c3,
+        "crosshairText3",
+        "crosshairX3",
+        "crosshairY3"
+    );
 
 });
-

@@ -7,10 +7,25 @@ const MQTT_CONFIG = {
     username: "espuser",
     password: "Esp32Cloud2026!",
 
-    topic_data: "esp32/panel/data",
-    topic_state: "esp32/panel/state",
-    topic_heartbeat: "esp32/panel/heartbeat",
-    topic_daynight: "esp32/config/daynight/state"
+    topic_wifi_state: "esp32/+/config/wifi/state",
+    topic_wifi_set: "esp32/+/config/wifi/set",
+    topic_ESP_RESTART: "esp32/+/config/esp/restart",
+
+    topic_Wifi_progress: "esp32/+/wifi/progress",
+    topic_Wifi_status: "esp32/+/wifi/status",
+    topic_Pressure_state: "esp32/+/pressure/state",
+    topic_pump_state: "esp32/+/pump/state",
+    topic_calis_state: "esp32/+/calis/state",
+    topic_valve_state: "esp32/+/valve/state",
+    topic_wifi_list: "esp32/+/wifi/list",
+    topic_heartbeat: "esp32/+/heartbeat",
+    topic_daynight: "esp32/+/daynight/state",
+    topic_notif: "esp32/+/alarm",
+    topic_UPTIME: "esp32/+/uptime",
+    topic_data: "esp32/+/data",
+    topic_state: "esp32/+/state",
+    topic_Led_indikator: "esp32/+/indikator/state",
+    topic_ALARM_SENSOR: "esp32/+/alarm/sensor"
 };
 
 let mqttClient = null;
@@ -29,12 +44,33 @@ function mqttStart() {
 
     mqttClient.on("connect", () => {
         console.log("MQTT Connected ✅");
+        setLed("ledMqtt", true);
 
         mqttClient.subscribe(MQTT_CONFIG.topic_data);
         mqttClient.subscribe(MQTT_CONFIG.topic_state);
         mqttClient.subscribe(MQTT_CONFIG.topic_heartbeat);
         mqttClient.subscribe(MQTT_CONFIG.topic_daynight);
+        mqttClient.subscribe(MQTT_CONFIG.topic_notif);
+        mqttClient.subscribe(MQTT_CONFIG.topic_pump_state);
+        mqttClient.subscribe(MQTT_CONFIG.topic_valve_state);
+        mqttClient.subscribe(MQTT_CONFIG.topic_wifi_list);
+        mqttClient.subscribe(MQTT_CONFIG.topic_wifi_state);
+        mqttClient.subscribe(MQTT_CONFIG.topic_wifi_set);
+        mqttClient.subscribe(MQTT_CONFIG.topic_Pressure_state);
+        mqttClient.subscribe(MQTT_CONFIG.topic_Led_indikator);
+        mqttClient.subscribe(MQTT_CONFIG.topic_Wifi_status);
+        mqttClient.subscribe(MQTT_CONFIG.topic_Wifi_progress);
+        mqttClient.subscribe(MQTT_CONFIG.topic_ESP_RESTART);
+        mqttClient.subscribe(MQTT_CONFIG.topic_UPTIME);
+        mqttClient.subscribe(MQTT_CONFIG.topic_calis_state);
+        mqttClient.subscribe(MQTT_CONFIG.topic_ALARM_SENSOR);
+    });
 
+    mqttClient.on("close", () => {
+
+        console.log("MQTT Disconnected");
+
+        setLed("ledMqtt", false);
     });
 
     mqttClient.on("message", mqttOnMessage);
@@ -44,14 +80,46 @@ function mqttStart() {
     });
 }
 
-function mqttOnMessage(topic, payload) {
-    try {
-        const data = JSON.parse(payload.toString());
+function setLed(id, state) {
 
+    const led = document.getElementById(id);
+
+    if (!led) return;
+
+    if (state) {
+        led.classList.add("online");
+        led.classList.remove("offline");
+    } else {
+        led.classList.add("offline");
+        led.classList.remove("online");
+    }
+}
+
+function mqttOnMessage(topic, payload) {
+
+    const message = payload.toString();
+    let data = null;
+
+    try {
+        data = JSON.parse(message);
+    } catch (e) {
+        console.warn("Non JSON message:", message);
+        return;
+    }
+
+    // kirim ke semua handler
+    if (typeof onMQTTWifi === "function")
+        onMQTTWifi(topic, data);
+
+    if (typeof onMQTTData === "function")
         onMQTTData(topic, data);
 
-    }
-    catch (e) {
-        console.error("JSON error", e);
+    if (typeof onMQTTAlarm === "function")
+        onMQTTAlarm(topic, data);
+
+    console.log("devices", window.devices);
+
+     if (typeof renderDevices === "function") {
+        renderDevices();
     }
 }

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="pages.css">
     <link rel="stylesheet" href="control.css">
+    <link rel="stylesheet" href="settings.css">
 
     <!--
 
@@ -30,7 +31,6 @@ https://templatemo.com/tm-609-crypto-vault
             <span></span>
         </div>
     </button>
-
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="dashboard">
@@ -166,18 +166,24 @@ https://templatemo.com/tm-609-crypto-vault
         </aside>
 
         <main class="main-content">
-            <div class="page-header">
-                <h1>Settings</h1>
-                <p>Manage your account preferences and security</p>
+            <div class="header">
+                <div class="page-header">
+                    <h1>Settings</h1>
+                    <p>Manage your account preferences and security</p>
+                </div>
+                <div class="header-right">
+                    <select class="header-device" id="deviceSelect"></select>
+                </div>
             </div>
             <!-- Settings Tabs -->
             <div class="settings-tabs">
-                <button class="settings-tab active" data-tab="mode-control">🌙 Day / Night Mode Control</button>
-                <button class="settings-tab " data-tab="mode">Stopkran</button>
-                <button class="settings-tab " data-tab="mode">State</button>
+                <button class="settings-tab active" data-tab="mode-night_day">🌙 Day / Night Mode Control</button>
+                <button class="settings-tab " data-tab="mode-kran">Stopkran</button>
+                <button class="settings-tab " data-tab="mode-state">State</button>
+                <button class="settings-tab " data-tab="mode-calibrasi">calibrasi sensor</button>
             </div>
             <!-- 🌙 Day / Night Mode Control -->
-            <div class="settings-content active" id="mode-control">
+            <div class="settings-content active" id="mode-night_day">
                 <div class="card">
                     <div class="card-header">
                         <h3>🌙 Operation Mode</h3>
@@ -218,9 +224,271 @@ https://templatemo.com/tm-609-crypto-vault
                     </div>
                 </div>
             </div>
+            <!--  State Stopkran Mode -->
+            <div class="settings-content" id="mode-kran">
+                <div class="switc-group">
+                    <div class="control-row">
+                        <span>Selatan</span>
+                        <label class="ui-switch">
+                            <input type="checkbox" onchange="toggleValve('selatan', this.checked)">
+                            <div class="slider">
+                                <span class="text closed">CLOSED</span>
+                                <span class="text open">OPEN</span>
+
+                                <div class="knob">
+                                    <span class="icon"></span>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="control-row">
+                        <span>Utara</span>
+
+                        <label class="ui-switch">
+                            <input type="checkbox" id="valveUtara" onchange="toggleValve('utara', this.checked)">
+
+                            <div class="slider">
+                                <span class="text closed">CLOSED</span>
+                                <span class="text open">OPEN</span>
+                                <div class="knob">
+                                    <span class="icon"></span>
+                                </div>
+                            </div>
+
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!--  State Mode Control -->
+            <div class="settings-content" id="mode-state">
+                <div class="gauge-container">
+                    <div class="plc-status">
+                        <div class="status-row">
+                            <span>System Health</span>
+
+                            <label class="ui-switch">
+                                <input type="checkbox" id="systemError" onchange="toggleHealth(this.checked)">
+                                <span class="ui-slider">
+                                    <span class="ui-on">true</span>
+                                    <span class="ui-off">false</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="status-row">
+                            <span>PLC Error</span>
+                            <span id="ledError" class="led"></span>
+                        </div>
+
+                        <div class="status-row">
+                            <span>Sensor eneble</span>
+                            <span id="ledRun" class="led"></span>
+                        </div>
+
+                        <div class="status-row">
+                            <span>WiFi</span>
+                            <span id="ledWifi" class="led"></span>
+                        </div>
+
+                        <div class="status-row">
+                            <span>MQTT</span>
+                            <span id="ledMqtt" class="led"></span>
+                        </div>
+
+                        <div class="status-row">
+                            <span>OTA Update</span>
+                            <span id="ledOta" class="led"></span>
+                        </div>
+
+                        <div class="status-row">
+                            <span>Sible Atas</span>
+                            <div id="sibleAtas" class="led"></div>
+                        </div>
+
+                        <div class="status-row">
+                            <span>Sible Bawah</span>
+                            <div id="sibleBawah" class="led"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!--  calibrasi Mode -->
+            <div class="settings-content" id="mode-calibrasi">
+                <div class="calib-card">
+                    <div class="calib-card">
+                        <div class="calib-title">Calibrasi Sensor</div>
+                        <div class="pump-grid">
+                            <div>
+                                <label>Kedalaman</label>
+                                <input id="kedalam" type="number" min="0" max="400">
+                            </div>
+
+                            <div>
+                                <label>Jarak Sensor </label>
+                                <input id="jarakSensorDariPermukaanAtas" type="number" min="0" max="100">
+                            </div>
+                        </div>
+                        <br>
+                        <button class="btn-save" onclick="saveCalibrasi()">
+                            SAVE CALIBRASI
+                        </button>
+                    </div>
+                    <div class="calib-card">
+                        <div class="calib-title">Pump Control</div>
+                        <div class="pump-grid">
+                            <div>
+                                <label>Stop Pump</label>
+                                <input id="levelStop" type="number" min="0" max="100">
+                            </div>
+
+                            <div>
+                                <label>1 Pump</label>
+                                <input id="levelOne" type="number" min="0" max="100">
+                            </div>
+
+                            <div>
+                                <label>2 Pump Day</label>
+                                <input id="levelDay" type="number" min="0" max="100">
+                            </div>
+
+                            <div>
+                                <label>2 Pump Night</label>
+                                <input id="levelNight" type="number" min="0" max="100">
+                            </div>
+                        </div>
+                        <br>
+                        <button class="btn-save" onclick="savePumpSetting()">
+                            SAVE SETTINGS
+                        </button>
+                    </div>
+                    <div class="calib-card">
+                        <h3>Pressure Control</h3>
+                        <div class="pump-grid">
+
+                            <div class="form-group">
+                                <label>Target Pressure</label>
+                                <input id="p_target" type="number" step="0.01">
+                            </div>
+
+                            <div class="form-group">
+                                <label>High Limit</label>
+                                <input id="p_high" type="number" step="0.01">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Low Limit</label>
+                                <input id="p_low" type="number" step="0.01">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Deadband</label>
+                                <input id="pressureDeadband" type="number" step="0.01" min="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Overshoot</label>
+                                <input id="over_shoot" type="number" step="0.01">
+                            </div>
+
+                            <div class="form-group">
+                                <label>OverLoad</label>
+                                <input id="over_Load" type="number" step="0.01">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Settle Time (ms)</label>
+                                <input id="p_settle" type="number">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Pulse Min</label>
+                                <input id="p_pulseMin" type="number">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Pulse Max</label>
+                                <input id="p_pulseMax" type="number">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Lock Time (ms)</label>
+                                <input id="pressureLock" type="number">
+                            </div>
+
+                        </div>
+                        <button onclick="savePressureSetting()" class="btn-save">
+                            SAVE PRESSURE SETTINGS
+                        </button>
+                    </div>
+                    <div class="calib-card">
+                        <h3>Cek All Sensor</h3>
+                        <div class="pump-grid">
+
+                            <div class="form-group">
+                                <label>Low Ultrasonic</label>
+                                <input id="low_u" type="number" step="0.01">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Los Ultrasonic</label>
+                                <input id="los_u" type="number" step="0.0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Low Pressure</label>
+                                <input id="low_p" type="number" step="0.0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Overload Pressure</label>
+                                <input id="over_p" type="number" step="0.0" min="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Low Voltaage</label>
+                                <input id="low_v" type="number" step="0.0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Low _Voltage</label>
+                                <input id="low__v" type="number" step="0.0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Over Voltage</label>
+                                <input id="over_v" type="number" step="0.0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Over _Voltage</label>
+                                <input id="over__v" type="number" step="0.0">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Over Current</label>
+                                <input id="over_c" type="number" step="0.01">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Over _Current</label>
+                                <input id="over__c" type="number" step="0.01">
+                            </div>
+
+                        </div>
+                        <button onclick="saveAlarmSettings()" class="btn-save">
+                            SAVE ALARM SETTINGS
+                        </button>
+                    </div>
+                </div>
+            </div>
             <footer class="copyright">
-                Copyright &copy; 2026 CryptoVault. Designed by <a href="https://templatemo.com" target="_blank"
-                    rel="nofollow">TemplateMo</a>
+                Copyright &copy; 2026 Sang Jagoan
+                <!-- Designed by <a href="https://templatemo.com" target="_blank"
+                    rel="nofollow">TemplateMo</a> -->
                 <div id="liveDate"></div>
                 <div id="liveClock"></div>
             </footer>
@@ -229,6 +497,7 @@ https://templatemo.com/tm-609-crypto-vault
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <script src="mqtt.js"></script>
     <script src="control.js"></script>
+    <script src="device.js"></script>
     <script src="ui.js"></script>
 </body>
 

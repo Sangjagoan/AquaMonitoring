@@ -1,13 +1,14 @@
+
+"use strict";
+
+window.activeDevice = localStorage.getItem("activeDevice") || null;
+window.devices
+window.activeDevice
 /* ========================================
  SYSTEM MONITORING
 ======================================== */
-
-async function loadSystemStatus(d)
-{
+async function loadSystemStatus(d) {
     console.log("System status:", d);
-
-    document.getElementById("uptimeValue").textContent =
-        formatUptime(d.up);
 
     document.getElementById("heapValue").textContent =
         (d.hp / 1024).toFixed(1) + " KB";
@@ -52,28 +53,68 @@ function updateHealthUI(data) {
     else el.classList.add("red");
 }
 
-function formatUptime(seconds)
-{
+function formatUptime(seconds) {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
     return `${h}h ${m}m ${s}s`;
 }
 
-function onMQTTData(topic, data)
-{
-    console.log("SYSTEM RX:", topic, data);
+function onMQTTData(topic, data) {
 
-    if (topic === "esp32/panel/data")
-    {
-        loadSystemStatus(data);
-        updateHealthUI(data);
+    const parts = topic.split("/");
+    if (parts.length < 3) return;
+
+    const deviceId = parts[1];
+    const type = parts[2];
+    const sub = parts[3];
+
+   
+    if (!deviceId.startsWith("ESP32_")) return;
+
+    // ✅ INIT GLOBAL
+    window.devices = window.devices || {};
+
+    if (!window.devices[deviceId]) {
+        window.devices[deviceId] = {};
     }
 
+    Object.assign(window.devices[deviceId], data);
+
+    // ✅ AUTO SET DEVICE PERTAMA
+    if (!window.activeDevice) {
+        window.activeDevice = deviceId;
+        localStorage.setItem("device", deviceId);
+    }
+
+    if (typeof updateDeviceSelector === "function") {
+        updateDeviceSelector();
+    }
+
+    if (typeof renderDevices === "function") {
+        renderDevices();
+    }
+
+    // ✅ FILTER
+    if (deviceId !== window.activeDevice) return;
     
+    if (type === "data" && deviceId === window.activeDevice) {
+        loadSystemStatus(data);
+        updateHealthUI(data);
+
+        console.log("SYSTEM RX:", topic, data);
+    }
+
+    if (type === "uptime" && deviceId === window.activeDevice) {
+
+        console.log("UPTIME:", topic, data);
+
+        const d = typeof data === "string" ? JSON.parse(data) : data;
+
+        document.getElementById("uptimeValue").textContent = formatUptime(d.up);
+    }
 }
 
-window.addEventListener("load", () =>
-{
+window.addEventListener("load", () => {
     mqttStart();
 });
