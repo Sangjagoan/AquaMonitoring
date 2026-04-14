@@ -101,12 +101,25 @@
     position: relative;
 }
 
+.ui-switch input:checked+.slider {
+    box-shadow:
+        0 0 10px rgba(46, 204, 113, 0.6),
+        inset 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 .ui-switch input {
     display: none;
 }
 
 /* BACKGROUND */
 .slider {
+    box-shadow:
+        inset 4px 4px 8px rgba(0, 0, 0, 0.35),
+        /* dalam gelap */
+        inset -4px -4px 8px rgba(255, 255, 255, 0.08),
+        /* dalam terang */
+        0 6px 14px rgba(0, 0, 0, 0.5);
+    /* bayangan luar */
     position: relative;
     width: 100%;
     height: 100%;
@@ -116,6 +129,21 @@
     overflow: hidden;
     font-weight: bold;
     color: white;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50px;
+
+    box-shadow:
+        inset 2px 2px 4px rgba(255, 255, 255, 0.12),
+        /* highlight atas */
+        inset -2px -2px 4px rgba(0, 0, 0, 0.5);
+    /* shadow bawah */
+
+    pointer-events: none;
 }
 
 /* TEXT */
@@ -128,16 +156,23 @@
 }
 
 .closed {
-    left: 50px;
+    left: 55px;
 }
 
 .open {
-    right: 30px;
+    right: 65px;
     opacity: 0;
 }
 
 /* KNOB */
 .knob {
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.5),
+        /* jatuh */
+        inset -2px -2px 4px rgba(255, 255, 255, 0.7),
+        /* highlight */
+        inset 2px 2px 4px rgba(0, 0, 0, 0.25);
+    /* depth */
     position: absolute;
     width: 45px;
     height: 45px;
@@ -155,6 +190,18 @@
 /* ICON */
 .icon {
     font-size: 23px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon svg {
+    width: 36px;
+    height: 36px;
+    transform: scale(1.2);
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
+    transform: translateY(3px);
+    /* ini biar bener2 center visual */
 }
 
 /* ON STATE */
@@ -174,17 +221,48 @@
     opacity: 1;
 }
 
-/* ICON CHANGE (FIX DOBEL) */
-.ui-switch input:checked+.slider .icon {
-    content: "";
+/* OFF (merah) */
+.ui-switch .icon svg {
+    fill: #c0392b;
 }
 
-.ui-switch input:checked+.slider .icon::after {
-    content: "🔓";
+/* ON (hijau) */
+.ui-switch input:checked+.slider .icon svg {
+    fill: #27ae60;
 }
 
-.icon::after {
-    content: "🔒";
+.pipe {
+    fill: #3a3a3a;
+}
+
+.body {
+    fill: #555;
+}
+
+.stem {
+    fill: #777;
+}
+
+/* wheel */
+.wheel {
+    stroke: #e74c3c;
+    transform-origin: 12px 4px;
+    transition: transform 0.4s ease;
+}
+
+/* CLOSED */
+.ui-switch .wheel {
+    transform: rotate(0deg);
+}
+
+/* OPEN (muter kayak valve asli) */
+.ui-switch input:checked+.slider .wheel {
+    transform: rotate(180deg);
+}
+
+/* warna ON */
+.ui-switch input:checked+.slider .wheel {
+    stroke: #2ecc71;
 }
 
 /* calibrasi */
