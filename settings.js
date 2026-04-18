@@ -103,7 +103,7 @@ function restartEsp() {
     if (!confirm("⚠ Restart ESP32?\nPerangkat akan restart.")) return;
     if (!confirm("Konfirmasi lagi.\nkalau sudah yakin ESP akan restart.")) return;
 
-    let countdown = 5;
+    let countdown = 2;
 
     const timer = setInterval(() => {
 

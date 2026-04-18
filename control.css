@@ -93,6 +93,84 @@
     }
 }
 
+.ui-switch1 {
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 36px;
+}
+
+/* hide checkbox */
+.ui-switch1 input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+}
+
+/* background */
+.ui-slider1 {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    background: #8b1d1d;
+    transition: 0.25s;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+/* knob */
+.ui-slider1::after {
+    content: "";
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: 2px;
+    left: 4px;
+    background: #f2f2f2;
+    border-radius: 50%;
+    transition: 0.25s;
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.6),
+        inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+/* ON state */
+.ui-switch1 input:checked+.ui-slider1 {
+    background: #2ecc71;
+    box-shadow:
+        0 0 8px rgba(46, 204, 113, 0.7),
+        inset 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+.ui-switch1 input:checked+.ui-slider1::after {
+    transform: translateX(40px);
+}
+
+/* text */
+.ui-on {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.ui-off {
+    position: absolute;
+    right: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
 /* swit */
 .ui-switch {
     display: inline-block;
@@ -124,7 +202,7 @@
     width: 100%;
     height: 100%;
     border-radius: 50px;
-    background: #e60023;
+    background: #27d124;
     transition: 0.3s;
     overflow: hidden;
     font-weight: bold;
@@ -206,7 +284,7 @@
 
 /* ON STATE */
 .ui-switch input:checked+.slider {
-    background: #2ecc71;
+    background: #ff0000;
 }
 
 .ui-switch input:checked+.slider .knob {
@@ -221,14 +299,10 @@
     opacity: 1;
 }
 
-/* OFF (merah) */
-.ui-switch .icon svg {
-    fill: #c0392b;
-}
 
 /* ON (hijau) */
 .ui-switch input:checked+.slider .icon svg {
-    fill: #27ae60;
+    fill: #9f9090;
 }
 
 .pipe {
@@ -245,7 +319,7 @@
 
 /* wheel */
 .wheel {
-    stroke: #e74c3c;
+    stroke: #27d124;
     transform-origin: 12px 4px;
     transition: transform 0.4s ease;
 }
@@ -262,7 +336,7 @@
 
 /* warna ON */
 .ui-switch input:checked+.slider .wheel {
-    stroke: #2ecc71;
+    stroke: #fc0000;
 }
 
 /* calibrasi */
