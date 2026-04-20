@@ -25,7 +25,8 @@ const MQTT_CONFIG = {
     topic_data: "esp32/+/data",
     topic_state: "esp32/+/state",
     topic_Led_indikator: "esp32/+/indikator/state",
-    topic_ALARM_SENSOR: "esp32/+/alarm/sensor"
+    topic_ALARM_SENSOR: "esp32/+/alarm/sensor",
+    topic_TIME: "esp32/+/time"
 };
 
 let mqttClient = null;
@@ -64,6 +65,7 @@ function mqttStart() {
         mqttClient.subscribe(MQTT_CONFIG.topic_UPTIME);
         mqttClient.subscribe(MQTT_CONFIG.topic_calis_state);
         mqttClient.subscribe(MQTT_CONFIG.topic_ALARM_SENSOR);
+        mqttClient.subscribe(MQTT_CONFIG.topic_TIME);
     });
 
     mqttClient.on("close", () => {

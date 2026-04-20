@@ -221,6 +221,17 @@ function onMQTTWifi(topic, data) {
         el.innerText = statusMap[data.mq] ?? "-";
 
     }
+
+    if (type === "time") {
+
+        if (deviceId !== window.activeDevice) return;
+
+        const el = document.getElementById("espUptime");
+
+        if (!el) return;
+
+        el.innerText = data.time || "--:--";
+    }
 }
 
 function getWifiBars(rssi) {
